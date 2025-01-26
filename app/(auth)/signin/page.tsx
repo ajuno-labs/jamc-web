@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { GraduationCap, Loader2 } from "lucide-react"
 import { GoogleIcon } from "@/components/icons/google"
-import { signInWithGoogle } from "@/app/lib/server-actions/auth/signin"
+import { signInWithGoogle, signInWithCredentials } from "@/app/lib/server-actions/auth/signin"
 
 type FormData = {
   email: string
@@ -27,10 +27,16 @@ export default function SignInPage() {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true)
     setError("")
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    // For demo purposes, always show an error
-    setError("Invalid email or password. Please try again.")
+    
+    const result = await signInWithCredentials(data.email, data.password)
+    
+    if (result.error) {
+      setError(result.error)
+      setIsLoading(false)
+      return
+    }
+    
+    // Redirect is handled by NextAuth
     setIsLoading(false)
   }
 
