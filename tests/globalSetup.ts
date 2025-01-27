@@ -1,10 +1,7 @@
-import { FullConfig } from '@playwright/test'
-import { startMSW, stopMSW } from './msw-handler'
+import { chromium, FullConfig } from '@playwright/test'
 
-export default async function globalSetup(config: FullConfig) {
-  await startMSW()
-  
-  return async () => {
-    await stopMSW()
-  }
-} 
+async function globalSetup(config: FullConfig) {
+  // Any global setup needed for tests can go here
+}
+
+export default globalSetup 

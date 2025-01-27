@@ -5,6 +5,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/prisma"
 import { signInSchema } from "@/app/lib/validations/auth"
 import { ZodError } from "zod"
+import bcrypt from "bcryptjs"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -19,37 +20,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       async authorize(credentials) {
         try {
           if (!credentials) return null
-          
           const { email, password } = await signInSchema.parseAsync(credentials)
-          
           const user = await prisma.user.findUnique({
             where: { email }
           })
-
-          if (!user) {
-            throw new Error("Invalid credentials")
+          
+          if (!user?.password) {
+            throw new Error("Please sign in with OAuth provider")
           }
 
-          // In a real app, you would hash the password and compare hashes
-          // This is just for demo purposes
-          if (password !== "demo123") {
-            throw new Error("Invalid credentials")
+          const isValidPassword = await bcrypt.compare(password, user.password)
+          
+          if (!user || !isValidPassword) {
+            throw new Error("Invalid email or password")
           }
 
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            image: user.image
-          }
+          return user
         } catch (error) {
           if (error instanceof ZodError) {
             throw new Error(error.errors[0].message)
           }
-          if (error instanceof Error) {
-            throw error
-          }
-          return null
+          throw error
         }
       }
     })
@@ -64,4 +55,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session
     },
   },
+  pages: {
+    signIn: "/signin"
+  }
 })

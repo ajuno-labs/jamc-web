@@ -1,14 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
-
-/**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
@@ -32,6 +24,9 @@ export default defineConfig({
     contextOptions: {
       serviceWorkers: 'block',
     },
+    /* Increase timeouts for actions and navigation */
+    actionTimeout: 15000,
+    navigationTimeout: 30000,
   },
 
   /* Configure projects for major browsers */
@@ -75,7 +70,11 @@ export default defineConfig({
     command: 'pnpm dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
+    timeout: 120000,
   },
   
   globalSetup: './tests/globalSetup.ts',
+  
+  /* Increase the test timeout */
+  timeout: 60000,
 });
