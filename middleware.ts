@@ -5,19 +5,15 @@ import type { NextRequest } from "next/server"
 export async function middleware(request: NextRequest) {
   const session = await auth()
 
-  // Protect all routes under /dashboard
-  if (request.nextUrl.pathname.startsWith("/dashboard")) {
+  if (request.nextUrl.pathname.startsWith("/(main)")) {
     if (!session) {
-      return NextResponse.redirect(new URL("/signin", request.url))
+      return NextResponse.redirect(new URL("/(auth)/signin", request.url));
     }
   }
-
-  // Redirect authenticated users away from auth pages
   if (session && (
-    request.nextUrl.pathname.startsWith("/signin") ||
-    request.nextUrl.pathname.startsWith("/signup")
+    request.nextUrl.pathname.startsWith("/(auth)")
   )) {
-    return NextResponse.redirect(new URL("/dashboard", request.url))
+    return NextResponse.redirect(new URL("/(main)", request.url))
   }
 
   return NextResponse.next()
@@ -25,8 +21,13 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",
-    "/signin",
-    "/signup",
-  ]
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+  ],
 }
