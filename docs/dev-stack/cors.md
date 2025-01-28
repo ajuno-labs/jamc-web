@@ -1,0 +1,6 @@
+- same-origin policy (SOP): only allow requests from the same origin
+- origin = protocol + host + port
+- cross-origin resource sharing (CORS): allow requests from different origins
+    - a security feature implemented by browsers
+- simple requests
+- preflight requests

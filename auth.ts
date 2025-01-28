@@ -4,7 +4,6 @@ import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/prisma"
 import { signInSchema } from "@/app/lib/validations/auth"
-import { ZodError } from "zod"
 import bcrypt from "bcryptjs"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -12,34 +11,33 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Google,
     Credentials({
-      name: "credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        email: {},
+        password: {}
       },
       async authorize(credentials) {
         try {
           if (!credentials) return null
           const { email, password } = await signInSchema.parseAsync(credentials)
+          //Find user with email
           const user = await prisma.user.findUnique({
-            where: { email }
+            where: { email: email }
           })
-          
-          if (!user?.password) {
+          if (!user) {
+            throw new Error("Invalid email or password")
+          }
+          if (!user.password) {
             throw new Error("Please sign in with OAuth provider")
           }
 
           const isValidPassword = await bcrypt.compare(password, user.password)
-          
-          if (!user || !isValidPassword) {
+
+          if (!isValidPassword) {
             throw new Error("Invalid email or password")
           }
 
           return user
         } catch (error) {
-          if (error instanceof ZodError) {
-            throw new Error(error.errors[0].message)
-          }
           throw error
         }
       }

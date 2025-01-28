@@ -33,22 +33,14 @@ export function SignInForm() {
     setIsLoading(true)
     setError(null)
     try {
-      const result = await signInWithCredentials(data.email, data.password)
+      const result = await signInWithCredentials(data)
       if (result?.error) {
-        if (result.error === "Invalid email format") {
-          setFormError("email", { message: result.error })
-        } else if (result.error.includes("Password must be")) {
-          setFormError("password", { message: result.error })
-        } else {
-          setError(result.error)
-        }
-        return // Don't proceed if there are errors
+        setError(result.error)
+        return
       }
       
       if (result?.success) {
         router.push("/")
-      } else {
-        setError("Authentication failed")
       }
     } catch (error) {
       console.error(error)

@@ -16,3 +16,8 @@
         - rewrite the URL internally without the user knowing
     - set cookies, headers
 
+- Using Cookies
+    - request.cookies: get, getAll, set, delete, has, clear
+- Setting Headers
+    - CORS (Cross-Origin Resource Sharing)
+- Many advanced use cases that I haven't explored yet: 

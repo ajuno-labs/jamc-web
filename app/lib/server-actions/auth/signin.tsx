@@ -1,41 +1,32 @@
 "use server"
 
 import { signIn } from "@/auth"
+import { SignInInput } from "../../validations/auth"
 import { AuthError } from "next-auth"
-import { redirect } from "next/navigation"
-import { signInSchema } from "@/app/lib/validations/auth"
 import { ZodError } from "zod"
 
 export const signInWithGoogle = async () => {
   await signIn("google", { redirectTo: "/" })
 }
 
-export const signInWithCredentials = async (email: string, password: string) => {
+export const signInWithCredentials = async (data: SignInInput): Promise<{ error?: string; success?: boolean }> => {
   try {
-    // Validate input first
-    await signInSchema.parseAsync({ email, password })
-
     const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
+      ...data,
+      redirect: false
     })
-    
-    if (result?.error) {
-      return { error: result.error }
-    }
-    
-    if (result?.ok) {
-      return { success: true }
+
+    if (!result?.ok) {
+      return { error: "Invalid email or password" }
     }
 
-    return { error: "Authentication failed" }
+    return { success: true }
   } catch (error) {
-    if (error instanceof ZodError) {
-      return { error: error.errors[0].message }
-    }
     if (error instanceof AuthError) {
       return { error: "Invalid email or password" }
+    }
+    if (error instanceof Error) {
+      return { error: error.message }
     }
     return { error: "An unexpected error occurred" }
   }
