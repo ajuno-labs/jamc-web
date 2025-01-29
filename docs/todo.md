@@ -6,10 +6,18 @@
             - [ ] Teachers
 - Features
     - [ ] Authentication
+        - [ ] Credentials
+            - [ ] Bcrypt hashing (cost factor ≥12)
+            - [ ] Rate limiting (e.g., 5 attempts/hour)
+            - [ ] Breached password checks (HaveIBeenPwned API)
+            - [ ] csrf token?
+        - [ ] OAuth
+            - Currently no plan for other OAuth providers than Google
         - [ ] auth test
-        - [ ] csrf token for credentials signin?
         - [ ] bug first click doesn't sign in, but second click does
         - [ ] Remember me?
+    - [ ] Authorization
+        - [ ] ZenStack
 
 - Miscellaneous
     - [ ] .cursor/rules for this project https://cursor.directory/
