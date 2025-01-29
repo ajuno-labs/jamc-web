@@ -1,4 +1,15 @@
-- [ ] .cursor/rules for this project https://cursor.directory/
-- [ ] auth test
-- [ ] csrf token for credentials signin?
-- [ ] bug first click doesn't sign in, but second click does
+- Thesis
+    - [ ] Survey
+        - [ ] Existing solutions
+        - [ ] Stakeholders  
+            - [ ] Students
+            - [ ] Teachers
+- Features
+    - [ ] Authentication
+        - [ ] auth test
+        - [ ] csrf token for credentials signin?
+        - [ ] bug first click doesn't sign in, but second click does
+        - [ ] Remember me?
+
+- Miscellaneous
+    - [ ] .cursor/rules for this project https://cursor.directory/

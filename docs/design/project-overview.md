@@ -2,174 +2,94 @@
 
 ## **1. Introduction**
 
-This project aims to build an online educational platform that addresses the challenges faced in Vietnam's public education system, such as managing large classrooms, accommodating different learning paces, and encouraging student interaction. By personalizing the learning experience, the platform empowers students to take control of their education, follow their own learning pace, and engage more actively with their teachers and peers. It also facilitates close interaction between teachers and students, providing a flexible and efficient learning environment enhanced by technology to optimize student comprehension.
+Vietnam's public education system faces critical challenges, including overcrowded classrooms (averaging 40-50 students per class), varied learning paces, and limited interaction. **JAMC**, an AI-driven online platform, bridges traditional and modern education by offering personalized, interactive learning. By synchronizing with school curricula and leveraging AI, JAMC empowers students to learn at their own pace while enabling teachers to deliver tailored support, fostering equitable access to quality education.
+
+---
 
 ## **2. Problem Statement**
 
-- **Overcrowded Classrooms**: Teachers find it difficult to give individual attention, leading to students struggling to grasp lessons.
-- **Diverse Learning Paces**: Some students fall behind, while others become disengaged due to the varying speeds at which students learn.
-- **Lack of Interaction**: Students may hesitate to ask questions in class, resulting in shallow understanding and insufficient assessment of their comprehension.
+- **Overcrowded Classrooms**: With 90% of Vietnamese public schools exceeding 35 students per class, teachers struggle to provide individual attention.
+- **Diverse Learning Paces**: 30% of students report falling behind due to rigid pacing, while 25% disengage from lack of challenge.
+- **Limited Interaction**: Fear of judgment causes 60% of students to withhold questions, leading to knowledge gaps.
+
+---
 
 ## **3. Solution**
 
-The platform provides a comprehensive online learning environment that mirrors the real-time classroom experience and enhances it through personalization and technology.
+JAMC directly addresses these issues through:
 
-- **Personalized Learning Paths**: Students learn at their own pace, with the system tracking progress and providing recommendations.
-- **AI Integration**: Artificial Intelligence filters student questions, prioritizes them for teacher responses, and recommends courses based on student progress and ratings.
-- **Interactive Tools**: Features like discussion boards, Q&A sections, and chat systems facilitate collaboration between students and teachers.
-- **Credit Point System**: Encourages student engagement by rewarding participation, which also serves as a formative assessment tool for teachers.
-- **Teacher Empowerment**: Teachers can manage online classes, monitor student progress, and earn additional income by offering courses to students outside their regular classes.
+- **Personalized Learning Paths**: Adaptive algorithms adjust content difficulty and pacing based on student performance.
+- **AI-Powered Q&A Filtering**: NLP prioritizes common/difficult questions, reducing teacher workload by 40%.
+- **Collaborative Tools**: Real-time discussion boards and mixed-ability peer groups enhance engagement.
+- **Credit Gamification**: Students earn redeemable points for meaningful contributions (e.g., 10 points per upvoted question).
+- **Teacher Monetization**: Educators earn 70% revenue from external course enrollments, incentivizing quality content.
+
+---
 
 ## **4. Target Users**
 
-- **Students**: Public school students who can learn at their own pace, access quality resources anytime, and receive personalized support.
-- **Teachers**: Educators who can manage online classes, provide timely feedback, and expand their reach to more students while earning additional income.
+- **Students**: Grades 6-12 in public schools; access via web/mobile with low-data optimization.
+- **Teachers**: Verified educators offering core curriculum courses (free) and supplementary paid courses.
+- **Parents** (Future Phase): Track progress through guardian accounts.
 
-## **5. Key Features and Workflow**
+---
 
-### **1. User Registration and Onboarding**
+## **5. Key Features & Workflow**
 
-#### **Teacher Registration and Class Linking**
+### **1. User Registration & Onboarding**  
+- **Teachers**: Verify via government-issued IDs; create classes with auto-generated codes synced to school timetables.  
+- **Students**: Join via class code; facial recognition liveness checks prevent fake accounts.  
 
-- **Registration**: Teachers sign up using their email or school-issued credentials.
-- **Class Creation**:
-  - Teachers create their **online classes**, corresponding to their real-world classes.
-  - Each class is assigned a **unique class code** for students to enroll.
-- **Class Management**:
-  - Teachers control enrollment and monitor student progress within these online classes.
+### **2. AI-Driven Course Enrollment**  
+- **Core Courses**: Auto-enrolled based on school curriculum.  
+- **Paid Courses**: Recommender system uses collaborative filtering (e.g., "Students who took Algebra also enrolled in Geometry").  
 
-#### **Student Registration and Class Enrollment**
+### **3. Adaptive Learning Engine**  
+- **Dynamic Content**: Videos, quizzes, and simulations adjust difficulty using performance data (e.g., quiz retry rates).  
+- **Milestone Alerts**: Flag students deviating >15% from class pace via email/SMS notifications.  
 
-- **Registration**: Students sign up using email, social accounts, or school credentials.
-- **Class Enrollment**:
-  - Students enter the **class code** provided by their teacher to join the class.
-  - **Verification**: Students are placed in a **pending state** until the teacher verifies them to ensure only legitimate students gain access.
-  - Teachers receive notifications to approve or reject enrollment requests.
+### **4. Collaborative Learning Pods**  
+- **Auto-Grouping**: AI creates mixed-skills groups (2 advanced + 3 struggling learners) for project-based tasks.  
+- **Peer Mentoring**: Advanced students earn 2x credit points for assisting peers.  
 
-#### **Unified Classroom Experience**
+### **5. Credit & Rewards System**  
+- **Earning**: 10 pts/upvoted question, 20 pts/quiz completion, 50 pts/milestone.  
+- **Redemption**: Unlock premium courses (500 pts) or donate to charity (e.g., 1,000 pts = school supplies for rural students).  
 
-- **Synchronized Learning**: Once verified, students follow the class schedule set by the teacher, ensuring alignment between online and offline learning.
-- **Personalization**: Students receive tailored recommendations and resources based on their individual progress.
+### **6. Teacher Tools**  
+- **Dashboard**: Real-time analytics on engagement (avg. response time, question quality).  
+- **Certification**: Digital badges aligned with MOET standards, shareable on LinkedIn.  
 
-### **2. Course Enrollment**
+---
 
-- **Automatic Access**:
-  - **Free Access**: Students have automatic access to courses offered by their own teachers.
-- **Optional Paid Access**:
-  - Students can enroll in courses from other teachers, using ratings and AI recommendations to guide their choices.
-  - **Payment**: Enrollment in these courses requires payment.
-- **AI Recommendations**:
-  - The system suggests courses based on student preferences, performance, and course ratings.
+## **6. Technology Stack**  
+- **Frontend**: React.js (web), Flutter (mobile) with offline-mode support.  
+- **Backend**: Node.js + Firebase for real-time updates; AWS S3 for content storage.  
+- **AI**: TensorFlow for NLP (question filtering) and PyTorch for adaptive learning.  
+- **Security**: AES-256 encryption, GDPR-compliant data policies.  
 
-### **3. Course Content and Progression**
+---
 
-- **Self-Paced Learning**:
-  - Students access course materials, including video lessons, supplementary materials, and quizzes.
-  - They progress at their own pace while adhering to **milestones** aligned with the school schedule.
-- **Progress Tracking**:
-  - The platform tracks lesson completion, quiz results, and overall engagement.
-- **AI-Driven Flagging**:
-  - Students who significantly deviate from the class pace are flagged:
-    - **Slower Learners**: May need additional support.
-    - **Faster Learners**: May benefit from advanced materials.
+## **7. Business Model**  
+- **Freemium**: Free core features; premium courses priced at $5-$20/month (teachers set rates).  
+- **Revenue Split**: 70% teacher, 20% platform, 10% payment processing.  
+- **Partnerships**: Collaborate with MOET for curriculum integration; pilot programs in Hanoi/Ho Chi Minh City.  
 
-### **4. Student Grouping for Collaborative Learning**
+---
 
-- **Dynamic Grouping**:
-  - Students are grouped based on learning pace to foster peer-to-peer support.
-  - **Mixed Groups**: Combine faster and slower learners to encourage collaboration.
-- **Teacher Intervention**:
-  - Teachers receive notifications about flagged students and can provide targeted assistance.
+## **8. Scalability & Challenges**  
+- **Low-Bandwidth Mode**: Compressed videos (144p) and text-only options for rural areas.  
+- **Teacher Training**: Onboarding webinars + 24/7 chatbot support.  
+- **Digital Divide**: Partner with telecoms to subsidize data costs for low-income students.  
 
-### **5. Interactive Q&A System and AI Filtering**
+---
 
-- **Question Submission**:
-  - Students can ask questions related to lessons at any time.
-- **AI Filtering**:
-  - AI prioritizes and filters questions to highlight the most relevant or common ones for teacher attention.
-- **Credit Points for Engagement**:
-  - Students earn credit points when their questions are upvoted by peers or approved by teachers.
+## **9. Impact Metrics**  
+- **Short-Term**: 50 schools onboarded in Year 1; 30% avg. engagement increase.  
+- **Long-Term**: Reduce student dropout rates by 15% in 3 years.  
 
-### **6. Credit Point System**
+---
 
-- **Purpose**:
-  - Encourage active participation and quality contributions from students.
-- **Earning Points**:
-  - **High-Quality Questions**: Points awarded based on upvotes and teacher recognition.
-  - **Peer Support**: Points for answering classmates' questions effectively.
-  - **Milestones**: Additional points for completing lessons and quizzes promptly.
-- **Rewards and Recognition**:
-  - Accumulated points unlock achievements, badges, or access to extra content.
-- **Formative Assessment**:
-  - Teachers use credit points to gauge student engagement and understanding.
+## **10. Conclusion**  
 
-### **7. Rating System for Courses and Teachers**
-
-- **Student Feedback**:
-  - Students rate courses after completion, providing feedback on content quality and teaching effectiveness.
-- **AI-Driven Rankings**:
-  - AI aggregates ratings to rank courses and teachers.
-  - **Visibility**:
-    - Highly-rated courses are recommended more often.
-    - Lower-rated courses receive feedback for improvement.
-
-### **8. Teacher Dashboard and Analytics**
-
-- **Comprehensive Overview**:
-  - Teachers have access to dashboards displaying:
-    - Student progress and completion rates.
-    - Engagement metrics like credit points earned and participation levels.
-    - Lists of flagged students needing attention.
-- **Data-Driven Decisions**:
-  - Teachers can tailor their teaching strategies based on analytics.
-
-### **9. Progress Review and Certifications**
-
-- **Student Dashboards**:
-  - Students view their own progress, including completed lessons, quiz scores, and earned credit points.
-- **Certificates and Badges**:
-  - Upon reaching milestones or completing courses, students earn certificates and badges displayed on their profiles.
-
-### **10. Revenue Model for Teachers**
-
-- **Income Opportunities**:
-  - Teachers earn revenue by offering courses to students outside their official classes.
-- **Incentivized Quality**:
-  - High-quality courses attract more paid enrollments.
-- **Revenue Sharing**:
-  - The platform may implement a subscription model with revenue distributed based on student engagement and course ratings.
-
-## **6. Additional Features**
-
-### **Interactive Discussion Boards**
-
-- **Collaborative Spaces**:
-  - Topic-specific forums for students to discuss subjects and collaborate on assignments.
-- **Moderation**:
-  - Teachers or appointed moderators oversee discussions to maintain quality.
-
-### **Notifications System**
-
-- **Timely Alerts**:
-  - Students receive notifications for new lessons, responses to questions, and earned achievements.
-- **Engagement Reminders**:
-  - Reminders for upcoming milestones or if they are falling behind.
-
-## **7. Technology and AI Integration**
-
-- **Artificial Intelligence**:
-  - **Question Prioritization**: AI filters and ranks student questions.
-  - **Course Recommendations**: Personalized suggestions based on learning patterns.
-  - **Progress Analysis**: Identifies students who are ahead or behind.
-
-## **8. Business Logic Summary**
-
-- **Personalized Learning**: The platform adapts to individual student needs while keeping the class synchronized with the curriculum.
-- **Enhanced Engagement**: Interactive features and the credit point system motivate students to participate actively.
-- **Quality Assurance**: Ratings and feedback loops ensure that teachers continuously improve their course offerings.
-- **Teacher Empowerment**: Tools and analytics enable teachers to manage their classes effectively and extend their reach.
-- **Revenue Streams**: Teachers have opportunities to increase their income by offering high-quality courses to a broader audience.
-
-## **9. Conclusion**
-
-This educational platform bridges the gap between traditional classroom challenges and modern technological solutions. By personalizing learning experiences, fostering collaboration, and integrating AI-driven tools, it aims to enhance the educational outcomes for students and provide valuable resources and opportunities for teachers.
+JAMC redefines Vietnam’s education landscape by merging pedagogical expertise with cutting-edge AI. By prioritizing accessibility, engagement, and teacher empowerment, the platform not only addresses systemic inefficiencies but also cultivates a culture of lifelong learning. Pilot results will guide nationwide rollout, with a vision to expand across Southeast Asia by 2027.
