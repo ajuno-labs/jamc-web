@@ -12,7 +12,8 @@
     "test:e2e:debug": "pnpm exec playwright test --debug",
     "db:migrate": "zenstack generate && prisma migrate dev --name auto",
     "db:reset": "prisma migrate reset --force && zenstack generate && prisma migrate dev --name auto",
-    "db:generate": "zenstack generate && prisma generate"
+    "db:generate": "zenstack generate && prisma generate",
+    "db:seed": "zenstack generate && prisma db seed"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",

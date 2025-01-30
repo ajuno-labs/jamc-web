@@ -17,7 +17,7 @@ model User {
   id            String          @id @default(cuid())
   name          String?
   email         String          @unique
-  password      String          @password @omit
+  password      String?          @password @omit
   emailVerified DateTime?
   image         String?
   accounts      Account[]
@@ -27,6 +27,11 @@ model User {
  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  
+  // Add access policies
+  @@allow('create', true) // Allow signups
+  @@allow('read,update', auth() == this) // Users can read/update their own profile
+  @@deny('delete', true) // Prevent direct deletions
 }
  
 model Account {
@@ -48,6 +53,8 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
  
   @@id([provider, providerAccountId])
+  
+  @@allow('read,update,delete', auth() == user)
 }
  
 model Session {
@@ -58,6 +65,8 @@ model Session {
  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  
+  @@allow('read,delete', auth() == user)
 }
  
 model VerificationToken {
