@@ -51,3 +51,32 @@ const db = enhance(prisma, { user: getSessionUser() });
 ```
 
 
+
+### 4. Access Policy
+
+- Introduction
+    - Row-level and field-level access control
+    - Accessing current user in rules
+    - Accessing relations in rules
+    - Pre and post-update rules
+    - Functions that help you write advanced rules
+    - block all operations by default
+- ZenStack Access Policy vs Postgres Row-Level Security??
+
+#### 4.1 Model-level policies
+
+- @@allow, @@deny: take two arguments: operation and condition
+- evaluation of model-level policies:
+    - write as much as you want, order doesn't matter
+    - **Each of the CRUD operation types governs a set of Prisma Client methods** [Link](https://zenstack.dev/docs/the-complete-guide/part1/access-policy/model-level)    
+- relation manipulation and policies
+- How Do Policies Affect Prisma Client's Behavior?
+    - Read, Bulk update and bulk delete methods behave as if the rows that don't satisfy the policies don't exist
+    - Nested read can filter out parent records
+    - A write can imply a read
+    - npx zenstack repl
+
+#### 4.2 Authentication and Authorization
+
+- Authentication: 
+

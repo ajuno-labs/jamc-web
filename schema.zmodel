@@ -54,6 +54,7 @@ model Account {
  
   @@id([provider, providerAccountId])
   
+  @@allow('create', auth() == user)
   @@allow('read,update,delete', auth() == user)
 }
  

@@ -16,6 +16,7 @@
         - [ ] auth test
         - [ ] bug first click doesn't sign in, but second click does
         - [ ] Remember me?
+        - [ ] refresh and access token
     - [ ] Authorization
         - [ ] ZenStack
 
