@@ -1,0 +1,62 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Next.js build output
+.next
+out
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Version control
+.git
+.gitignore
+
+# IDE and editor files
+.idea
+.vscode
+*.swp
+*.swo
+
+# Testing
+coverage
+.nyc_output
+playwright-report
+test-results
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Development files
+README.md
+CHANGELOG.md
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Documentation
+docs/
+
+# Temporary files
+.DS_Store
+*.pem
+.eslintcache
+
+# TypeScript
+*.tsbuildinfo
+
+# Prisma & ZenStack
+prisma/migrations
+prisma/*.db
+prisma/dev.db
+*.zmodel.ts
+
+# Cache directories
+.cache
+.temp 

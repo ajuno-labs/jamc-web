@@ -18,7 +18,7 @@ Literally don't really understand what those mean.
     - use REST API
 - Docker client
 - Docker daemon (dockerd)
-- Docker compose??
+- Docker compose: multiple `docker run` commands
 - Docker Desktop
 - Docker Registries
     - stores images
@@ -85,4 +85,37 @@ Literally don't really understand what those mean.
     - EXPOSE <port>
     - USER <username>
     - CMD ["<command>", "<arg1>", "<arg2>"]
+
+#### Build, Tag and Publish an Image
+
+- `docker build .` 
+
+- Tagging:
+    - Full image name: [HOST[:PORT_NUMBER]/]PATH[:TAG]
+    - Add tag: `docker image tag <image_name> <new_tag>`
+- Push to registry: `docker push <registry>/<image_name>`
+
+#### Using the Build Cache
+
+- Docker caches the instructions in the Dockerfile
+- Some invalidation rules
+    - Any changes to the command of a RUN instruction invalidates that layer
+    - Any changes to files copied into the image with the COPY or ADD instructions
+    - Once one layer is invalidated, all following layers are also invalidated. If any previous layer, including the base image or intermediary layers, has been invalidated due to changes, Docker ensures that subsequent layers relying on it are also invalidated. This keeps the build process synchronized and prevents inconsistencies.
+
+#### Multi-stage builds
+
+### Running Containers
+
+#### Publishing and exposing ports
+
+- Because a container is isolated, it can't access the host machine's ports. So somehow we need to map the container's port to the host machine's port.
+- `docker run -p <host_port>:<container_port> <image_name>`
+- Exposed ports are the ports that are exposed to all network interfaces, so we need to be careful with sensitive ports like databases.
+- **ephemeral ports**
+- `EXPOSE`: specifies the ports that the container will listen on, and exposes them all using the `-P` flag
+
+#### Overriding container defaults
+
+
 
