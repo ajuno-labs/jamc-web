@@ -10,7 +10,7 @@ const prisma = globalForPrisma.prisma || new PrismaClient()
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
 
 // Create an async function to get enhanced client with auth context
-export async function getEnhancedPrisma() {
+export async function getEnhancedPrismaWithUser() {
   // Get current session from Auth.js
   const session = await auth()
 

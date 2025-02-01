@@ -18,7 +18,16 @@
         - [ ] Remember me?
         - [ ] refresh and access token
     - [ ] Authorization
-        - [ ] ZenStack
+        - 
+    - [ ] Q&A System
+        - [ ] Anonymous Q&A mode
+    - [ ] Learning Management System
+        - [ ] AI Nudges & Suggestions
+        - [ ] Gamification with Leaderboards
+        - [ ] Teacher Encouragement: Teachers should model curiosity by posting "starter questions" to normalize asking.
+    - [ ] Moderation
 
 - Miscellaneous
     - [ ] .cursor/rules for this project https://cursor.directory/
+    - [ ] Make a better `prisma.ts` file that fit with zenstack's `enhance()`
+    - [ ] database-level validation with ZenStack

@@ -80,3 +80,64 @@ const db = enhance(prisma, { user: getSessionUser() });
 
 - Authentication: 
 
+#### 4.3 Accessing Current User 
+
+- Auth model: User model by default or using @@auth
+- What if I don't store users in the database?
+    - Use `type`
+- Providing current user
+- Writing conditions with `auth()`
+    - Traversing relation fields
+
+#### 4.4 Working with Relations
+
+- *-to-one Relations
+- *-to-many Relations
+    - Collection Predicate Expressions
+        - Any:  relation?[condition]
+        - All:  relation![condition]
+        - None: relation^[condition]
+- A note about "create" rules??    
+
+#### 4.5 Expressions and Functions
+
+- Expressions: literal ('123'), array ([1,2,3]), reference (user.id), this (auth() == this), invocation (auth()), unary (!), binary
+- Functions
+    - auth()
+    - now()
+    - future()
+    - contains()
+    - startsWith()
+    - endsWith()
+    - has(): array
+    - hasEvery()
+    - hasSome()
+    - isEmpty()
+
+#### 4.6 Post-Update Checks
+
+- use `future()` to access the post-update state
+
+#### 4.7 Field-level Policies
+
+- Can't use `future()` for field-level policies
+- Difference Between Field-Level and Model-Level Policies
+    - Field-level policies only support "read", "update", and "all"
+    - Field-level access is allowed by default.
+- Behavior of Field-Level Access Control
+
+#### 4.8 Keeping the Policies DRY
+
+- Delegating Access Control to `check()`
+
+### 5. Data Validation
+
+- field-level validation
+
+### 6. Other Enhancements
+
+- password hashing
+
+## Part 2: Plugin System
+
+

@@ -1,0 +1,1 @@
+https://zenstack.dev/blog/model-authz
