@@ -2,23 +2,23 @@ services:
   app:
     build:
       context: .
-      target: ${TARGET:-base}  # Use 'base' for dev, 'runner' for prod
+      target: dev  # Use the dev stage for local development
     volumes:
-      - .:/app  # Mount source code for development
-      - /app/node_modules  # Don't override node_modules
-      - /app/.next  # Don't override Next.js build
+      - .:/app  # Mount source code for hot reloading
+      - /app/node_modules  # Prevent overriding node_modules
+      - /app/.next  # Prevent overriding Next.js build output
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=${NODE_ENV:-development}
+      - NODE_ENV=development
       - DATABASE_URL=postgresql://jamc:jamc@db:5432/jamc?schema=public
-      - AUTH_SECRET=${AUTH_SECRET:-development_secret}
+      - AUTH_SECRET=${AUTH_SECRET}
       - AUTH_GOOGLE_ID=${AUTH_GOOGLE_ID}
       - AUTH_GOOGLE_SECRET=${AUTH_GOOGLE_SECRET}
     depends_on:
       db:
         condition: service_healthy
-    command: ${COMMAND:-pnpm dev}  # Use 'pnpm dev' for development, 'node server.js' for production
+    command: sh -c "pnpm install && pnpm db:generate && pnpm dev"  
     develop:
       watch:
         - action: sync
@@ -53,28 +53,24 @@ services:
       - "8080:8080"
     depends_on:
       - db
-    profiles:
-      - dev
 
-  # Redis for caching and session storage (optional)
-  redis:
-    image: redis:alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    profiles:
-      - prod
-    command: redis-server --appendonly yes
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+  # Redis service is commented out for now. Uncomment and configure if needed later.
+  # redis:
+  #   image: redis:alpine
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   command: redis-server --appendonly yes
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 5
 
 volumes:
   postgres_data:
-  redis_data:
+  # redis_data:
 
 # For development:
 # docker compose --profile dev up

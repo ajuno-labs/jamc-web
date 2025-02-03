@@ -12,6 +12,14 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum PermissionType {
+  READ
+  CREATE
+  UPDATE
+  DELETE
+  MANAGE
+}
+
 model User {
   id            String          @id() @default(cuid())
   name          String?
@@ -24,6 +32,20 @@ model User {
   Authenticator Authenticator[]
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt()
+  roles         Role[]
+}
+
+model Role {
+  id          Int          @id() @default(autoincrement())
+  name        String
+  users       User[]
+  permissions Permission[]
+}
+
+model Permission {
+  id    Int            @id() @default(autoincrement())
+  name  PermissionType
+  roles Role[]
 }
 
 model Account {

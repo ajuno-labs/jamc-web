@@ -18,7 +18,7 @@ COPY package.json pnpm-lock.yaml* ./
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
-# Builder stage
+# Builder stage (for production build, if needed)
 FROM base AS builder
 WORKDIR /app
 
@@ -26,8 +26,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Set environment variables for build
-# TODO: Consider using build args for these values in production
+# Set environment variables for build (production settings)
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -35,7 +34,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm db:generate
 RUN pnpm build
 
-# Runner stage
+# Runner stage (for production, not used in local development)
 FROM base AS runner
 WORKDIR /app
 
@@ -60,23 +59,36 @@ USER nextjs
 # Expose port
 EXPOSE 3000
 
-# Set environment variables
-# TODO: These should be set through docker-compose or kubernetes secrets in production
+# Set environment variables (production settings should be injected via docker-compose or env variables)
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
-
-# TODO: The following environment variables need to be properly configured in production:
-# - AUTH_SECRET
-# - AUTH_GOOGLE_ID
-# - AUTH_GOOGLE_SECRET
-# - DATABASE_URL
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:3000/api/health || exit 1
 
-# Start the application
+# Start the production application
 CMD ["node", "server.js"]
+
+# -------------------------------------------------------------------------------------------------
+# Dev stage for local development. This stage is used by docker-compose for local development.
+FROM base AS dev
+WORKDIR /app
+
+# Copy package files
+COPY package.json pnpm-lock.yaml* ./
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy full source code
+COPY . .
+
+# Expose port for development
+EXPOSE 3000
+
+# Start development server
+CMD ["pnpm", "dev"]
 
 # NOTE: Additional considerations:
 # 1. Database migrations should be handled separately, not in the Dockerfile
@@ -88,4 +100,10 @@ CMD ["node", "server.js"]
 # 7. Add monitoring and observability tools
 # 8. Configure proper backup strategy for the database
 # 9. Set up CDN for static assets
-# 10. Implement proper security headers 
+# 10. Implement proper security headers
+
+# TODO: The following environment variables need to be properly configured in production:
+# - AUTH_SECRET
+# - AUTH_GOOGLE_ID
+# - AUTH_GOOGLE_SECRET
+# - DATABASE_URL 

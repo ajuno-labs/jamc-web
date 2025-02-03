@@ -117,5 +117,23 @@ Literally don't really understand what those mean.
 
 #### Overriding container defaults
 
+- mostly about customized `docker run` commands
+- sth `network` is here
+
+#### Persisting data
+
+- `volumes`: log files with certain ways to be managed
+
+#### Sharing local files with containers
+
+- Skipped
+
+#### Multi-container applications
+
+### Docker Workshop
+
+- Work with a sample to-do app.
+
+### [Educational Resources](https://docs.docker.com/get-started/resources/)
 
 

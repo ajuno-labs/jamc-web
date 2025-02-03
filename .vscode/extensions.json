@@ -1,0 +1,45 @@
+{
+  "recommendations": [
+    // TypeScript & React
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    
+    // Prisma & Database
+    "prisma.prisma",
+    "mtxr.sqltools",
+    
+    // Docker & Kubernetes
+    "ms-azuretools.vscode-docker",
+    "ms-vscode-remote.remote-containers",
+    "ms-kubernetes-tools.vscode-kubernetes-tools",
+    
+    // Testing
+    "ms-playwright.playwright",
+    
+    // Git & GitHub
+    "eamodio.gitlens",
+    "github.vscode-pull-request-github",
+    
+    // ZenStack
+    "zenstack.zenstack",
+
+    // ENV files
+    "mikestead.dotenv",
+    
+    // Documentation & Markdown
+    "davidanson.vscode-markdownlint",
+    "yzhang.markdown-all-in-one",
+    
+    // General Development
+    "christian-kohler.path-intellisense",
+    "formulahendry.auto-rename-tag",
+    "streetsidesoftware.code-spell-checker",
+    "naumovs.color-highlight",
+    "usernamehw.errorlens",
+    "wix.vscode-import-cost",
+
+    // Vim
+    "vscodevim.vim"
+  ]
+}
