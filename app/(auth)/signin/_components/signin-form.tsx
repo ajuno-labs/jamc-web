@@ -10,17 +10,14 @@ import { Loader2 } from "lucide-react"
 import { signInWithCredentials } from "@/app/lib/server-actions/auth/signin"
 import { signInSchema } from "@/app/lib/validations/auth"
 import type { SignInInput } from "@/app/lib/validations/auth"
-import { useRouter } from "next/navigation"
 
 export function SignInForm() {
-  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setError: setFormError,
   } = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -36,11 +33,6 @@ export function SignInForm() {
       const result = await signInWithCredentials(data)
       if (result?.error) {
         setError(result.error)
-        return
-      }
-      
-      if (result?.success) {
-        router.push("/")
       }
     } catch (error) {
       console.error(error)
@@ -51,7 +43,11 @@ export function SignInForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+    <form 
+      onSubmit={handleSubmit(onSubmit)} 
+      className="space-y-6" 
+      noValidate
+    >
       {error && (
         <div 
           role="alert"

@@ -18,7 +18,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: sh -c "pnpm install && pnpm db:generate && pnpm dev"  
+    command: sh -c "pnpm install && pnpm db:migrate && pnpm db:seed && pnpm dev"  
     develop:
       watch:
         - action: sync
