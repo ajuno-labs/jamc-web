@@ -27,10 +27,6 @@
     // ENV files
     "mikestead.dotenv",
     
-    // Documentation & Markdown
-    "davidanson.vscode-markdownlint",
-    "yzhang.markdown-all-in-one",
-    
     // General Development
     "christian-kohler.path-intellisense",
     "formulahendry.auto-rename-tag",

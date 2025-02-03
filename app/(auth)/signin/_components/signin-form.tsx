@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader2 } from "lucide-react"
+import { Loader2, Eye, EyeOff } from "lucide-react"
 import { signInWithCredentials } from "@/app/lib/server-actions/auth/signin"
 import { signInSchema } from "@/app/lib/validations/auth"
 import type { SignInInput } from "@/app/lib/validations/auth"
@@ -14,6 +14,7 @@ import type { SignInInput } from "@/app/lib/validations/auth"
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
   const {
     register,
     handleSubmit,
@@ -86,13 +87,13 @@ export function SignInForm() {
         )}
       </div>
       <div className="space-y-2">
-        <div className="relative">
+        <div className="relative flex items-center">
           <Input
             id="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder=" "
             {...register("password")}
-            className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 peer"
+            className="pr-10"
             aria-invalid={errors.password ? "true" : "false"}
             aria-describedby={errors.password ? "password-error" : undefined}
           />
@@ -102,6 +103,20 @@ export function SignInForm() {
           >
             Password
           </Label>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-0 h-full px-3 text-gray-500 hover:text-gray-700"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </Button>
         </div>
         {errors.password && (
           <p 

@@ -14,7 +14,7 @@
         - [ ] OAuth
             - Currently no plan for other OAuth providers than Google
         - [ ] auth test
-        - [ ] bug first click doesn't sign in, but second click does
+        - [x] bug first click doesn't sign in, but second click does
         - [ ] Remember me?
         - [ ] refresh and access token
     - [ ] Authorization
