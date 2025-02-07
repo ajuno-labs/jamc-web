@@ -18,11 +18,13 @@
         - [ ] Remember me?
         - [ ] refresh and access token
     - [ ] Authorization
-        - 
+        - [ ] Role-based access control (RBAC)
     - [ ] Q&A System
         - [ ] User Profile
-        - 
         - [ ] Anonymous Q&A mode
+        - [ ] Upvote/downvote
+        - [ ] Related questions
+        - [ ] Ask question button in a question details page
     - [ ] Learning Management System
         - [ ] AI Nudges & Suggestions
         - [ ] Gamification with Leaderboards

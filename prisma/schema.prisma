@@ -20,6 +20,16 @@ enum PermissionType {
   MANAGE
 }
 
+enum QuestionType {
+  YOLO
+  FORMAL
+}
+
+enum Visibility {
+  PUBLIC
+  PRIVATE
+}
+
 model User {
   id            String          @id() @default(cuid())
   name          String?
@@ -33,6 +43,10 @@ model User {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt()
   roles         Role[]
+  questions     Question[]
+  answers       Answer[]
+  questionVotes QuestionVote[]
+  answerVotes   AnswerVote[]
 }
 
 model Role {
@@ -96,4 +110,74 @@ model Authenticator {
   user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, credentialID])
+}
+
+model Question {
+  id          String         @id() @default(cuid())
+  title       String
+  content     String
+  type        QuestionType
+  visibility  Visibility     @default(PUBLIC)
+  topic       String?
+  attachments Attachment[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt()
+  authorId    String
+  author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  answers     Answer[]
+  tags        Tag[]
+  votes       QuestionVote[]
+  viewCount   Int            @default(0)
+}
+
+model Answer {
+  id         String       @id() @default(cuid())
+  content    String
+  isAccepted Boolean      @default(false)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt()
+  authorId   String
+  author     User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  votes      AnswerVote[]
+}
+
+model Tag {
+  id          String     @id() @default(cuid())
+  name        String     @unique()
+  description String?
+  questions   Question[]
+  aiGenerated Boolean    @default(false)
+  verified    Boolean    @default(false)
+}
+
+model Attachment {
+  id         String   @id() @default(cuid())
+  url        String
+  type       String
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model QuestionVote {
+  id         String   @id() @default(cuid())
+  value      Int
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, userId])
+}
+
+model AnswerVote {
+  id       String @id() @default(cuid())
+  value    Int
+  answerId String
+  answer   Answer @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([answerId, userId])
 }

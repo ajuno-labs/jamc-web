@@ -1,4 +1,8 @@
 ---
+description: 
+globs: 
+---
+---
 description: development
 globs: *.*
 ---
@@ -7,4 +11,5 @@ globs: *.*
 
 - If you want to create a new file, always search for an existed file with similar name before creating a new file.
 - This project use `pnpm`, so please use `pnpm exec` if it's better rather than using `npx`.
-- Always search for related files in the context, no assumption upon existing code with similar trained code, that's a source of bug
+- Always search for related files in the context, no assumption upon existing code with similar trained code, that's a source of bug.
+- Tech stack of this web app is: Next.js 15 + React 19, ZenStack + Prisma ORM, Docker, Shadcn/ui, Auth.js, Playwright for E2E testing.
