@@ -20,6 +20,8 @@
     - [ ] Authorization
         - 
     - [ ] Q&A System
+        - [ ] User Profile
+        - 
         - [ ] Anonymous Q&A mode
     - [ ] Learning Management System
         - [ ] AI Nudges & Suggestions

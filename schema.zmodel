@@ -34,6 +34,11 @@ model User {
   @@allow('create', true) // Allow signups
   @@allow('read,update', auth() == this) // Users can read/update their own profile
   @@deny('delete', true) // Prevent direct deletions
+
+  questions     Question[]
+  answers       Answer[]
+  questionVotes QuestionVote[]
+  answerVotes   AnswerVote[]
 }
 
 model Role {
@@ -146,4 +151,125 @@ model Authenticator {
   user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, credentialID])
+}
+
+enum QuestionType {
+  YOLO
+  FORMAL
+}
+
+enum Visibility {
+  PUBLIC
+  PRIVATE
+}
+
+model Question {
+  id          String      @id @default(cuid())
+  title       String      @length(min: 3, max: 300)
+  content     String      @length(min: 10)
+  type        QuestionType
+  visibility  Visibility  @default(PUBLIC)
+  
+  // For formal questions
+  topic       String?
+  attachments Attachment[]
+  
+  // Metadata
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  authorId    String
+  author      User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  answers     Answer[]
+  tags        Tag[]
+  votes       QuestionVote[]
+  
+  // Engagement metrics
+  viewCount   Int         @default(0)
+  
+  // Access control
+  @@allow('create', auth() != null)
+  @@allow('read', visibility == PUBLIC || auth() == author)
+  @@allow('update', auth() == author)
+  @@allow('delete', auth() == author || auth().roles?[permissions?[name == DELETE]])
+}
+
+model Answer {
+  id          String      @id @default(cuid())
+  content     String      @length(min: 10)
+  isAccepted  Boolean     @default(false)
+  
+  // Metadata
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  authorId    String
+  author      User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  questionId  String
+  question    Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  votes       AnswerVote[]
+  
+  // Access control
+  @@allow('create', auth() != null)
+  @@allow('read', question.visibility == PUBLIC || auth() == author || auth() == question.author)
+  @@allow('update', auth() == author)
+  @@allow('delete', auth() == author || auth().roles?[permissions?[name == DELETE]])
+}
+
+model Tag {
+  id          String      @id @default(cuid())
+  name        String      @unique
+  description String?
+  questions   Question[]
+  
+  // For AI-suggested tags
+  aiGenerated Boolean     @default(false)
+  verified    Boolean     @default(false)
+  
+  @@allow('create', auth() != null)
+  @@allow('read', true)
+  @@allow('update', auth().roles?[permissions?[name == UPDATE]])
+  @@allow('delete', auth().roles?[permissions?[name == DELETE]])
+}
+
+model Attachment {
+  id          String      @id @default(cuid())
+  url         String
+  type        String      // e.g., "image", "document", etc.
+  questionId  String
+  question    Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  @@allow('create', auth() != null)
+  @@allow('read', question.visibility == PUBLIC || auth() == question.author)
+  @@allow('delete', auth() == question.author || auth().roles?[permissions?[name == DELETE]])
+}
+
+model QuestionVote {
+  id          String      @id @default(cuid())
+  value       Int         // 1 for upvote, -1 for downvote
+  questionId  String
+  question    Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([questionId, userId])
+  @@allow('create,update', auth() == user)
+  @@allow('read', true)
+  @@allow('delete', auth() == user)
+}
+
+model AnswerVote {
+  id          String      @id @default(cuid())
+  value       Int         // 1 for upvote, -1 for downvote
+  answerId    String
+  answer      Answer      @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([answerId, userId])
+  @@allow('create,update', auth() == user)
+  @@allow('read', true)
+  @@allow('delete', auth() == user)
 }
