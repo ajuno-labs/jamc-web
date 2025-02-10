@@ -1,13 +1,13 @@
-- Requirements
-    - Enhance the personalized learning experience for students.
+- **Requirements**
+    - Enhance the personalized learning experience for **students**.
         - Teacher can pack the concrete part of lectures, and focusing on answering questions and providing guidance for each student with personal tracking.
             - They can sell that concrete part of lectures too.
-            - From now on, we can call that concrete part of lectures as "modules".
+            - From now on, we can call that concrete part of lectures as "**modules**".
         - Q&A/forum: students freely asking questions and discuss with others and teachers.
             - I'm thinking of dividing questions into categories.
                 - private and public questions, regarding to visibility outside of a class.
-                - freely asked question and formated formal questions. Or I can call them as "yolo" and "formal" questions.
-            - This feature need to be somehow link to the tracking system aka LMS, allows teachers to track students' progress and individual engagement in classes.
+                - freely asked question and formatted formal questions. Or I can call them as "**yolo**" and "**formal**" questions.
+            - This feature needs to be somehow linked to the tracking system aka LMS, allows teachers to track students' progress and individual engagement in classes.
             - For formal questions, we want a systematic way to handle this
                 - Predefined format
                 - AI-generated answers based on existing data.
@@ -19,20 +19,22 @@
                         - How do we validate the tags? Admin, AI-based?
         - LMS/Tracking system: teachers can track students' progress and individual engagement in classes.
             - Tracking learning progress, engagement, and performance.
-            - Actually we might want to thing exactly what to be tracked here.
-    - Module monetization: teachers can sell the modules which are concrete parts for students outside of that class.
-        - We need to think exactly how the monetization system should be.
-            - Students within a real class should be able to access the modules for free.
-            - Students outside can purchase the modules. How do they purchase the modules?
-                - How do we handle the payment?
-                    - Payment services?
-                - Freemium model:
-                    - Trials for every module?
-                    - I think each teacher would want to pricing their own modules. Because it depends on the effort. The system can't decide the price.
-        - We could have a recommendation system for students to purchase modules based on personal style and reviews for the modules.
-            - Recommendation probably would be AI based here.
-            - How exactly can we track the personal style?
-                - Frequently asked questions, accessed modules?
+            - Actually, we might want to think exactly what to be tracked here.
+    - Module 
+        - Monetization: teachers can sell the modules which are concrete parts for students outside of that class.
+            - We need to think exactly how the monetization system should be.
+                - Students within a real class should be able to access the modules for free.
+                - Students outside can purchase the modules. How do they purchase the modules?
+                    - How do we handle the payment?
+                        - Payment services?
+                    - Freemium model:
+                        - Trials for every module?
+                        - I think each teacher would want to price their own modules. Because it depends on the effort. The system can't decide the price.
+            - We could have a recommendation system for students to purchase modules based on personal style and reviews for the modules.
+                - Recommendation probably would be AI based here.
+                - How exactly can we track the personal style?
+                    - Frequently asked questions, accessed modules?
+        - Plugins system: allow teachers to customize the structure of the modules according to their own needs.
     - Authentication and authorization
         - OAuth
         - Passkey?
@@ -45,7 +47,7 @@
         - User activity tracking: What to track? How would this affect the database and stuff?
         - System monitoring: How to monitor the system? I don't even know what to be monitored.
         - Q&A management: How to manage the questions? How to manage the answers? Tags?
-        - Can we implement and AI-based stuffs to reduce the effort for admin?
+        - Can we implement AI-based stuff to reduce the effort for admin?
 
 - Design
     - UI design
