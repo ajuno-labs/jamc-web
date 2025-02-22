@@ -1,22 +1,21 @@
 ## Components
 
-Let’s structure the feature design into **core components**, prioritizing engagement, scalability, and alignment with Vietnam’s educational context. I’ll break this down into workflows, technical specs, and mitigation strategies for potential risks.
-
----
-
 ### **1. Feature Prioritization & Design Goals**
-| **Priority** | **Feature**                     | **Objective**                                                                 |
-|--------------|----------------------------------|-------------------------------------------------------------------------------|
-| P0           | AI-Powered Q&A with Gamification| Solve engagement gaps by incentivizing questions and reducing teacher workload. |
-| P0           | Adaptive Learning Engine        | Personalize content delivery to address diverse learning paces.              |
-| P1           | Module Monetization Marketplace | Empower teachers to earn revenue while expanding access to quality content.  |
-| P1           | LMS & Progress Tracking         | Provide actionable insights for teachers and students.                       |
-| P2           | Admin Automation Tools          | Reduce manual moderation via AI-driven tagging/approval.                     |
+
+| **Priority** | **Feature**                      | **Objective**                                                                   |
+| ------------ | -------------------------------- | ------------------------------------------------------------------------------- |
+| P0           | AI-Powered Q&A with Gamification | Solve engagement gaps by incentivizing questions and reducing teacher workload. |
+| P0           | Adaptive Learning Engine         | Personalize content delivery to address diverse learning paces.                 |
+| P1           | Module Monetization Marketplace  | Empower teachers to earn revenue while expanding access to quality content.     |
+| P1           | LMS & Progress Tracking          | Provide actionable insights for teachers and students.                          |
+| P2           | Admin Automation Tools           | Reduce manual moderation via AI-driven tagging/approval.                        |
 
 ---
 
 ### **2. Core Features & Technical Specifications**
+
 #### **A. Q&A System with Engagement Hooks**
+
 - **Question Types**:
   - **YOLO (Informal)**: Free-form text/audio; auto-tagged by AI (e.g., "Algebra – Quadratic Equations").
   - **Formal**: Structured template (Topic, Description, Attachments) linked to curriculum standards.
@@ -31,6 +30,7 @@ Let’s structure the feature design into **core components**, prioritizing enga
   - **Leaderboards**: Weekly "Top Contributors" per class (anonymizable for shy students).
 
 #### **B. Adaptive Learning Engine**
+
 - **Module Structure**:
   - **Core Modules**: Free for enrolled students; aligned with MOET curriculum.
   - **Premium Modules**: Teacher-created; priced $5–$20 (set by teacher).
@@ -42,6 +42,7 @@ Let’s structure the feature design into **core components**, prioritizing enga
   - **Performance-Based**: Suggests modules addressing weak areas (e.g., "Struggling with Geometry? Try this module").
 
 #### **C. Module Monetization**
+
 - **Access Control**:
   - **Enrolled Students**: Free access via class code.
   - **External Students**: Purchase via Stripe/ local gateways (VNPay, MoMo).
@@ -51,6 +52,7 @@ Let’s structure the feature design into **core components**, prioritizing enga
 - **Refund Policy**: 24-hour free trial for premium modules.
 
 #### **D. LMS & Progress Tracking**
+
 - **Student Profile**:
   - **Learning Graph**: Visualizes progress across modules (completion %, quiz scores).
   - **Engagement Score**: Combines question contributions, peer interactions, and login frequency.
@@ -59,6 +61,7 @@ Let’s structure the feature design into **core components**, prioritizing enga
   - **Intervention Flags**: AI identifies at-risk students (e.g., 3+ missed milestones).
 
 #### **E. Authentication & Security**
+
 - **Roles**:
   - **Student**: Facial recognition liveness check + class code.
   - **Teacher**: Government ID verification (e.g., CCCD) + manual admin approval.
@@ -70,34 +73,38 @@ Let’s structure the feature design into **core components**, prioritizing enga
 ---
 
 ### **3. Workflow Diagrams**
+
 #### **Student Journey**:
+
 1. **Onboard** → Facial scan + class code → **Learn** → Watch module → **Engage** → Ask YOLO question → **Earn** → Redeem credits for premium content.
 
 #### **Teacher Journey**:
+
 1. **Verify** → Submit ID → **Create** → Upload module → **Monetize** → Set price → **Track** → Monitor student heatmaps.
 
 ---
 
 ### **4. Risk Mitigation**
-| **Risk**                          | **Mitigation Strategy**                                                                 |
-|-----------------------------------|-----------------------------------------------------------------------------------------|
-| Low student engagement in Q&A     | Default to anonymous mode; AI-generated "starter questions" to seed discussions.        |
-| Module plagiarism                 | AI similarity check (≥80% match blocks upload); teacher reporting tools.                |
-| Payment fraud                     | Integrate VNPay’s anti-fraud API; limit refunds to 1/month.                             |
-| Rural access barriers             | Offline mode for modules; SMS-based Q&A (Twilio integration).                           |
+
+| **Risk**                      | **Mitigation Strategy**                                                          |
+| ----------------------------- | -------------------------------------------------------------------------------- |
+| Low student engagement in Q&A | Default to anonymous mode; AI-generated "starter questions" to seed discussions. |
+| Module plagiarism             | AI similarity check (≥80% match blocks upload); teacher reporting tools.         |
+| Payment fraud                 | Integrate VNPay’s anti-fraud API; limit refunds to 1/month.                      |
+| Rural access barriers         | Offline mode for modules; SMS-based Q&A (Twilio integration).                    |
 
 ---
 
 ## Design
 
 - [ ] User Profile
-    - [ ] Student
-    - [ ] Teacher
-    - [ ] Admin
+
+  - [ ] Student
+  - [ ] Teacher
+  - [ ] Admin
 
 - [ ] Q&A System
-    - [ ] Anonymous Q&A mode
-    - [ ] AI-powered Q&A
-    - [ ] Gamification with Leaderboards
-    - [ ] Teacher Encouragement: Teachers should model curiosity by posting "starter questions" to normalize asking.
-
+  - [ ] Anonymous Q&A mode
+  - [ ] AI-powered Q&A
+  - [ ] Gamification with Leaderboards
+  - [ ] Teacher Encouragement: Teachers should model curiosity by posting "starter questions" to normalize asking.
