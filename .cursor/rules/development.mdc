@@ -13,3 +13,4 @@ globs: *.*
 - This project use `pnpm`, so please use `pnpm exec` if it's better rather than using `npx`.
 - Always search for related files in the context, no assumption upon existing code with similar trained code, that's a source of bug.
 - Tech stack of this web app is: Next.js 15 + React 19, ZenStack + Prisma ORM, Docker, Shadcn/ui, Auth.js, Playwright for E2E testing.
+- When I say to run a command in background, remember to use the `run_terminal_cmd` tool with `is_background` set to true.

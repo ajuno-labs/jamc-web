@@ -5,7 +5,8 @@ FROM node:20-alpine AS base
 RUN apk add --no-cache libc6-compat python3 make g++
 
 # Install pnpm (as project uses pnpm)
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN wget -qO /bin/pnpm "https://github.com/pnpm/pnpm/releases/download/v8.15.4/pnpm-linux-x64" && \
+    chmod +x /bin/pnpm
 
 # Set working directory
 WORKDIR /app
@@ -16,7 +17,7 @@ FROM base AS deps
 COPY package.json pnpm-lock.yaml* ./
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --force
 
 # Builder stage (for production build, if needed)
 FROM base AS builder
@@ -79,7 +80,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml* ./
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --force
 
 # Copy full source code
 COPY . .
