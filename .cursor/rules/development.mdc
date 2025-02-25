@@ -17,3 +17,4 @@ globs: *.*
 - Command to install shadcn/ui components `pnpm dlx shadcn@latest add <component-name>`.
 - Propose the modification plan first then wait for my confirmation. Don't just modify files at your own will.
 - For frontend development, split the page into smaller components to increase the code clarity, readability and reusability
+- Always use `shadcn/ui` components for UI development instead pure html elements if possible.
