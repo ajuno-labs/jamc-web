@@ -22,7 +22,7 @@
     - [ ] Q&A System
         - [ ] User Profile
         - [ ] Anonymous Q&A mode
-        - [ ] Upvote/downvote
+        - [x] Upvote/downvote
         - [ ] Related questions
         - [ ] Ask question button in a question details page
     - [ ] Learning Management System
@@ -32,6 +32,7 @@
     - [ ] Moderation
 
 - Miscellaneous
-    - [ ] .cursor/rules for this project https://cursor.directory/
-    - [ ] Make a better `prisma.ts` file that fit with zenstack's `enhance()`
+    - [x] .cursor/rules for this project https://cursor.directory/
+    - [x] Make a better `prisma.ts` file that fit with zenstack's `enhance()`
+        - I've tried but in the end decided to just use the default prisma with `enhance()` where needed
     - [ ] database-level validation with ZenStack

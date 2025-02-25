@@ -3,10 +3,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
-import { ChevronUp, ChevronDown, Flag } from "lucide-react"
+import { Flag } from "lucide-react"
 import { voteQuestion } from "../_actions/question-actions"
-import { useTransition } from "react"
-import { toast } from "sonner"
+import { VoteButtons } from "@/components/ui/vote-buttons"
 
 interface QuestionHeaderProps {
   question: {
@@ -18,25 +17,14 @@ interface QuestionHeaderProps {
       image: string | null
     }
     createdAt: Date
-    votes: Array<{ value: number }>
+    votes: Array<{ value: number, userId?: string }>
+    currentUserVote?: number | null
   }
 }
 
 export function QuestionHeader({ question }: QuestionHeaderProps) {
-  const [isPending, startTransition] = useTransition()
-  
   const upvotes = question.votes.filter(v => v.value === 1).length
   const downvotes = question.votes.filter(v => v.value === -1).length
-
-  const handleVote = (value: 1 | -1) => {
-    startTransition(async () => {
-      try {
-        await voteQuestion(question.id, value)
-      } catch (error) {
-        toast.error("You must be logged in to vote")
-      }
-    })
-  }
 
   return (
     <Card className="mb-8">
@@ -57,24 +45,14 @@ export function QuestionHeader({ question }: QuestionHeaderProps) {
             </span>
           </div>
           <div className="flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => handleVote(1)}
-              disabled={isPending}
-            >
-              <ChevronUp className="mr-1 h-4 w-4" />
-              {upvotes}
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => handleVote(-1)}
-              disabled={isPending}
-            >
-              <ChevronDown className="mr-1 h-4 w-4" />
-              {downvotes}
-            </Button>
+            <VoteButtons 
+              itemId={question.id}
+              upvotes={upvotes}
+              downvotes={downvotes}
+              userVote={question.currentUserVote}
+              onVote={voteQuestion}
+              size="md"
+            />
             <Button variant="ghost" size="sm">
               <Flag className="mr-1 h-4 w-4" />
               Flag

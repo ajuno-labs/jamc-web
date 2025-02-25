@@ -51,13 +51,28 @@ export default async function QuestionPage({
   }
 
   const isEducator = hasPermission(user, "MANAGE")
+  
+  // Determine the current user's vote on this question
+  let currentUserVote = null
+  if (user) {
+    const userVote = question.votes.find(vote => vote.userId === user.id)
+    if (userVote) {
+      currentUserVote = userVote.value
+    }
+  }
+  
+  // Enhance question with current user's vote
+  const enhancedQuestion = {
+    ...question,
+    currentUserVote
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main content area */}
         <div className="lg:col-span-2 space-y-8">
-          <QuestionHeader question={question} />
+          <QuestionHeader question={enhancedQuestion} />
           <AnswerList answers={answers} isEducator={isEducator} />
           <AnswerForm questionId={questionId} />
         </div>

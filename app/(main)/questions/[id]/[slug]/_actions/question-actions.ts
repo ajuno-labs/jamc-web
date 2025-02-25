@@ -7,14 +7,19 @@ export async function getQuestionDetails(id: string) {
     where: { id },
     include: {
       author: {
-
         select: {
           id: true,
           name: true,
           image: true,
         },
       },
-      votes: true,
+      votes: {
+        select: {
+          id: true,
+          value: true,
+          userId: true,
+        }
+      },
       tags: true,
     },
   })
@@ -71,7 +76,6 @@ export async function voteQuestion(questionId: string, value: 1 | -1) {
     where: {
       questionId_userId: {
         questionId,
-
         userId: session.user.id,
       },
     },
@@ -85,14 +89,12 @@ export async function voteQuestion(questionId: string, value: 1 | -1) {
           id: existingVote.id,
         },
       })
-
     } else {
       // Update vote if changing from upvote to downvote or vice versa
       await prisma.questionVote.update({
         where: {
           id: existingVote.id,
         },
-
         data: {
           value,
         },
@@ -107,10 +109,17 @@ export async function voteQuestion(questionId: string, value: 1 | -1) {
         value,
       },
     })
-
   }
 
-  revalidatePath(`/question/${questionId}`)
+  // Fix the revalidation path
+  const question = await prisma.question.findUnique({
+    where: { id: questionId },
+    select: { slug: true },
+  })
+
+  if (question) {
+    revalidatePath(`/questions/${questionId}/${question.slug}`)
+  }
 }
 
 export async function voteAnswer(answerId: string, value: 1 | -1) {
