@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# JAMC Q&A Platform
+
+JAMC is a Q&A platform designed for educational environments, bringing together students and educators in a collaborative learning community. The platform focuses on knowledge sharing, structured discussions, and seamless integration with learning management systems.
+
+## Project Overview
+
+JAMC combines a robust Q&A system with basic LMS integration to create an efficient knowledge-sharing environment:
+
+- **Question & Answer System**: Post, edit, and categorize questions with support for accepted and official answers
+- **User Management**: Separate roles for students and teachers with appropriate permissions
+- **Engagement Features**: Voting, reputation system, badges, and leaderboards
+- **Search & Filtering**: Full-text search with filtering by tags, courses, or teachers
+- **LMS Integration**: Questions can be associated with specific courses/modules
+- **AI-powered Enhancements**: Auto-suggest similar questions, AI-generated answers, and content moderation
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18.x or higher
+- pnpm (recommended) or npm
+- Docker (for production deployment only)
+
+### Development Setup
+
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+git clone https://github.com/yourusername/jamc.git
+cd jamc
+```
+
+2. Install dependencies:
+
+```bash
+pnpm install
+```
+
+3. Set up environment variables:
+
+```bash
+cp .env.example .env.local
+```
+
+Edit the `.env.local` file with your configuration values.
+
+4. Run the development server:
+
+```bash
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Production Deployment with Docker
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+For production deployment, you can use Docker:
+
+1. Build the Docker image:
+
+```bash
+docker build -t jamc-app .
+```
+
+2. Run the container:
+
+```bash
+docker run -p 3000:3000 -e DATABASE_URL=your_database_url jamc-app
+```
+
+For orchestrating multiple services:
+
+```bash
+docker-compose up -d
+```
+
+This will start the application and any required services (database, etc.) defined in the docker-compose.yml file.
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+This project uses:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Next.js](https://nextjs.org/) - React framework
+- [Prisma](https://www.prisma.io/) - ORM for database access
+- [shadcn/ui](https://ui.shadcn.com/) - UI component library
+- [Auth.js](https://authjs.dev/) - Authentication
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## License
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[MIT](LICENSE)
