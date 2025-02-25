@@ -35,12 +35,6 @@ export function Header({ user }: HeaderProps) {
               >
                 Courses
               </Link>
-              <Link
-                href="/community"
-                className="transition-colors hover:text-foreground/80 text-foreground/60"
-              >
-                Community
-              </Link>
             </nav>
           </div>
 
