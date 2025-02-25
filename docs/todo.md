@@ -20,7 +20,9 @@
     - [ ] Authorization
         - [ ] Role-based access control (RBAC)
     - [ ] Q&A System
-        - [ ] User Profile
+        - [ ] Question Subscription
+        - [x] User Profile
+            - [ ] Bug: not changing the header after rename
         - [ ] Anonymous Q&A mode
         - [x] Upvote/downvote
         - [ ] Related questions
