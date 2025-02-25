@@ -1,46 +1,52 @@
-### **Project Scope: Q&A Platform with LMS Integration**
+### **Project Scope: Math-Focused Q&A Platform with LMS Integration**
 
-This project focuses on developing a **Q&A platform** that integrates with a **basic Learning Management System (LMS)**. The LMS serves only as a structural backbone, providing course/module organization and linking users to relevant Q&A discussions. The emphasis is on the **Q&A functionalities**, ensuring an efficient and structured knowledge-sharing system for students and teachers.
+This project focuses on developing a **math-oriented Q&A platform** that integrates with a **basic Learning Management System (LMS)**. The platform is designed specifically for mathematics education, with LaTeX support for displaying mathematical formulas. The LMS provides course/module organization with text and link-based content, while the Q&A system enables efficient knowledge sharing between teachers and students.
 
 ---
 
-## **Core Features of the Q&A Platform**
+## **Core Features**
 
-### **1. User Management**
-- Users register and log in separately.
-- Basic roles: **Students, Teachers**.
+### **1. Course Management**
+- Teachers can **create, edit, and manage** course content with a fixed structure.
+- **LaTeX support** for displaying mathematical formulas in course materials.
+- Basic text and link-based content (no video support initially).
+- Important content can be **bookmarked** for easy navigation.
 
 ### **2. Question & Answer System**
-- Users can **post, edit, delete**, and categorize questions.
-- Questions can be linked to **specific courses/modules** within the LMS.
-- Answers can be provided by **any user**, with engagement features like:
-  - **Accepted Answer:** Marked by the question owner.
-  - **Official Answer:** Marked by a teacher.
+- Students can **post questions**, teachers or other students can **provide answers**.
+- **LaTeX support** in both questions and answers for mathematical formulas.
+- Teachers can mark **official answers**.
+- Questions are **categorized by tags and topics** for easy searching.
+- **Voting system** to rank helpful answers.
+- Teachers can **edit, delete, or pin** important questions.
 
 ### **3. Search & Filtering**
-- Full-text **search functionality** for questions, answers, and topics.
-- Filtering by **tags, courses, or teachers**.
+- Full-text **search functionality** across course content and Q&A.
+- Filtering by **topics, teachers, or relevant tags**.
 
-### **4. Voting & Engagement**
-- Users can **upvote/downvote** answers to highlight valuable contributions.
-- **Reputation system** based on participation (asking, answering, receiving upvotes).
-- **Badges & Leaderboards** for active contributors.
+### **4. Notification System**
+- Notifications for **new answers** or **content updates**.
+- Option to **follow** specific questions, lessons, or topics.
 
-### **5. Moderation & Reporting**
-- Users can **report** inappropriate or duplicate content.
-- Teachers can **edit, pin, or delete** questions and answers.
+### **5. Feedback & Rating System**
+- Students can provide **feedback** on lessons, learning materials, and Q&A content.
 
-### **6. Notifications & Subscriptions**
-- Users receive **notifications** for replies and updates.
-- Option to **follow** specific questions or topics.
+### **6. LMS-Q&A Integration**
+- Questions in the Q&A system are **linked to specific course content**.
+- Course pages **display related discussions** from the Q&A system.
+- **Bookmarking feature** helps students easily navigate back to important lessons.
 
-### **7. LMS Integration (Basic Structure & Links)**
-- Questions can be **associated with courses/modules** from LMS.
-- Course pages in LMS will have direct **links to relevant Q&A discussions**.
-- No role synchronization—users interact with LMS and Q&A as separate but connected platforms.
+### **7. User Management**
+- **Registration and login** with role-based permissions (Teacher, Student).
+- **Profile management** for personal information and activity tracking.
 
-### **8. AI-powered Enhancements (Optional)**
+### **8. Gamification**
+- **Reputation points** based on participation (asking, answering, receiving upvotes).
+- **Badges** for achievements (e.g., answering many questions, receiving most upvotes).
+- **Leaderboards** displaying top contributors.
+- **Learning challenges** (daily/weekly tasks) to encourage participation.
+
+### **9. AI-powered Enhancements (Planned for Future)**
 - **Auto-suggest similar questions** when posting to reduce duplicates.
 - **AI-generated suggested answers** based on previous responses.
 - **Sentiment analysis** for flagging inappropriate content.
-- **Suggested questions** to enhance understanding of students.
