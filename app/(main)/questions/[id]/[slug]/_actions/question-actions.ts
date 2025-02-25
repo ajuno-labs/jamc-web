@@ -1,5 +1,5 @@
 import { auth } from "@/auth"
-import { prisma } from "@/prisma"
+import { prisma } from "@/lib/db/prisma"
 import { revalidatePath } from "next/cache"
 
 export async function getQuestionDetails(id: string) {
@@ -188,6 +188,7 @@ export async function getRelatedQuestions(questionId: string) {
       id: true,
       title: true,
       content: true,
+      slug: true,
     },
   })
   return questions

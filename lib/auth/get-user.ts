@@ -1,5 +1,5 @@
 import { auth } from "@/auth"
-import { prisma } from "@/prisma"
+import { prisma } from "@/lib/db/prisma"
 import { UserWithRoles, userWithRolesInclude } from "../types/prisma"
 
 

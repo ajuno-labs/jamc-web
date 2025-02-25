@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/pagination"
 import Link from "next/link"
 import { QuestionType } from "@prisma/client"
+import { TagFilter } from "./components/tag-filter"
 
 interface SearchResult {
   id: string
@@ -47,6 +48,7 @@ export default function QuestionsPage() {
   const [results, setResults] = React.useState<SearchResult[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [selectedType, setSelectedType] = React.useState<"all" | QuestionType>("all")
+  const [selectedTags, setSelectedTags] = React.useState<string[]>([])
   const [currentPage, setCurrentPage] = React.useState(1)
   const [total, setTotal] = React.useState(0)
   const [hasMore, setHasMore] = React.useState(false)
@@ -56,7 +58,13 @@ export default function QuestionsPage() {
     setIsLoading(true)
     try {
       const page = resetPage ? 1 : currentPage
-      const result = await searchQuestions(debouncedQuery, selectedType, page, ITEMS_PER_PAGE)
+      const result = await searchQuestions(
+        debouncedQuery, 
+        selectedType, 
+        page, 
+        ITEMS_PER_PAGE,
+        selectedTags
+      )
       setResults(result.items)
       setTotal(result.total)
       setHasMore(result.hasMore)
@@ -68,17 +76,17 @@ export default function QuestionsPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [debouncedQuery, selectedType, currentPage])
+  }, [debouncedQuery, selectedType, currentPage, selectedTags])
 
   // Load initial questions
   React.useEffect(() => {
     performSearch()
   }, [])
 
-  // Perform search when query or type changes
+  // Perform search when query, type, or tags change
   React.useEffect(() => {
     performSearch(true) // Reset to first page when filters change
-  }, [debouncedQuery, selectedType])
+  }, [debouncedQuery, selectedType, selectedTags])
 
   // Load more questions when page changes
   React.useEffect(() => {
@@ -133,6 +141,13 @@ export default function QuestionsPage() {
     return pageNumbers
   }
 
+  // Handle tag click from question items
+  const handleTagClick = (tagName: string) => {
+    if (!selectedTags.includes(tagName)) {
+      setSelectedTags([...selectedTags, tagName])
+    }
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
@@ -142,38 +157,47 @@ export default function QuestionsPage() {
         </Button>
       </div>
 
-      <div className="flex gap-4 mb-8">
-        <div className="flex-1">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search questions..."
-              className="w-full pl-10 pr-4 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            />
+      <div className="flex flex-col gap-6 mb-8">
+        {/* Search and Type filters */}
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search questions..."
+                className="w-full pl-10 pr-4 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant={selectedType === "all" ? "default" : "outline"}
+              onClick={() => setSelectedType("all")}
+            >
+              All
+            </Button>
+            <Button
+              variant={selectedType === "YOLO" ? "default" : "outline"}
+              onClick={() => setSelectedType("YOLO")}
+            >
+              YOLO
+            </Button>
+            <Button
+              variant={selectedType === "FORMAL" ? "default" : "outline"}
+              onClick={() => setSelectedType("FORMAL")}
+            >
+              Formal
+            </Button>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant={selectedType === "all" ? "default" : "outline"}
-            onClick={() => setSelectedType("all")}
-          >
-            All
-          </Button>
-          <Button
-            variant={selectedType === "YOLO" ? "default" : "outline"}
-            onClick={() => setSelectedType("YOLO")}
-          >
-            YOLO
-          </Button>
-          <Button
-            variant={selectedType === "FORMAL" ? "default" : "outline"}
-            onClick={() => setSelectedType("FORMAL")}
-          >
-            Formal
-          </Button>
-        </div>
+        
+        {/* Tag filter */}
+        <TagFilter 
+          selectedTags={selectedTags} 
+          onTagsChange={setSelectedTags} 
+        />
       </div>
 
       <div className="space-y-4">
@@ -181,7 +205,7 @@ export default function QuestionsPage() {
           <div className="text-center py-8">Loading questions...</div>
         ) : results.length === 0 ? (
           <div className="text-center py-8">
-            {query ? "No questions found." : "No questions yet. Be the first to ask!"}
+            {query || selectedTags.length > 0 ? "No questions found matching your filters." : "No questions yet. Be the first to ask!"}
           </div>
         ) : (
           <>
@@ -214,7 +238,12 @@ export default function QuestionsPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     {question.tags.slice(0, 3).map((tag) => (
-                      <Badge key={tag.name} variant="outline" className="flex items-center gap-1">
+                      <Badge 
+                        key={tag.name} 
+                        variant="outline" 
+                        className="flex items-center gap-1 cursor-pointer hover:bg-secondary"
+                        onClick={() => handleTagClick(tag.name)}
+                      >
                         <Tag className="h-3 w-3" />
                         {tag.name}
                       </Badge>

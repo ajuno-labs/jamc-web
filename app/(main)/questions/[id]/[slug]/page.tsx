@@ -18,11 +18,21 @@ interface QuestionPageProps {
   }
 }
 
-export default async function QuestionPage({ params }: QuestionPageProps) {
+export default async function QuestionPage({
+  params,
+}: QuestionPageProps) {
+  // Validate params before using them
+  if (!params?.id || typeof params.id !== 'string') {
+    notFound()
+  }
+
+  const id = params.id
+  const slug = params.slug as string
+  
   const [question, answers, relatedQuestions, user] = await Promise.all([
-    getQuestionDetails(params.id),
-    getQuestionAnswers(params.id),
-    getRelatedQuestions(params.id),
+    getQuestionDetails(id),
+    getQuestionAnswers(id),
+    getRelatedQuestions(id),
     getAuthUser(),
   ])
 
@@ -31,8 +41,8 @@ export default async function QuestionPage({ params }: QuestionPageProps) {
   }
 
   // If the slug doesn't match, redirect to the correct URL
-  if (question.slug !== params.slug) {
-    redirect(`/questions/${params.id}/${question.slug}`)
+  if (question.slug !== slug) {
+    redirect(`/questions/${id}/${question.slug}`)
   }
 
   const isEducator = hasPermission(user, "MANAGE")
@@ -44,7 +54,7 @@ export default async function QuestionPage({ params }: QuestionPageProps) {
         <div className="lg:col-span-2">
           <QuestionHeader question={question} />
           <AnswerList answers={answers} isEducator={isEducator} />
-          <AnswerForm questionId={params.id} />
+          <AnswerForm questionId={id} />
         </div>
 
         {/* Sidebar */}

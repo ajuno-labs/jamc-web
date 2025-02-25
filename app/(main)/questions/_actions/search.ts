@@ -36,7 +36,8 @@ export async function searchQuestions(
   query: string = "",
   type: "all" | QuestionType = "all",
   page: number = 1,
-  pageSize: number = 10
+  pageSize: number = 10,
+  tags: string[] = []
 ): Promise<SearchQuestionsResult> {
   try {
     // For public question listing, we use the original prisma client
@@ -70,6 +71,14 @@ export async function searchQuestions(
         } : {},
         // Always apply type filter if not "all"
         type === "all" ? {} : { type },
+        // Apply tags filter if any tags are selected
+        tags.length > 0 ? {
+          tags: {
+            some: {
+              name: { in: tags }
+            }
+          }
+        } : {},
         // Only show public questions to maintain some access control
         { visibility: "PUBLIC" }
       ]
@@ -92,6 +101,9 @@ export async function searchQuestions(
     // Debug logging
     console.log('Found questions:', questions.length)
     console.log('Total questions:', total)
+    if (tags.length > 0) {
+      console.log('Filtering by tags:', tags)
+    }
 
     return {
       items: questions.map((question) => ({
