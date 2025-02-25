@@ -21,18 +21,23 @@ interface QuestionPageProps {
 export default async function QuestionPage({
   params,
 }: QuestionPageProps) {
+  // Store params in local variables to avoid Next.js warnings
+  const questionId = params?.id
+  const questionSlug = params?.slug
+  
   // Validate params before using them
-  if (!params?.id || typeof params.id !== 'string') {
+  if (!questionId || typeof questionId !== 'string') {
     notFound()
   }
 
-  const id = params.id
-  const slug = params.slug as string
+  if (!questionSlug || typeof questionSlug !== 'string') {
+    notFound()
+  }
   
   const [question, answers, relatedQuestions, user] = await Promise.all([
-    getQuestionDetails(id),
-    getQuestionAnswers(id),
-    getRelatedQuestions(id),
+    getQuestionDetails(questionId),
+    getQuestionAnswers(questionId),
+    getRelatedQuestions(questionId),
     getAuthUser(),
   ])
 
@@ -41,8 +46,8 @@ export default async function QuestionPage({
   }
 
   // If the slug doesn't match, redirect to the correct URL
-  if (question.slug !== slug) {
-    redirect(`/questions/${id}/${question.slug}`)
+  if (question.slug !== questionSlug) {
+    redirect(`/questions/${questionId}/${question.slug}`)
   }
 
   const isEducator = hasPermission(user, "MANAGE")
@@ -51,16 +56,16 @@ export default async function QuestionPage({
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main content area */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-8">
           <QuestionHeader question={question} />
           <AnswerList answers={answers} isEducator={isEducator} />
-          <AnswerForm questionId={id} />
+          <AnswerForm questionId={questionId} />
         </div>
 
         {/* Sidebar */}
-        <div className="lg:col-span-1">
+        <aside className="lg:col-span-1">
           <RelatedQuestions questions={relatedQuestions} />
-        </div>
+        </aside>
       </div>
     </div>
   )

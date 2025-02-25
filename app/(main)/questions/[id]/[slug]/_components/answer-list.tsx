@@ -3,6 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
 import { MessageSquare, ThumbsUp, ThumbsDown, AlertTriangle } from "lucide-react"
 import { voteAnswer } from "../_actions/question-actions"
 import { useTransition } from "react"
@@ -45,27 +46,31 @@ export function AnswerList({ answers, isEducator = false }: AnswerListProps) {
         const downvotes = answer.votes.filter(v => v.value === -1).length
 
         return (
-          <div key={answer.id} className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-2">
-                <Avatar>
-                  <AvatarImage src={answer.author.image || undefined} alt={answer.author.name || undefined} />
-                  <AvatarFallback>{answer.author.name?.[0]}</AvatarFallback>
-                </Avatar>
-                <span className="font-semibold">{answer.author.name}</span>
-                <span className="text-sm text-gray-400">
-                  {new Date(answer.createdAt).toLocaleString()}
-                </span>
+          <Card key={answer.id}>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Avatar>
+                    <AvatarImage src={answer.author.image || undefined} alt={answer.author.name || undefined} />
+                    <AvatarFallback>{answer.author.name?.[0]}</AvatarFallback>
+                  </Avatar>
+                  <span className="font-semibold">{answer.author.name}</span>
+                  <span className="text-sm text-muted-foreground">
+                    {new Date(answer.createdAt).toLocaleString()}
+                  </span>
+                </div>
+                {isEducator && (
+                  <Button variant="ghost" size="sm" className="text-yellow-600">
+                    <AlertTriangle className="mr-1 h-4 w-4" />
+                    Moderate
+                  </Button>
+                )}
               </div>
-              {isEducator && (
-                <Button variant="ghost" size="sm" className="text-yellow-600">
-                  <AlertTriangle className="mr-1 h-4 w-4" />
-                  Moderate
-                </Button>
-              )}
-            </div>
-            <p className="text-gray-700 mb-4">{answer.content}</p>
-            <div className="flex items-center justify-between">
+            </CardHeader>
+            <CardContent>
+              <p className="text-foreground">{answer.content}</p>
+            </CardContent>
+            <CardFooter className="flex items-center justify-between pt-2 border-t">
               <div className="flex items-center space-x-4">
                 <Button 
                   variant="ghost" 
@@ -90,8 +95,8 @@ export function AnswerList({ answers, isEducator = false }: AnswerListProps) {
                 <MessageSquare className="mr-1 h-4 w-4" />
                 Reply
               </Button>
-            </div>
-          </div>
+            </CardFooter>
+          </Card>
         )
       })}
     </div>

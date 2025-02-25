@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
 import { addAnswer } from "../_actions/question-actions"
 import { toast } from "sonner"
 
@@ -42,20 +43,27 @@ export function AnswerForm({ questionId }: AnswerFormProps) {
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8">
-      <Textarea
-        placeholder="Write your answer here..."
-        {...form.register("content")}
-        className="mb-2"
-      />
-      {form.formState.errors.content && (
-        <p className="text-sm text-red-500 mb-2">
-          {form.formState.errors.content.message}
-        </p>
-      )}
-      <Button type="submit" disabled={isPending}>
-        {isPending ? "Posting..." : "Add Answer"}
-      </Button>
-    </form>
+    <Card className="mt-8">
+      <CardHeader>
+        <h2 className="text-xl font-semibold">Your Answer</h2>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <Textarea
+            placeholder="Write your answer here..."
+            {...form.register("content")}
+            className="mb-2 min-h-[150px]"
+          />
+          {form.formState.errors.content && (
+            <p className="text-sm text-destructive mb-2">
+              {form.formState.errors.content.message}
+            </p>
+          )}
+          <Button type="submit" disabled={isPending}>
+            {isPending ? "Posting..." : "Add Answer"}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   )
 } 
