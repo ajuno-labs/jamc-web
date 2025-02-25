@@ -163,6 +163,12 @@ enum Visibility {
   PRIVATE
 }
 
+enum Status {
+  OPEN
+  CLOSED
+  SOLVED
+}
+
 model Question {
   id          String      @id @default(cuid())
   title       String      @length(min: 3, max: 300)
@@ -190,9 +196,12 @@ model Question {
   
   // Access control
   @@allow('create', auth() != null)
-  @@allow('read', visibility == PUBLIC || auth() == author)
+  @@allow('read', true) // Allow reading all questions
   @@allow('update', auth() == author)
   @@allow('delete', auth() == author || auth().roles?[permissions?[name == DELETE]])
+
+  slug        String      @unique
+  status      Status      @default(OPEN)
 }
 
 model Answer {

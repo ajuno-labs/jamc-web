@@ -1,8 +1,17 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
-
 const prisma = new PrismaClient()
+
+// Utility function for generating slugs
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-')     // Replace spaces with -
+    .replace(/--+/g, '-')     // Replace multiple - with single -
+    .trim()                   // Trim whitespace
+}
 
 async function main() {
   // Create permissions
@@ -117,9 +126,11 @@ async function main() {
   })
 
   // Create questions
+  const question1Title = "Understanding the Pythagorean Theorem"
   const question1 = await prisma.question.create({
     data: {
-      title: "Understanding the Pythagorean Theorem",
+      title: question1Title,
+      slug: slugify(question1Title),
       content: "Can someone explain how the Pythagorean theorem relates to real-world applications? I understand the basic formula a² + b² = c², but I'm struggling to see its practical uses.",
       type: "FORMAL",
       visibility: "PUBLIC",
@@ -135,9 +146,11 @@ async function main() {
   })
 
   // Question 2
+  const question2Title = "Quick question about derivatives"
   await prisma.question.create({
     data: {
-      title: "Quick question about derivatives",
+      title: question2Title,
+      slug: slugify(question2Title),
       content: "What's the easiest way to remember the power rule for derivatives? I keep mixing it up!",
       type: "YOLO",
       visibility: "PUBLIC",

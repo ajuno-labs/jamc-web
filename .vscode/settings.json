@@ -12,7 +12,8 @@
             "driver": "PostgreSQL",
             "name": "jamc",
             "database": "jamc",
-            "username": "jamc"
+            "username": "jamc",
+            "password": "jamc"
         }
     ]
 }

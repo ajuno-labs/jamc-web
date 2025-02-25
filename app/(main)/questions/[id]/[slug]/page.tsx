@@ -8,12 +8,13 @@ import {
   getQuestionAnswers, 
   getRelatedQuestions 
 } from "./_actions/question-actions"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { hasPermission } from "@/lib/types/prisma"
 
 interface QuestionPageProps {
   params: {
     id: string
+    slug: string
   }
 }
 
@@ -27,6 +28,11 @@ export default async function QuestionPage({ params }: QuestionPageProps) {
 
   if (!question) {
     notFound()
+  }
+
+  // If the slug doesn't match, redirect to the correct URL
+  if (question.slug !== params.slug) {
+    redirect(`/questions/${params.id}/${question.slug}`)
   }
 
   const isEducator = hasPermission(user, "MANAGE")
