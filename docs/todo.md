@@ -32,6 +32,7 @@
         - [ ] Gamification with Leaderboards
         - [ ] Teacher Encouragement: Teachers should model curiosity by posting "starter questions" to normalize asking.
     - [ ] Moderation
+    - [ ] RAG model suggested by lecturer?
 
 - Miscellaneous
     - [x] .cursor/rules for this project https://cursor.directory/

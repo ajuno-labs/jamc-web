@@ -1,3 +1,5 @@
+"use server"
+
 import { auth } from "@/auth"
 import { prisma } from "@/lib/db/prisma"
 import { revalidatePath } from "next/cache"
@@ -31,14 +33,19 @@ export async function getQuestionAnswers(questionId: string) {
     where: { questionId },
     include: {
       author: {
-
         select: {
           id: true,
           name: true,
           image: true,
         },
       },
-      votes: true,
+      votes: {
+        select: {
+          id: true,
+          value: true,
+          userId: true,
+        }
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -111,13 +118,14 @@ export async function voteQuestion(questionId: string, value: 1 | -1) {
     })
   }
 
-  // Fix the revalidation path
+  // Get the question slug for proper revalidation
   const question = await prisma.question.findUnique({
     where: { id: questionId },
     select: { slug: true },
   })
 
   if (question) {
+    // Fix the revalidation path to match the actual route
     revalidatePath(`/questions/${questionId}/${question.slug}`)
   }
 }
@@ -132,7 +140,6 @@ export async function voteAnswer(answerId: string, value: 1 | -1) {
     where: {
       answerId_userId: {
         answerId,
-
         userId: session.user.id,
       },
     },
@@ -144,14 +151,12 @@ export async function voteAnswer(answerId: string, value: 1 | -1) {
         where: {
           id: existingVote.id,
         },
-
       })
     } else {
       await prisma.answerVote.update({
         where: {
           id: existingVote.id,
         },
-
         data: {
           value,
         },
@@ -163,19 +168,26 @@ export async function voteAnswer(answerId: string, value: 1 | -1) {
         answerId,
         userId: session.user.id,
         value,
-
       },
     })
   }
 
+  // Get the answer and question details for proper revalidation
   const answer = await prisma.answer.findUnique({
     where: { id: answerId },
-    select: { questionId: true },
+    select: { 
+      questionId: true,
+      question: {
+        select: {
+          slug: true
+        }
+      }
+    },
   })
 
-
-  if (answer) {
-    revalidatePath(`/question/${answer.questionId}`)
+  if (answer && answer.question) {
+    // Fix the revalidation path to match the actual route
+    revalidatePath(`/questions/${answer.questionId}/${answer.question.slug}`)
   }
 }
 

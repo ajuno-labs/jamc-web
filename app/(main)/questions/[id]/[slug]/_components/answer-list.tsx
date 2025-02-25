@@ -4,10 +4,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
-import { MessageSquare, ThumbsUp, ThumbsDown, AlertTriangle } from "lucide-react"
+import { MessageSquare, AlertTriangle } from "lucide-react"
 import { voteAnswer } from "../_actions/question-actions"
-import { useTransition } from "react"
-import { toast } from "sonner"
+import { VoteButtons } from "@/components/ui/vote-buttons"
+import { useSession } from "next-auth/react"
 
 interface Answer {
   id: string
@@ -17,7 +17,7 @@ interface Answer {
     image: string | null
   }
   createdAt: Date
-  votes: Array<{ value: number }>
+  votes: Array<{ value: number, userId?: string }>
   isAccepted: boolean
 }
 
@@ -27,23 +27,23 @@ interface AnswerListProps {
 }
 
 export function AnswerList({ answers, isEducator = false }: AnswerListProps) {
-  const [isPending, startTransition] = useTransition()
-
-  const handleVote = (answerId: string, value: 1 | -1) => {
-    startTransition(async () => {
-      try {
-        await voteAnswer(answerId, value)
-      } catch (error) {
-        toast.error("You must be logged in to vote")
-      }
-    })
-  }
+  const { data: session } = useSession()
+  const user = session?.user
 
   return (
     <div className="space-y-6">
       {answers.map((answer) => {
         const upvotes = answer.votes.filter(v => v.value === 1).length
         const downvotes = answer.votes.filter(v => v.value === -1).length
+        
+        // Determine the current user's vote on this answer
+        let currentUserVote = null
+        if (user?.id) {
+          const userVote = answer.votes.find(vote => vote.userId === user.id)
+          if (userVote) {
+            currentUserVote = userVote.value
+          }
+        }
 
         return (
           <Card key={answer.id}>
@@ -72,24 +72,14 @@ export function AnswerList({ answers, isEducator = false }: AnswerListProps) {
             </CardContent>
             <CardFooter className="flex items-center justify-between pt-2 border-t">
               <div className="flex items-center space-x-4">
-                <Button 
-                  variant="ghost" 
+                <VoteButtons 
+                  itemId={answer.id}
+                  upvotes={upvotes}
+                  downvotes={downvotes}
+                  userVote={currentUserVote}
+                  onVote={voteAnswer}
                   size="sm"
-                  onClick={() => handleVote(answer.id, 1)}
-                  disabled={isPending}
-                >
-                  <ThumbsUp className="mr-1 h-4 w-4" />
-                  {upvotes}
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => handleVote(answer.id, -1)}
-                  disabled={isPending}
-                >
-                  <ThumbsDown className="mr-1 h-4 w-4" />
-                  {downvotes}
-                </Button>
+                />
               </div>
               <Button variant="outline" size="sm">
                 <MessageSquare className="mr-1 h-4 w-4" />

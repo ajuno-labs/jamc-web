@@ -38,6 +38,7 @@ export function VoteButtons({
       try {
         await onVote(itemId, value)
       } catch (error) {
+        console.error("Error voting:", error)
         toast.error("You must be logged in to vote")
       }
     })
