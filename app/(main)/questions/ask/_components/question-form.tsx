@@ -15,19 +15,14 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select"
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { AlertCircle, Loader2 } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { TagFilter } from "../../components/tag-filter"
 import { createQuestion } from "../../_actions/create-question"
 import { QuestionType, Visibility } from "@prisma/client"
 import { toast } from "sonner"
+import PostingGuideline from "./posting-guideline"
+import SimilarQuestion from "./similar-question"
 
 // Define the form schema with zod
 const questionSchema = z.object({
@@ -256,42 +251,10 @@ export function QuestionForm({ tags }: QuestionFormProps) {
 
       <div>
         {similarQuestions.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Similar Questions</CardTitle>
-              <CardDescription>
-                These questions might be related to yours. Check them out before posting!
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
-                {similarQuestions.map((question, index) => (
-                  <li key={index} className="flex items-start">
-                    <AlertCircle className="h-5 w-5 text-primary mr-2 mt-0.5 flex-shrink-0" />
-                    <a href="#" className="text-primary hover:underline">
-                      {question}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+          <SimilarQuestion similarQuestions={similarQuestions} />
         )}
         
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>Posting Guidelines</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2 text-sm">
-              <li>Be specific and clear about your question</li>
-              <li>Include all relevant details and context</li>
-              <li>Use proper formatting for code or equations</li>
-              <li>Check for similar questions before posting</li>
-              <li>Tag your question appropriately</li>
-            </ul>
-          </CardContent>
-        </Card>
+        <PostingGuideline />
       </div>
     </div>
   )
