@@ -153,7 +153,7 @@ export default function QuestionsPage() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Questions</h1>
         <Button asChild>
-          <Link href="/questions/new">Ask a Question</Link>
+          <Link href="/questions/ask">Ask a Question</Link>
         </Button>
       </div>
 
