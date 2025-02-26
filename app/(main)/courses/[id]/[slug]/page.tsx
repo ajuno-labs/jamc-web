@@ -40,14 +40,16 @@ export default async function CourseDetailPage({
 }: {
   params: { id: string, slug: string }
 }) {
-  const course = await getCourseById(params.id) as CourseWithRelations | null
+  const { id, slug } = await params
+
+  const course = await getCourseById(id) as CourseWithRelations | null
   
   if (!course) {
     notFound()
   }
   
   // Verify that the slug matches the course slug
-  if (course.slug !== params.slug) {
+  if (course.slug !== slug) {
     notFound()
   }
   
@@ -170,7 +172,7 @@ export default async function CourseDetailPage({
             <CardHeader>
               <CardTitle>Course Actions</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 flex flex-col">
+            <CardContent className="space-y-3 flex flex-col">
               <EnrollButton 
                 courseId={course.id} 
                 isEnrolled={enrollmentStatus.isEnrolled} 
