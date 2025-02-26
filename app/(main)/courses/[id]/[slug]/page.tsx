@@ -4,8 +4,8 @@ import { auth } from "@/auth"
 import { getCourseById } from "../../_actions/course-actions"
 import { checkEnrollmentStatus } from "../../_actions/enrollment-actions"
 import { CourseWithRelations } from "@/lib/types/course"
-import CourseInfo from "./_components/course-info"
-import CourseSidebar from "./_components/course-sidebar"
+import CourseInfo from "./components/course-info"
+import CourseSidebar from "./components/course-sidebar"
 
 // Generate metadata for the page
 export async function generateMetadata({
