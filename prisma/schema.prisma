@@ -37,22 +37,23 @@ enum Status {
 }
 
 model User {
-  id            String          @id() @default(cuid())
-  name          String?
-  email         String          @unique()
-  password      String?
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  Authenticator Authenticator[]
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt()
-  roles         Role[]
-  questions     Question[]
-  answers       Answer[]
-  questionVotes QuestionVote[]
-  answerVotes   AnswerVote[]
+  id             String          @id() @default(cuid())
+  name           String?
+  email          String          @unique()
+  password       String?
+  emailVerified  DateTime?
+  image          String?
+  accounts       Account[]
+  sessions       Session[]
+  Authenticator  Authenticator[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt()
+  roles          Role[]
+  questions      Question[]
+  answers        Answer[]
+  questionVotes  QuestionVote[]
+  answerVotes    AnswerVote[]
+  createdCourses Course[]        @relation("CourseCreator")
 }
 
 model Role {
@@ -133,6 +134,10 @@ model Question {
   answers     Answer[]
   tags        Tag[]
   votes       QuestionVote[]
+  courseId    String?
+  course      Course?        @relation(fields: [courseId], references: [id])
+  moduleId    String?
+  module      Module?        @relation(fields: [moduleId], references: [id])
   viewCount   Int            @default(0)
   slug        String         @unique()
   status      Status         @default(OPEN)
@@ -158,6 +163,7 @@ model Tag {
   questions   Question[]
   aiGenerated Boolean    @default(false)
   verified    Boolean    @default(false)
+  courses     Course[]
 }
 
 model Attachment {
@@ -188,4 +194,30 @@ model AnswerVote {
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([answerId, userId])
+}
+
+model Course {
+  id          String     @id() @default(cuid())
+  title       String
+  description String
+  slug        String     @unique()
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt()
+  authorId    String
+  author      User       @relation("CourseCreator", fields: [authorId], references: [id])
+  modules     Module[]
+  tags        Tag[]
+  questions   Question[]
+}
+
+model Module {
+  id        String     @id() @default(cuid())
+  title     String
+  content   String
+  order     Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt()
+  courseId  String
+  course    Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  questions Question[]
 }

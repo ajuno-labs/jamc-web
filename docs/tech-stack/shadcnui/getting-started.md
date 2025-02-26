@@ -33,6 +33,11 @@
 
 ## Theming?? need to learn tailwindcss and css first
 ## Dark mode
+## CLI
+
+- Use the CLI to add components to your project.
+
+## Monorepo
 
 
     

@@ -39,6 +39,9 @@ model User {
   answers       Answer[]
   questionVotes QuestionVote[]
   answerVotes   AnswerVote[]
+  
+  // Course relations
+  createdCourses Course[]       @relation("CourseCreator")
 }
 
 model Role {
@@ -191,6 +194,12 @@ model Question {
   tags        Tag[]
   votes       QuestionVote[]
   
+  // Course relation
+  courseId    String?
+  course      Course?     @relation(fields: [courseId], references: [id])
+  moduleId    String?
+  module      Module?     @relation(fields: [moduleId], references: [id])
+  
   // Engagement metrics
   viewCount   Int         @default(0)
   
@@ -237,6 +246,9 @@ model Tag {
   aiGenerated Boolean     @default(false)
   verified    Boolean     @default(false)
   
+  // Course relation
+  courses     Course[]
+  
   @@allow('create', auth() != null)
   @@allow('read', true)
   @@allow('update', auth().roles?[permissions?[name == UPDATE]])
@@ -281,4 +293,51 @@ model AnswerVote {
   @@allow('create,update', auth() == user)
   @@allow('read', true)
   @@allow('delete', auth() == user)
+}
+
+// Course models
+model Course {
+  id          String      @id @default(cuid())
+  title       String      @length(min: 3, max: 100)
+  description String      @length(min: 10, max: 1000)
+  slug        String      @unique
+  
+  // Metadata
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  authorId    String
+  author      User        @relation("CourseCreator", fields: [authorId], references: [id])
+  modules     Module[]
+  tags        Tag[]
+  questions   Question[]
+  
+  // Access control
+  @@allow('create', auth() != null && auth().roles?[name == "TEACHER"])
+  @@allow('read', true)
+  @@allow('update', auth() == author || auth().roles?[permissions?[name == UPDATE]])
+  @@allow('delete', auth() == author || auth().roles?[permissions?[name == DELETE]])
+}
+
+model Module {
+  id          String      @id @default(cuid())
+  title       String      @length(min: 3, max: 100)
+  content     String      @length(min: 10)
+  order       Int         // For ordering modules within a course
+  
+  // Metadata
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  courseId    String
+  course      Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  questions   Question[]
+  
+  // Access control
+  @@allow('create', auth() != null && (auth() == course.author || auth().roles?[permissions?[name == CREATE]]))
+  @@allow('read', true)
+  @@allow('update', auth() == course.author || auth().roles?[permissions?[name == UPDATE]])
+  @@allow('delete', auth() == course.author || auth().roles?[permissions?[name == DELETE]])
 }

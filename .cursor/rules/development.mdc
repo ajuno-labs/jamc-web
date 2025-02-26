@@ -19,3 +19,5 @@ globs: *.*
 - For frontend development, split the page into smaller components to increase the code clarity, readability and reusability
 - Always use `shadcn/ui` components for UI development instead pure html elements if possible.
 - Remember about Server Actions of Next.js and add "use server" directive.
+- After schema changes, remember to run necessary commands in `package.json` to rebuild the client
+- You don't have to restart the `pnpm dev` server since this can watch over changes in codebase
