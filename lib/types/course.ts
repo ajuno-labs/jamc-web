@@ -1,5 +1,14 @@
 import { Prisma } from "@prisma/client"
 
+// Type for basic module structure (for the old course structure)
+export type CourseModule = {
+  id: string
+  title: string
+  content: string
+  order: number
+  createdAt: Date
+}
+
 // Common course include object for consistent querying
 export const courseWithRelationsInclude = {
   author: {
@@ -15,18 +24,7 @@ export const courseWithRelationsInclude = {
       name: true,
     },
   },
-  modules: {
-    select: {
-      id: true,
-      title: true,
-      content: true,
-      order: true,
-      createdAt: true,
-    },
-    orderBy: {
-      order: 'asc',
-    },
-  },
+  modules: true, // Include all module fields
   questions: {
     select: {
       id: true,

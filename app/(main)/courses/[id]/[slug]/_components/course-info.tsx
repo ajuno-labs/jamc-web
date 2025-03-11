@@ -23,7 +23,7 @@ export default function CourseInfo({ course, isEnrolled }: CourseInfoProps) {
   const moduleCount = hasNewStructure 
     ? (course as CourseWithStructure).volumes.reduce((acc, vol) => 
         acc + vol.chapters.reduce((acc2, chap) => acc2 + (chap.modules?.length || 0), 0), 0)
-    : (course as CourseWithRelations).modules.length
+    : (course as CourseWithRelations).modules?.length || 0
   
   // Calculate volume and chapter counts
   const volumeCount = hasNewStructure ? (course as CourseWithStructure).volumes.length : 0

@@ -9,7 +9,7 @@ interface CourseSidebarProps {
   courseSlug: string
   isEnrolled: boolean
   isLoggedIn: boolean
-  modules: CourseModule[]
+  modules: CourseModule[] | undefined
   stats: {
     moduleCount: number
     questionCount: number
@@ -25,7 +25,7 @@ export default function CourseSidebar({
   courseSlug,
   isEnrolled,
   isLoggedIn,
-  modules,
+  modules = [],
   stats,
   hasNewStructure = false,
   volumeCount = 0,
@@ -54,7 +54,7 @@ export default function CourseSidebar({
               )}
               
               {/* For old structure with modules */}
-              {!hasNewStructure && modules.length > 0 && (
+              {!hasNewStructure && modules?.length > 0 && (
                 <Link href={`/courses/${courseId}/${courseSlug}/modules/${modules[0].id}`}>
                   <Button variant="outline" className="w-full">Continue Learning</Button>
                 </Link>

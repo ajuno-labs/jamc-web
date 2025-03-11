@@ -19,6 +19,7 @@
     - [x] Bug: first click doesn't sign in, but second click does
     - [ ] Remember me functionality
     - [ ] Refresh and access token implementation
+    - [ ] View all asked (profile) questions
 
 - [ ] Course Management (LMS)
     - [ ] Course creation and editing interface for teachers
@@ -39,6 +40,7 @@
     - [ ] Related questions
     - [ ] Ask question button in question details page
     - [ ] Anonymous Q&A mode (optional)
+    - [ ] Choose courses in a question should be selectable from courses the user has enrolled in
 
 - [ ] Integration Features
     - [ ] Linking Q&A to course content

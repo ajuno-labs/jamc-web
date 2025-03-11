@@ -251,6 +251,17 @@ export const courseWithStructureInclude = {
           title: true,
           order: true,
           slug: true,
+          modules: {
+            select: {
+              id: true,
+              title: true,
+              order: true,
+              slug: true,
+            },
+            orderBy: {
+              order: 'asc',
+            },
+          },
         },
         orderBy: {
           order: 'asc',
