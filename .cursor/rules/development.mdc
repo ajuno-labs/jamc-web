@@ -1,6 +1,7 @@
 ---
 description: Development
 globs: 
+alwaysApply: false
 ---
 ---
 description: development
@@ -22,3 +23,5 @@ globs: *.*
 - After schema changes, remember to run necessary commands in `package.json` to rebuild the client
 - You don't have to restart the `pnpm dev` server since this can watch over changes in codebase
 - `params` in Next.js 15 now is a Promise object and need to be awaited before being used.
+- Use alias for 
+- 

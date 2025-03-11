@@ -44,9 +44,9 @@ export async function getCourseWithStructure(id: string): Promise<CourseWithStru
 }
 
 /**
- * Get all volumes for a course
+ * Get volumes for a course
  */
-export async function getVolumesForCourse(courseId: string): Promise<VolumeCardProps[]> {
+export async function getVolumesForCourse(courseId: string): Promise<VolumeWithRelations[]> {
   try {
     const volumes = await prisma.volume.findMany({
       where: { courseId },
@@ -54,7 +54,7 @@ export async function getVolumesForCourse(courseId: string): Promise<VolumeCardP
       orderBy: { order: 'asc' }
     })
     
-    return volumes.map(transformVolumeToCardProps)
+    return volumes
   } catch (error) {
     console.error("Error fetching volumes:", error)
     return []
@@ -79,9 +79,9 @@ export async function getVolumeById(id: string): Promise<VolumeWithRelations | n
 }
 
 /**
- * Get all chapters for a volume
+ * Get chapters for a volume
  */
-export async function getChaptersForVolume(volumeId: string): Promise<ChapterCardProps[]> {
+export async function getChaptersForVolume(volumeId: string): Promise<ChapterWithRelations[]> {
   try {
     const chapters = await prisma.chapter.findMany({
       where: { volumeId },
@@ -89,7 +89,7 @@ export async function getChaptersForVolume(volumeId: string): Promise<ChapterCar
       orderBy: { order: 'asc' }
     })
     
-    return chapters.map(transformChapterToCardProps)
+    return chapters
   } catch (error) {
     console.error("Error fetching chapters:", error)
     return []
@@ -114,9 +114,9 @@ export async function getChapterById(id: string): Promise<ChapterWithRelations |
 }
 
 /**
- * Get all modules for a chapter
+ * Get modules for a chapter
  */
-export async function getModulesForChapter(chapterId: string): Promise<ModuleCardProps[]> {
+export async function getModulesForChapter(chapterId: string): Promise<StructuredModuleWithRelations[]> {
   try {
     const modules = await prisma.module.findMany({
       where: { chapterId },
@@ -124,7 +124,7 @@ export async function getModulesForChapter(chapterId: string): Promise<ModuleCar
       orderBy: { order: 'asc' }
     })
     
-    return modules.map(transformModuleToCardProps)
+    return modules
   } catch (error) {
     console.error("Error fetching modules:", error)
     return []
@@ -149,9 +149,9 @@ export async function getModuleById(id: string): Promise<StructuredModuleWithRel
 }
 
 /**
- * Get all lessons for a module
+ * Get lessons for a module
  */
-export async function getLessonsForModule(moduleId: string): Promise<LessonCardProps[]> {
+export async function getLessonsForModule(moduleId: string): Promise<LessonWithRelations[]> {
   try {
     const lessons = await prisma.lesson.findMany({
       where: { moduleId },
@@ -159,7 +159,7 @@ export async function getLessonsForModule(moduleId: string): Promise<LessonCardP
       orderBy: { order: 'asc' }
     })
     
-    return lessons.map(transformLessonToCardProps)
+    return lessons
   } catch (error) {
     console.error("Error fetching lessons:", error)
     return []
@@ -184,9 +184,9 @@ export async function getLessonById(id: string): Promise<LessonWithRelations | n
 }
 
 /**
- * Get all activities for a lesson
+ * Get activities for a lesson
  */
-export async function getActivitiesForLesson(lessonId: string): Promise<ActivityCardProps[]> {
+export async function getActivitiesForLesson(lessonId: string): Promise<ActivityWithRelations[]> {
   try {
     const activities = await prisma.activity.findMany({
       where: { lessonId },
@@ -194,7 +194,7 @@ export async function getActivitiesForLesson(lessonId: string): Promise<Activity
       orderBy: { order: 'asc' }
     })
     
-    return activities.map(transformActivityToCardProps)
+    return activities
   } catch (error) {
     console.error("Error fetching activities:", error)
     return []
@@ -369,5 +369,56 @@ export async function createActivity(data: {
   } catch (error) {
     console.error("Error creating activity:", error)
     throw error
+  }
+}
+
+/**
+ * Get related questions for any course component
+ */
+export async function getRelatedQuestions(params: {
+  courseId?: string
+  volumeId?: string
+  chapterId?: string
+  moduleId?: string
+  lessonId?: string
+  activityId?: string
+  limit?: number
+}) {
+  try {
+    const questions = await prisma.question.findMany({
+      where: {
+        OR: [
+          params.courseId ? { courseId: params.courseId } : {},
+          params.volumeId ? { volumeId: params.volumeId } : {},
+          params.chapterId ? { chapterId: params.chapterId } : {},
+          params.moduleId ? { moduleId: params.moduleId } : {},
+          params.lessonId ? { lessonId: params.lessonId } : {},
+          params.activityId ? { activityId: params.activityId } : {},
+        ]
+      },
+      include: {
+        author: {
+          select: {
+            name: true,
+            image: true,
+          },
+        },
+        _count: {
+          select: {
+            answers: true,
+            votes: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: params.limit || 5,
+    })
+    
+    return questions
+  } catch (error) {
+    console.error("Error fetching related questions:", error)
+    return []
   }
 } 

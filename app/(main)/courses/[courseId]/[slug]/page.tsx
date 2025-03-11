@@ -6,8 +6,6 @@ import {
   getCourseWithStructure, 
   checkEnrollmentStatus 
 } from "@/app/actions/course-actions"
-import { CourseWithRelations } from "@/lib/types/course"
-import { CourseWithStructure } from "@/lib/types/course-structure"
 import CourseInfo from "./_components/course-info"
 import CourseSidebar from "./_components/course-sidebar"
 // We'll handle the volumes display directly in the page component

@@ -20,6 +20,7 @@ import { Loader2 } from "lucide-react"
 import { TagFilter } from "../../components/tag-filter"
 import { createQuestion } from "../../_actions/create-question"
 import { QuestionType, Visibility } from "@prisma/client"
+import { QuestionContext } from "@/lib/types/question"
 import { toast } from "sonner"
 import PostingGuideline from "./posting-guideline"
 import SimilarQuestion from "./similar-question"
@@ -48,9 +49,10 @@ interface Tag {
 
 interface QuestionFormProps {
   tags: Tag[]
+  context: QuestionContext
 }
 
-export function QuestionForm({ tags }: QuestionFormProps) {
+export function QuestionForm({ tags, context }: QuestionFormProps) {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedTags, setSelectedTags] = useState<string[]>([])

@@ -2,6 +2,8 @@
 
 import { prisma } from "@/lib/db/prisma"
 import { CourseCardProps, courseWithRelationsInclude, transformCourseToCardProps } from "@/lib/types/course"
+import { auth } from "@/auth"
+import { revalidatePath } from "next/cache"
 
 /**
  * Get all courses with filtering options
@@ -151,5 +153,32 @@ export async function getTeachers(): Promise<TeacherWithCount[]> {
   } catch (error) {
     console.error("Error fetching teachers:", error)
     return []
+  }
+}
+
+export async function enrollInCourse(formData: FormData) {
+  const session = await auth()
+  if (!session?.user?.id) {
+    throw new Error("You must be logged in to enroll in a course")
+  }
+
+  const courseId = formData.get("courseId") as string
+  if (!courseId) {
+    throw new Error("Course ID is required")
+  }
+
+  try {
+    await prisma.courseEnrollment.create({
+      data: {
+        userId: session.user.id,
+        courseId,
+      },
+    })
+
+    revalidatePath(`/courses/${courseId}`)
+    return { success: true }
+  } catch (error: unknown) {
+    console.error("Failed to enroll in course:", error)
+    throw new Error("Failed to enroll in course")
   }
 } 

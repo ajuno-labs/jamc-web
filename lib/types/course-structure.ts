@@ -1,306 +1,92 @@
-import { Prisma } from "@prisma/client"
+import { Activity, Chapter, Course, Lesson, Module, Question, Volume, Prisma } from "@prisma/client"
 
 // Volume includes
 export const volumeWithRelationsInclude = {
-  course: {
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      author: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
+  course: true,
+  chapters: {
+    include: {
+      modules: {
+        include: {
+          lessons: true,
         },
       },
-    },
-  },
-  chapters: {
-    select: {
-      id: true,
-      title: true,
-      order: true,
-      slug: true,
-    },
-    orderBy: {
-      order: 'asc',
     },
   },
 } satisfies Prisma.VolumeInclude
 
 // Volume type with relations
-export type VolumeWithRelations = Prisma.VolumeGetPayload<{
-  include: typeof volumeWithRelationsInclude
-}>
+export type VolumeWithRelations = Volume & {
+  course: Course
+  chapters: ChapterWithRelations[]
+  questions: Question[]
+}
 
 // Chapter includes
 export const chapterWithRelationsInclude = {
-  volume: {
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      course: {
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-        },
-      },
-    },
-  },
+  volume: true,
   modules: {
-    select: {
-      id: true,
-      title: true,
-      order: true,
-      slug: true,
-    },
-    orderBy: {
-      order: 'asc',
+    include: {
+      lessons: true,
     },
   },
 } satisfies Prisma.ChapterInclude
 
 // Chapter type with relations
-export type ChapterWithRelations = Prisma.ChapterGetPayload<{
-  include: typeof chapterWithRelationsInclude
-}>
+export type ChapterWithRelations = Chapter & {
+  volume: VolumeWithRelations
+  modules: StructuredModuleWithRelations[]
+  questions: Question[]
+}
 
 // Module includes for the new structure
 export const structuredModuleWithRelationsInclude = {
-  chapter: {
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      volume: {
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          course: {
-            select: {
-              id: true,
-              title: true,
-              slug: true,
-            },
-          },
-        },
-      },
-    },
-  },
-  lessons: {
-    select: {
-      id: true,
-      title: true,
-      order: true,
-      slug: true,
-    },
-    orderBy: {
-      order: 'asc',
-    },
-  },
-  questions: {
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      createdAt: true,
-      author: {
-        select: {
-          name: true,
-        },
-      },
-      _count: {
-        select: {
-          answers: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-    take: 3,
-  },
+  chapter: true,
+  lessons: true,
 } satisfies Prisma.ModuleInclude
 
 // Module type with relations for the new structure
-export type StructuredModuleWithRelations = Prisma.ModuleGetPayload<{
-  include: typeof structuredModuleWithRelationsInclude
-}>
+export type StructuredModuleWithRelations = Module & {
+  chapter: ChapterWithRelations
+  lessons: LessonWithRelations[]
+  questions: Question[]
+}
 
 // Lesson includes
 export const lessonWithRelationsInclude = {
-  module: {
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      chapter: {
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          volume: {
-            select: {
-              id: true,
-              title: true,
-              slug: true,
-              course: {
-                select: {
-                  id: true,
-                  title: true,
-                  slug: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
-  activities: {
-    select: {
-      id: true,
-      title: true,
-      order: true,
-      slug: true,
-    },
-    orderBy: {
-      order: 'asc',
-    },
-  },
+  module: true,
+  activities: true,
 } satisfies Prisma.LessonInclude
 
 // Lesson type with relations
-export type LessonWithRelations = Prisma.LessonGetPayload<{
-  include: typeof lessonWithRelationsInclude
-}>
+export type LessonWithRelations = Lesson & {
+  module: StructuredModuleWithRelations
+  activities: ActivityWithRelations[]
+  questions: Question[]
+}
 
 // Activity includes
 export const activityWithRelationsInclude = {
-  lesson: {
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      module: {
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          chapter: {
-            select: {
-              id: true,
-              title: true,
-              slug: true,
-              volume: {
-                select: {
-                  id: true,
-                  title: true,
-                  slug: true,
-                  course: {
-                    select: {
-                      id: true,
-                      title: true,
-                      slug: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
+  lesson: true,
 } satisfies Prisma.ActivityInclude
 
 // Activity type with relations
-export type ActivityWithRelations = Prisma.ActivityGetPayload<{
-  include: typeof activityWithRelationsInclude
-}>
+export type ActivityWithRelations = Activity & {
+  lesson: LessonWithRelations
+  questions: Question[]
+}
 
 // Update the course include to include volumes
 export const courseWithStructureInclude = {
-  author: {
-    select: {
-      id: true,
-      name: true,
-      image: true,
-    },
-  },
-  tags: {
-    select: {
-      id: true,
-      name: true,
-    },
-  },
   volumes: {
-    select: {
-      id: true,
-      title: true,
-      overview: true,
-      order: true,
-      slug: true,
-      chapters: {
-        select: {
-          id: true,
-          title: true,
-          order: true,
-          slug: true,
-          modules: {
-            select: {
-              id: true,
-              title: true,
-              order: true,
-              slug: true,
-            },
-            orderBy: {
-              order: 'asc',
-            },
-          },
-        },
-        orderBy: {
-          order: 'asc',
-        },
-      },
-    },
-    orderBy: {
-      order: 'asc',
-    },
-  },
-  questions: {
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      createdAt: true,
-      author: {
-        select: {
-          name: true,
-          image: true,
-        },
-      },
-      _count: {
-        select: {
-          answers: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-    take: 5,
+    include: volumeWithRelationsInclude,
   },
 } satisfies Prisma.CourseInclude
 
 // Course type with structure
-export type CourseWithStructure = Prisma.CourseGetPayload<{
-  include: typeof courseWithStructureInclude
-}>
+export type CourseWithStructure = Course & {
+  volumes: VolumeWithRelations[]
+  questions: Question[]
+}
 
 // Types for UI components
 export type VolumeCardProps = {
@@ -476,4 +262,6 @@ export function transformActivityToCardProps(activity: ActivityWithRelations): A
     courseTitle: activity.lesson.module.chapter?.volume.course.title || '',
     courseSlug: activity.lesson.module.chapter?.volume.course.slug || '',
   }
-} 
+}
+
+export type CourseStructureType = 'course' | 'volume' | 'chapter' | 'module' | 'lesson' | 'activity' 

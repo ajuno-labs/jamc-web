@@ -42,6 +42,7 @@ model User {
   
   // Course relations
   createdCourses Course[]       @relation("CourseCreator")
+  enrolledCourses CourseEnrollment[]
 }
 
 model Role {
@@ -194,11 +195,19 @@ model Question {
   tags        Tag[]
   votes       QuestionVote[]
   
-  // Course relation
+  // Course structure relations
   courseId    String?
   course      Course?     @relation(fields: [courseId], references: [id])
+  volumeId    String?
+  volume      Volume?     @relation(fields: [volumeId], references: [id])
+  chapterId   String?
+  chapter     Chapter?    @relation(fields: [chapterId], references: [id])
   moduleId    String?
   module      Module?     @relation(fields: [moduleId], references: [id])
+  lessonId    String?
+  lesson      Lesson?     @relation(fields: [lessonId], references: [id])
+  activityId  String?
+  activity    Activity?   @relation(fields: [activityId], references: [id])
   
   // Engagement metrics
   viewCount   Int         @default(0)
@@ -211,6 +220,14 @@ model Question {
 
   slug        String      @unique
   status      Status      @default(OPEN)
+  
+  // Add reverse relations to course components for easy querying
+  @@index([courseId])
+  @@index([volumeId])
+  @@index([chapterId])
+  @@index([moduleId])
+  @@index([lessonId])
+  @@index([activityId])
 }
 
 model Answer {
@@ -313,12 +330,33 @@ model Course {
   modules     Module[]    // Keep for backward compatibility
   tags        Tag[]
   questions   Question[]
+  enrollments CourseEnrollment[]
   
   // Access control
   @@allow('create', auth() != null && auth().roles?[name == "TEACHER"])
   @@allow('read', true)
   @@allow('update', auth() == author || auth().roles?[permissions?[name == UPDATE]])
   @@allow('delete', auth() == author || auth().roles?[permissions?[name == DELETE]])
+}
+
+model CourseEnrollment {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Unique constraint to prevent duplicate enrollments
+  @@unique([userId, courseId])
+  
+  // Access control
+  @@allow('create', auth() == user)
+  @@allow('read', auth() == user || auth() == course.author)
+  @@allow('delete', auth() == user || auth() == course.author)
 }
 
 // New model for Volume (e.g., "Tập 1", "Tập 2")
@@ -337,6 +375,7 @@ model Volume {
   courseId    String
   course      Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
   chapters    Chapter[]   // Relation to chapters
+  questions   Question[]  // Questions linked to this volume
   
   // Unique constraint for slug within a course
   @@unique([courseId, slug])
@@ -365,6 +404,7 @@ model Chapter {
   volumeId    String
   volume      Volume      @relation(fields: [volumeId], references: [id], onDelete: Cascade)
   modules     Module[]    // Relation to modules
+  questions   Question[]  // Questions linked to this chapter
   
   // Unique constraint for slug within a volume
   @@unique([volumeId, slug])
@@ -392,7 +432,7 @@ model Module {
   course      Course?     @relation(fields: [courseId], references: [id], onDelete: Cascade)
   chapterId   String?     // New optional relation to chapter
   chapter     Chapter?    @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  questions   Question[]
+  questions   Question[]  // Questions linked to this module
   lessons     Lesson[]    // New relation to lessons
   
   // Unique constraint for slug within a course or chapter
@@ -423,6 +463,7 @@ model Lesson {
   moduleId    String
   module      Module      @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   activities  Activity[]  // Relation to activities
+  questions   Question[]  // Questions linked to this lesson
   
   // Unique constraint for slug within a module
   @@unique([moduleId, slug])
@@ -451,6 +492,7 @@ model Activity {
   // Relations
   lessonId    String
   lesson      Lesson      @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  questions   Question[]  // Questions linked to this activity
   
   // Unique constraint for slug within a lesson
   @@unique([lessonId, slug])
