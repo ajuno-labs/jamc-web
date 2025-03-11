@@ -15,6 +15,9 @@ interface CourseSidebarProps {
     questionCount: number
     createdAt: Date
   }
+  hasNewStructure?: boolean
+  volumeCount?: number
+  chapterCount?: number
 }
 
 export default function CourseSidebar({
@@ -23,7 +26,10 @@ export default function CourseSidebar({
   isEnrolled,
   isLoggedIn,
   modules,
-  stats
+  stats,
+  hasNewStructure = false,
+  volumeCount = 0,
+  chapterCount = 0
 }: CourseSidebarProps) {
   return (
     <div>
@@ -38,10 +44,22 @@ export default function CourseSidebar({
             isLoggedIn={isLoggedIn}
           />
           
-          {isEnrolled && modules.length > 0 && (
-            <Link href={`/courses/${courseId}/${courseSlug}/modules/${modules[0].id}`}>
-              <Button variant="outline" className="w-full">Continue Learning</Button>
-            </Link>
+          {isEnrolled && (
+            <>
+              {/* For new structure with volumes */}
+              {hasNewStructure && volumeCount > 0 && (
+                <Link href={`/courses/${courseId}/${courseSlug}/volumes`}>
+                  <Button variant="outline" className="w-full">Continue Learning</Button>
+                </Link>
+              )}
+              
+              {/* For old structure with modules */}
+              {!hasNewStructure && modules.length > 0 && (
+                <Link href={`/courses/${courseId}/${courseSlug}/modules/${modules[0].id}`}>
+                  <Button variant="outline" className="w-full">Continue Learning</Button>
+                </Link>
+              )}
+            </>
           )}
           
           <Link href={`/questions/ask?courseId=${courseId}`}>
@@ -55,6 +73,18 @@ export default function CourseSidebar({
           <CardTitle>Course Stats</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          {hasNewStructure && (
+            <>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Volumes:</span>
+                <span className="font-medium">{volumeCount}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Chapters:</span>
+                <span className="font-medium">{chapterCount}</span>
+              </div>
+            </>
+          )}
           <div className="flex justify-between">
             <span className="text-muted-foreground">Modules:</span>
             <span className="font-medium">{stats.moduleCount}</span>

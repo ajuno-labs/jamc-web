@@ -35,6 +35,7 @@ This project focuses on developing a **math-oriented Q&A platform** that integra
 - Questions in the Q&A system are **linked to specific course content**.
 - Course pages **display related discussions** from the Q&A system.
 - **Bookmarking feature** helps students easily navigate back to important lessons.
+- Teacher dashboard to track students progress.
 
 ### **7. User Management**
 - **Registration and login** with role-based permissions (Teacher, Student).

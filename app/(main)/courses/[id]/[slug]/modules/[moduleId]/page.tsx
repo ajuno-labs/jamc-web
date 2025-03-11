@@ -4,11 +4,11 @@ import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
 import { getModuleById } from "../../../../_actions/module-actions"
 import { auth } from "@/auth"
-import { ModuleNavigation } from "./components/module-navigation"
-import { ModuleActions } from "./components/module-actions"
-import { ModuleContent } from "./components/module-content"
-import { ModuleNavigationButtons } from "./components/module-navigation-buttons"
-import { RelatedQuestions } from "./components/related-questions"
+import { ModuleNavigation } from "./_components/module-navigation"
+import { ModuleActions } from "./_components/module-actions"
+import { ModuleContent } from "./_components/module-content"
+import { ModuleNavigationButtons } from "./_components/module-navigation-buttons"
+import { RelatedQuestions } from "./_components/related-questions"
 
 // Generate metadata for the page
 export async function generateMetadata({

@@ -309,7 +309,8 @@ model Course {
   // Relations
   authorId    String
   author      User        @relation("CourseCreator", fields: [authorId], references: [id])
-  modules     Module[]
+  volumes     Volume[]    // New relation to volumes
+  modules     Module[]    // Keep for backward compatibility
   tags        Tag[]
   questions   Question[]
   
@@ -320,11 +321,13 @@ model Course {
   @@allow('delete', auth() == author || auth().roles?[permissions?[name == DELETE]])
 }
 
-model Module {
+// New model for Volume (e.g., "Tập 1", "Tập 2")
+model Volume {
   id          String      @id @default(cuid())
-  title       String      @length(min: 3, max: 100)
-  content     String      @length(min: 10)
-  order       Int         // For ordering modules within a course
+  title       String      @length(min: 1, max: 100)
+  overview    String?     @length(min: 10, max: 1000)
+  order       Int         // For ordering volumes within a course
+  slug        String      
   
   // Metadata
   createdAt   DateTime    @default(now())
@@ -333,11 +336,128 @@ model Module {
   // Relations
   courseId    String
   course      Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  questions   Question[]
+  chapters    Chapter[]   // Relation to chapters
+  
+  // Unique constraint for slug within a course
+  @@unique([courseId, slug])
   
   // Access control
   @@allow('create', auth() != null && (auth() == course.author || auth().roles?[permissions?[name == CREATE]]))
   @@allow('read', true)
   @@allow('update', auth() == course.author || auth().roles?[permissions?[name == UPDATE]])
   @@allow('delete', auth() == course.author || auth().roles?[permissions?[name == DELETE]])
+}
+
+// New model for Chapter
+model Chapter {
+  id          String      @id @default(cuid())
+  title       String      @length(min: 1, max: 100)
+  introduction String?    @length(min: 10, max: 2000)
+  summary     String?     @length(min: 10, max: 2000)
+  order       Int         // For ordering chapters within a volume
+  slug        String      
+  
+  // Metadata
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  volumeId    String
+  volume      Volume      @relation(fields: [volumeId], references: [id], onDelete: Cascade)
+  modules     Module[]    // Relation to modules
+  
+  // Unique constraint for slug within a volume
+  @@unique([volumeId, slug])
+  
+  // Access control
+  @@allow('create', auth() != null && (auth() == volume.course.author || auth().roles?[permissions?[name == CREATE]]))
+  @@allow('read', true)
+  @@allow('update', auth() == volume.course.author || auth().roles?[permissions?[name == UPDATE]])
+  @@allow('delete', auth() == volume.course.author || auth().roles?[permissions?[name == DELETE]])
+}
+
+model Module {
+  id          String      @id @default(cuid())
+  title       String      @length(min: 3, max: 100)
+  content     String      @length(min: 10)
+  order       Int         // For ordering modules within a course or chapter
+  slug        String      
+  
+  // Metadata
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  courseId    String?     // Optional for backward compatibility
+  course      Course?     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  chapterId   String?     // New optional relation to chapter
+  chapter     Chapter?    @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  questions   Question[]
+  lessons     Lesson[]    // New relation to lessons
+  
+  // Unique constraint for slug within a course or chapter
+  @@unique([courseId, slug], name: "courseModuleSlug")
+  @@unique([chapterId, slug], name: "chapterModuleSlug")
+  
+  // Access control
+  @@allow('create', auth() != null)
+  @@allow('read', true)
+  @@allow('update', auth() != null && auth().roles?[permissions?[name == UPDATE]])
+  @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
+}
+
+// New model for Lesson
+model Lesson {
+  id          String      @id @default(cuid())
+  title       String      @length(min: 1, max: 100)
+  theory      String      @length(min: 10)
+  examples    String?     @length(min: 10)
+  order       Int         // For ordering lessons within a module
+  slug        String      
+  
+  // Metadata
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  moduleId    String
+  module      Module      @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  activities  Activity[]  // Relation to activities
+  
+  // Unique constraint for slug within a module
+  @@unique([moduleId, slug])
+  
+  // Access control
+  @@allow('create', auth() != null)
+  @@allow('read', true)
+  @@allow('update', auth() != null && auth().roles?[permissions?[name == UPDATE]])
+  @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
+}
+
+// New model for Activity/Problem
+model Activity {
+  id          String      @id @default(cuid())
+  title       String      @length(min: 1, max: 100)
+  description String      @length(min: 10)
+  problemSet  String?     @length(min: 10)
+  hints       String?     @length(min: 10)
+  order       Int         // For ordering activities within a lesson
+  slug        String      
+  
+  // Metadata
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  lessonId    String
+  lesson      Lesson      @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  
+  // Unique constraint for slug within a lesson
+  @@unique([lessonId, slug])
+  
+  // Access control
+  @@allow('create', auth() != null)
+  @@allow('read', true)
+  @@allow('update', auth() != null && auth().roles?[permissions?[name == UPDATE]])
+  @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
 }

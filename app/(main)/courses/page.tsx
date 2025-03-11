@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { getCourses, getTopics, getTeachers } from "./_actions/course-actions"
-import { CourseCard, CourseCardProps } from "./components/course-card"
-import { CourseFilters, Topic, Teacher } from "./components/course-filters"
-import { CourseSkeleton } from "./components/course-skeleton"
+import { CourseCard, CourseCardProps } from "./_components/course-card"
+import { CourseFilters, Topic, Teacher } from "./_components/course-filters"
+import { CourseSkeleton } from "./_components/course-skeleton"
 
 export default function CoursesPage() {
   const [searchTerm, setSearchTerm] = useState("")

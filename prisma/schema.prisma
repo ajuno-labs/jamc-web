@@ -205,9 +205,41 @@ model Course {
   updatedAt   DateTime   @updatedAt()
   authorId    String
   author      User       @relation("CourseCreator", fields: [authorId], references: [id])
+  volumes     Volume[]
   modules     Module[]
   tags        Tag[]
   questions   Question[]
+}
+
+model Volume {
+  id        String    @id() @default(cuid())
+  title     String
+  overview  String?
+  order     Int
+  slug      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt()
+  courseId  String
+  course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  chapters  Chapter[]
+
+  @@unique([courseId, slug])
+}
+
+model Chapter {
+  id           String   @id() @default(cuid())
+  title        String
+  introduction String?
+  summary      String?
+  order        Int
+  slug         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt()
+  volumeId     String
+  volume       Volume   @relation(fields: [volumeId], references: [id], onDelete: Cascade)
+  modules      Module[]
+
+  @@unique([volumeId, slug])
 }
 
 model Module {
@@ -215,9 +247,48 @@ model Module {
   title     String
   content   String
   order     Int
+  slug      String
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt()
-  courseId  String
-  course    Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId  String?
+  course    Course?    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  chapterId String?
+  chapter   Chapter?   @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   questions Question[]
+  lessons   Lesson[]
+
+  @@unique([courseId, slug], name: "courseModuleSlug")
+  @@unique([chapterId, slug], name: "chapterModuleSlug")
+}
+
+model Lesson {
+  id         String     @id() @default(cuid())
+  title      String
+  theory     String
+  examples   String?
+  order      Int
+  slug       String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt()
+  moduleId   String
+  module     Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  activities Activity[]
+
+  @@unique([moduleId, slug])
+}
+
+model Activity {
+  id          String   @id() @default(cuid())
+  title       String
+  description String
+  problemSet  String?
+  hints       String?
+  order       Int
+  slug        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt()
+  lessonId    String
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([lessonId, slug])
 }
