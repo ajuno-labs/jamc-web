@@ -1,9 +1,9 @@
 import { auth } from "@/auth"
 import { prisma } from "@/lib/db/prisma"
 import { notFound } from "next/navigation"
-import { ChapterHeader } from "../../../../_components/chapter-header"
-import { ChapterContent } from "../../../../_components/chapter-content"
-import { CourseRelatedQuestions } from "../../../../_components/course-related-questions"
+import { ChapterHeader } from "./_components/chapter-header"
+import { ChapterContent } from "./_components/chapter-content"
+import { CourseRelatedQuestions } from "../../../../../_components/course-related-questions"
 
 interface ChapterPageProps {
   params: {
@@ -36,11 +36,7 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
       },
       modules: {
         include: {
-          lessons: {
-            include: {
-              activities: true,
-            },
-          },
+          lessons: true,
         },
         orderBy: {
           order: "asc",
@@ -61,6 +57,7 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
         <div className="lg:col-span-2 space-y-6">
           <ChapterHeader
             title={chapter.title}
+            introduction={chapter.introduction}
             courseId={chapter.volume.courseId}
             volumeId={chapter.volumeId}
           />

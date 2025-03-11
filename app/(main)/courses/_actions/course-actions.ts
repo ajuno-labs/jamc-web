@@ -4,6 +4,57 @@ import { prisma } from "@/lib/db/prisma"
 import { CourseCardProps, courseWithRelationsInclude, transformCourseToCardProps } from "@/lib/types/course"
 import { auth } from "@/auth"
 import { revalidatePath } from "next/cache"
+import { Prisma } from "@prisma/client"
+
+export type CourseWithStructure = Prisma.CourseGetPayload<{
+  include: {
+    volumes: {
+      include: {
+        chapters: {
+          include: {
+            modules: {
+              include: {
+                lessons: true
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}>
+
+export type CourseWithBasicRelations = Prisma.CourseGetPayload<{
+  include: {
+    author: {
+      select: {
+        id: true
+        name: true
+        image: true
+      }
+    }
+    tags: {
+      select: {
+        id: true
+        name: true
+      }
+    }
+    volumes: {
+      include: {
+        _count: {
+          select: {
+            chapters: true
+          }
+        }
+      }
+    }
+    enrollments: {
+      select: {
+        userId: true
+      }
+    }
+  }
+}>
 
 /**
  * Get all courses with filtering options
@@ -17,7 +68,7 @@ export async function getCourses(options?: {
     const { searchTerm, topic, teacherId } = options || {}
     
     // Build the where clause based on filter options
-    const where: any = {}
+    const where: Prisma.CourseWhereInput = {}
     
     if (searchTerm) {
       where.OR = [
@@ -58,11 +109,48 @@ export async function getCourses(options?: {
 /**
  * Get a single course by ID
  */
-export async function getCourseById(id: string) {
+export async function getCourseById(id: string): Promise<CourseWithBasicRelations | null> {
+  if (!id) {
+    throw new Error("Course ID is required")
+  }
+
   try {
     const course = await prisma.course.findUnique({
-      where: { id },
-      include: courseWithRelationsInclude
+      where: { 
+        id: id,
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+        tags: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        volumes: {
+          include: {
+            _count: {
+              select: {
+                chapters: true
+              }
+            },
+          },
+          orderBy: {
+            order: "asc",
+          },
+        },
+        enrollments: {
+          select: {
+            userId: true,
+          },
+        },
+      },
     })
     
     return course
@@ -180,5 +268,55 @@ export async function enrollInCourse(formData: FormData) {
   } catch (error: unknown) {
     console.error("Failed to enroll in course:", error)
     throw new Error("Failed to enroll in course")
+  }
+}
+
+/**
+ * Get a course with its complete structure (volumes, chapters, modules, lessons)
+ */
+export async function getCourseWithStructure(id: string): Promise<CourseWithStructure | null> {
+  if (!id) {
+    throw new Error("Course ID is required")
+  }
+
+  try {
+    const course = await prisma.course.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        volumes: {
+          orderBy: {
+            order: 'asc',
+          },
+          include: {
+            chapters: {
+              orderBy: {
+                order: 'asc',
+              },
+              include: {
+                modules: {
+                  orderBy: {
+                    order: 'asc',
+                  },
+                  include: {
+                    lessons: {
+                      orderBy: {
+                        order: 'asc',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+    
+    return course
+  } catch (error) {
+    console.error("Error fetching course structure:", error)
+    return null
   }
 } 

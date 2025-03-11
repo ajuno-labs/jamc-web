@@ -337,6 +337,9 @@ model Course {
   @@allow('read', true)
   @@allow('update', auth() == author || auth().roles?[permissions?[name == UPDATE]])
   @@allow('delete', auth() == author || auth().roles?[permissions?[name == DELETE]])
+  
+  // Add index for better query performance
+  @@index([authorId])
 }
 
 model CourseEnrollment {

@@ -1,9 +1,9 @@
 import { auth } from "@/auth"
 import { prisma } from "@/lib/db/prisma"
 import { notFound } from "next/navigation"
-import { ActivityHeader } from "../../../../../../../_components/activity-header"
-import { ActivityContent } from "../../../../../../../_components/activity-content"
-import { CourseRelatedQuestions } from "../../../../../../../_components/course-related-questions"
+import { ActivityHeader } from "@/components/activity-header"
+import { ActivityContent } from "@/components/activity-content"
+import { CourseRelatedQuestions } from "@/components/course-related-questions"
 
 interface ActivityPageProps {
   params: {
@@ -52,7 +52,7 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
     },
   })
 
-  if (!activity) {
+  if (!activity || !activity.lesson.module.chapter) {
     notFound()
   }
 
@@ -64,31 +64,31 @@ export default async function ActivityPage({ params }: ActivityPageProps) {
         <div className="lg:col-span-2 space-y-6">
           <ActivityHeader
             title={activity.title}
-            courseId={activity.lesson.module.chapter.volume.courseId}
-            volumeId={activity.lesson.module.chapter.volumeId}
-            chapterId={activity.lesson.module.chapterId}
-            moduleId={activity.lesson.moduleId}
-            lessonId={activity.lessonId}
+            courseId={activity.lesson.module.chapter.volume.course.id}
+            volumeId={activity.lesson.module.chapter.volume.id}
+            chapterId={activity.lesson.module.chapter.id}
+            moduleId={activity.lesson.module.id}
+            lessonId={activity.lesson.id}
           />
           <ActivityContent
-            content={activity.content}
-            type={activity.type}
-            courseId={activity.lesson.module.chapter.volume.courseId}
-            volumeId={activity.lesson.module.chapter.volumeId}
-            chapterId={activity.lesson.module.chapterId}
-            moduleId={activity.lesson.moduleId}
-            lessonId={activity.lessonId}
+            content={activity.description || ""}
+            type={activity.problemSet ? "Problem Set" : "Theory"}
+            courseId={activity.lesson.module.chapter.volume.course.id}
+            volumeId={activity.lesson.module.chapter.volume.id}
+            chapterId={activity.lesson.module.chapter.id}
+            moduleId={activity.lesson.module.id}
+            lessonId={activity.lesson.id}
             activityId={activity.id}
             isEnrolled={isEnrolled}
           />
         </div>
         <div className="space-y-6">
           <CourseRelatedQuestions
-            courseId={activity.lesson.module.chapter.volume.courseId}
-            volumeId={activity.lesson.module.chapter.volumeId}
-            chapterId={activity.lesson.module.chapterId}
-            moduleId={activity.lesson.moduleId}
-            lessonId={activity.lessonId}
+            courseId={activity.lesson.module.chapter.volume.course.id}
+            volumeId={activity.lesson.module.chapter.volume.id}
+            chapterId={activity.lesson.module.chapter.id}
+            moduleId={activity.lesson.module.id}
+            lessonId={activity.lesson.id}
             activityId={activity.id}
           />
         </div>

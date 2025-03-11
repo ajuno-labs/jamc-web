@@ -1,9 +1,9 @@
 import { auth } from "@/auth"
 import { prisma } from "@/lib/db/prisma"
 import { notFound } from "next/navigation"
-import { LessonHeader } from "../../../../../../_components/lesson-header"
-import { LessonContent } from "../../../../../../_components/lesson-content"
-import { CourseRelatedQuestions } from "../../../../../../_components/course-related-questions"
+import { LessonHeader } from "@/components/lesson-header"
+import { LessonContent } from "@/components/lesson-content"
+import { CourseRelatedQuestions } from "@/components/course-related-questions"
 
 interface LessonPageProps {
   params: {
@@ -56,6 +56,14 @@ export default async function LessonPage({ params }: LessonPageProps) {
     notFound()
   }
 
+  if (!lesson.module || !lesson.module.chapter || !lesson.module.chapter.volume || !lesson.module.chapter.volume.course) {
+    notFound()
+  }
+
+  const courseId = lesson.module.chapter.volume.course.id
+  const volumeId = lesson.module.chapter.volume.id
+  const chapterId = lesson.module.chapter.id
+  const moduleId = lesson.module.id
   const isEnrolled = lesson.module.chapter.volume.course.enrollments.length > 0
 
   return (
@@ -64,28 +72,29 @@ export default async function LessonPage({ params }: LessonPageProps) {
         <div className="lg:col-span-2 space-y-6">
           <LessonHeader
             title={lesson.title}
-            courseId={lesson.module.chapter.volume.courseId}
-            volumeId={lesson.module.chapter.volumeId}
-            chapterId={lesson.module.chapterId}
-            moduleId={lesson.moduleId}
+            courseId={courseId}
+            volumeId={volumeId}
+            chapterId={chapterId}
+            moduleId={moduleId}
           />
           <LessonContent
             activities={lesson.activities}
-            courseId={lesson.module.chapter.volume.courseId}
-            volumeId={lesson.module.chapter.volumeId}
-            chapterId={lesson.module.chapterId}
-            moduleId={lesson.moduleId}
+            courseId={courseId}
+            volumeId={volumeId}
+            chapterId={chapterId}
+            moduleId={moduleId}
             lessonId={lesson.id}
             isEnrolled={isEnrolled}
           />
         </div>
         <div className="space-y-6">
           <CourseRelatedQuestions
-            courseId={lesson.module.chapter.volume.courseId}
-            volumeId={lesson.module.chapter.volumeId}
-            chapterId={lesson.module.chapterId}
-            moduleId={lesson.moduleId}
+            courseId={courseId}
+            volumeId={volumeId}
+            chapterId={chapterId}
+            moduleId={moduleId}
             lessonId={lesson.id}
+            activityId={null}
           />
         </div>
       </div>

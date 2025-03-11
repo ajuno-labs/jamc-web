@@ -226,6 +226,8 @@ model Course {
   tags        Tag[]
   questions   Question[]
   enrollments CourseEnrollment[]
+
+  @@index([authorId])
 }
 
 model CourseEnrollment {

@@ -1,54 +1,52 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { UserAvatar } from "@/components/user-avatar"
+import { UserAvatar } from "./user-avatar"
 import { enrollInCourse } from "../_actions/course-actions"
 
 interface CourseHeaderProps {
+  courseId: string
   title: string
   description: string
   author: {
     id: string
-    name: string | null
+    name: string
     image: string | null
   }
   tags: {
     id: string
     name: string
   }[]
-  isEnrolled: boolean
-  courseId: string
-  userId: string | undefined
+  userId?: string | null
+  isEnrolled?: boolean
 }
 
 export function CourseHeader({
+  courseId,
   title,
   description,
   author,
   tags,
-  isEnrolled,
-  courseId,
   userId,
+  isEnrolled,
 }: CourseHeaderProps) {
+  const handleEnroll = async (formData: FormData) => {
+    await enrollInCourse(formData)
+  }
+
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <UserAvatar
-              name={author.name || "Unknown"}
-              image={author.image}
-              className="h-10 w-10"
-            />
+          <div className="flex items-center space-x-4">
+            <UserAvatar name={author.name} image={author.image} />
             <div>
-              <CardTitle className="text-2xl">{title}</CardTitle>
-              <CardDescription>
-                By {author.name || "Unknown"}
-              </CardDescription>
+              <CardTitle>{title}</CardTitle>
+              <CardDescription>by {author.name}</CardDescription>
             </div>
           </div>
           {userId && !isEnrolled && (
-            <form action={enrollInCourse}>
+            <form action={handleEnroll}>
               <input type="hidden" name="courseId" value={courseId} />
               <Button type="submit">Enroll Now</Button>
             </form>
@@ -56,10 +54,10 @@ export function CourseHeader({
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground mb-4">{description}</p>
+        <p className="mb-4">{description}</p>
         <div className="flex flex-wrap gap-2">
           {tags.map((tag) => (
-            <Badge key={tag.id} variant="outline">
+            <Badge key={tag.id} variant="secondary">
               {tag.name}
             </Badge>
           ))}
