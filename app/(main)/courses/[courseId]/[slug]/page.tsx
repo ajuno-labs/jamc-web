@@ -14,9 +14,9 @@ import CourseSidebar from "./_components/course-sidebar"
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string, slug: string }
+  params: { courseId: string, slug: string }
 }): Promise<Metadata> {
-  const course = await getCourseById(params.id)
+  const course = await getCourseById(params.courseId)
   
   if (!course) {
     return {
@@ -34,15 +34,15 @@ export async function generateMetadata({
 export default async function CourseDetailPage({
   params,
 }: {
-  params: { id: string, slug: string }
+  params: { courseId: string, slug: string }
 }) {
-  const { id, slug } = params
+  const { courseId, slug } = params
 
   // Try to get the course with the new structure first
-  const courseWithStructure = await getCourseWithStructure(id)
+  const courseWithStructure = await getCourseWithStructure(courseId)
   
   // If not found, try the old structure
-  const course = courseWithStructure || await getCourseById(id)
+  const course = courseWithStructure || await getCourseById(courseId)
   
   if (!course) {
     notFound()
@@ -73,6 +73,9 @@ export default async function CourseDetailPage({
     // So we'll just use 0 or another placeholder value
     moduleCount = 0;
   }
+
+  // Calculate question count safely
+  const questionCount = course.questions?.length ?? 0
   
   return (
     <div className="container mx-auto px-4 py-8">
@@ -110,7 +113,7 @@ export default async function CourseDetailPage({
                               <li key={chapter.id} className="flex items-center gap-2">
                                 <span className="text-muted-foreground">→</span>
                                 <a 
-                                  href={`/courses/${course.id}/${course.slug}/volumes/${volume.id}/${volume.slug}/chapters/${chapter.id}/${chapter.slug}`}
+                                  href={`/courses/${course.id}/${course.slug}/volumes/${volume.id}/chapters/${chapter.id}`}
                                   className="text-sm hover:text-primary transition-colors"
                                 >
                                   {chapter.title}
@@ -137,7 +140,7 @@ export default async function CourseDetailPage({
             modules={!hasNewStructure && 'modules' in course ? course.modules : []}
             stats={{
               moduleCount,
-              questionCount: course.questions.length,
+              questionCount,
               createdAt: new Date(course.createdAt)
             }}
             hasNewStructure={hasNewStructure}

@@ -20,7 +20,6 @@ export default async function VolumePage({ params }: VolumePageProps) {
           <VolumeHeader
             title={volume.title}
             overview={volume.overview}
-            courseId={volume.courseId}
           />
           <VolumeContent
             chapters={volume.chapters}

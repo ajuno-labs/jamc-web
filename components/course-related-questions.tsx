@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 interface CourseRelatedQuestionsProps {
   courseId: string
   volumeId: string
-  chapterId: string
-  moduleId: string
-  lessonId: string
+  chapterId?: string
+  moduleId?: string
+  lessonId?: string
   activityId?: string | null
 }
 

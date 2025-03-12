@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db/prisma"
 import { notFound } from "next/navigation"
 import { ChapterHeader } from "./_components/chapter-header"
 import { ChapterContent } from "./_components/chapter-content"
-import { CourseRelatedQuestions } from "../../../../../_components/course-related-questions"
+import { CourseRelatedQuestions } from "@/components/course-related-questions"
 
 interface ChapterPageProps {
   params: {

@@ -33,7 +33,7 @@ export default function CourseVolumes({ volumes, courseId, courseSlug }: CourseV
               <CardTitle className="flex items-center gap-2">
                 <BookOpen className="h-5 w-5 text-primary" />
                 <Link 
-                  href={`/courses/${courseId}/${courseSlug}/volumes/${volume.id}/${volume.slug}`}
+                  href={`/courses/${courseId}/${courseSlug}/volumes/${volume.id}`}
                   className="hover:text-primary transition-colors"
                 >
                   {volume.title}

@@ -15,9 +15,14 @@ interface CourseInfoProps {
   isEnrolled: boolean
 }
 
+// Type guard to check if course has the old structure
+function isOldStructure(course: CourseWithRelations | CourseWithStructure): course is CourseWithRelations {
+  return 'modules' in course && !('volumes' in course)
+}
+
 export default function CourseInfo({ course, isEnrolled }: CourseInfoProps) {
   // Check if the course has the new structure (volumes)
-  const hasNewStructure = 'volumes' in course && course.volumes.length > 0
+  const hasNewStructure = 'volumes' in course && Array.isArray(course.volumes) && course.volumes.length > 0
   
   // Calculate module count based on structure
   const moduleCount = hasNewStructure 
@@ -30,13 +35,18 @@ export default function CourseInfo({ course, isEnrolled }: CourseInfoProps) {
   const chapterCount = hasNewStructure 
     ? (course as CourseWithStructure).volumes.reduce((acc, vol) => acc + vol.chapters.length, 0)
     : 0
+
+  // Safely access course properties based on structure
+  const tags = isOldStructure(course) ? course.tags : []
+  const author = isOldStructure(course) ? course.author : { name: null, image: null }
+  const questions = isOldStructure(course) ? course.questions : []
   
   return (
     <div className="lg:col-span-2">
       <h1 className="text-3xl font-bold mb-4">{course.title}</h1>
       
       <div className="flex flex-wrap gap-2 mb-6">
-        {course.tags.map((tag) => (
+        {tags.map((tag) => (
           <Badge key={tag.id} variant="secondary">
             {tag.name}
           </Badge>
@@ -64,7 +74,7 @@ export default function CourseInfo({ course, isEnrolled }: CourseInfoProps) {
         </div>
         <div className="flex items-center">
           <MessageSquare className="h-5 w-5 mr-2 text-muted-foreground" />
-          <span>{course.questions.length} question{course.questions.length !== 1 ? 's' : ''}</span>
+          <span>{questions.length} question{questions.length !== 1 ? 's' : ''}</span>
         </div>
         <div className="flex items-center">
           <Calendar className="h-5 w-5 mr-2 text-muted-foreground" />
@@ -74,16 +84,16 @@ export default function CourseInfo({ course, isEnrolled }: CourseInfoProps) {
       
       <div className="flex items-center mb-8">
         <Avatar className="h-10 w-10 mr-3">
-          <AvatarImage src={course.author.image || undefined} alt={course.author.name || "Author"} />
-          <AvatarFallback>{course.author.name?.charAt(0) || "A"}</AvatarFallback>
+          <AvatarImage src={author.image || undefined} alt={author.name || "Author"} />
+          <AvatarFallback>{author.name?.charAt(0) || "A"}</AvatarFallback>
         </Avatar>
         <div>
-          <p className="font-medium">{course.author.name || "Anonymous"}</p>
+          <p className="font-medium">{author.name || "Anonymous"}</p>
           <p className="text-sm text-muted-foreground">Course Instructor</p>
         </div>
       </div>
       
-      {!hasNewStructure && (
+      {!hasNewStructure && isOldStructure(course) && (
         <Tabs defaultValue="modules" className="mb-8">
           <TabsList className="mb-4">
             <TabsTrigger value="modules">Modules</TabsTrigger>
@@ -92,7 +102,7 @@ export default function CourseInfo({ course, isEnrolled }: CourseInfoProps) {
           
           <TabsContent value="modules">
             <CourseModules
-              modules={(course as CourseWithRelations).modules}
+              modules={course.modules}
               courseId={course.id}
               courseSlug={course.slug}
               isEnrolled={isEnrolled}
@@ -100,7 +110,7 @@ export default function CourseInfo({ course, isEnrolled }: CourseInfoProps) {
           </TabsContent>
           
           <TabsContent value="questions">
-            <CourseQuestions questions={course.questions} />
+            <CourseQuestions questions={questions} />
           </TabsContent>
         </Tabs>
       )}
@@ -112,7 +122,7 @@ export default function CourseInfo({ course, isEnrolled }: CourseInfoProps) {
           </TabsList>
           
           <TabsContent value="questions">
-            <CourseQuestions questions={course.questions} />
+            <CourseQuestions questions={questions} />
           </TabsContent>
         </Tabs>
       )}
