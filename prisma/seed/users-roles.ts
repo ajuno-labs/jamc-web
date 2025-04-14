@@ -117,45 +117,140 @@ export async function seedUsersAndRoles() {
     },
   })
 
-  // Create teacher user
-  const teacherUser = await prisma.user.upsert({
-    where: { email: "teacher@example.com" },
-    update: {
-      name: "Teacher User",
-      roles: {
-        connect: { id: teacherRole.id }
-      }
-    },
-    create: {
-      name: "Teacher User",
-      email: "teacher@example.com",
-      password: await bcrypt.hash("password123", 10),
-      roles: {
-        connect: { id: teacherRole.id }
-      }
-    },
-  })
+  // Create teacher users
+  const teacherUsers = await Promise.all([
+    prisma.user.upsert({
+      where: { email: "teacher@example.com" },
+      update: {
+        name: "John Smith",
+        roles: {
+          connect: { id: teacherRole.id }
+        }
+      },
+      create: {
+        name: "John Smith",
+        email: "teacher@example.com",
+        password: await bcrypt.hash("password123", 10),
+        roles: {
+          connect: { id: teacherRole.id }
+        }
+      },
+    }),
+    prisma.user.upsert({
+      where: { email: "sarah.math@example.com" },
+      update: {
+        name: "Sarah Johnson",
+        roles: {
+          connect: { id: teacherRole.id }
+        }
+      },
+      create: {
+        name: "Sarah Johnson",
+        email: "sarah.math@example.com",
+        password: await bcrypt.hash("password123", 10),
+        roles: {
+          connect: { id: teacherRole.id }
+        }
+      },
+    }),
+    prisma.user.upsert({
+      where: { email: "david.stats@example.com" },
+      update: {
+        name: "David Chen",
+        roles: {
+          connect: { id: teacherRole.id }
+        }
+      },
+      create: {
+        name: "David Chen",
+        email: "david.stats@example.com",
+        password: await bcrypt.hash("password123", 10),
+        roles: {
+          connect: { id: teacherRole.id }
+        }
+      },
+    }),
+  ])
 
-  // Create student user
-  const studentUser = await prisma.user.upsert({
-    where: { email: "student@example.com" },
-    update: {
-      name: "Student User",
-      roles: {
-        connect: { id: studentRole.id }
-      }
-    },
-    create: {
-      name: "Student User",
-      email: "student@example.com",
-      password: await bcrypt.hash("password123", 10),
-      roles: {
-        connect: { id: studentRole.id }
-      }
-    },
-  })
+  // Create student users
+  const studentUsers = await Promise.all([
+    prisma.user.upsert({
+      where: { email: "student@example.com" },
+      update: {
+        name: "Alice Brown",
+        roles: {
+          connect: { id: studentRole.id }
+        }
+      },
+      create: {
+        name: "Alice Brown",
+        email: "student@example.com",
+        password: await bcrypt.hash("password123", 10),
+        roles: {
+          connect: { id: studentRole.id }
+        }
+      },
+    }),
+    prisma.user.upsert({
+      where: { email: "bob.student@example.com" },
+      update: {
+        name: "Bob Wilson",
+        roles: {
+          connect: { id: studentRole.id }
+        }
+      },
+      create: {
+        name: "Bob Wilson",
+        email: "bob.student@example.com",
+        password: await bcrypt.hash("password123", 10),
+        roles: {
+          connect: { id: studentRole.id }
+        }
+      },
+    }),
+    prisma.user.upsert({
+      where: { email: "carol.student@example.com" },
+      update: {
+        name: "Carol Martinez",
+        roles: {
+          connect: { id: studentRole.id }
+        }
+      },
+      create: {
+        name: "Carol Martinez",
+        email: "carol.student@example.com",
+        password: await bcrypt.hash("password123", 10),
+        roles: {
+          connect: { id: studentRole.id }
+        }
+      },
+    }),
+    prisma.user.upsert({
+      where: { email: "dave.student@example.com" },
+      update: {
+        name: "Dave Thompson",
+        roles: {
+          connect: { id: studentRole.id }
+        }
+      },
+      create: {
+        name: "Dave Thompson",
+        email: "dave.student@example.com",
+        password: await bcrypt.hash("password123", 10),
+        roles: {
+          connect: { id: studentRole.id }
+        }
+      },
+    }),
+  ])
 
   console.log('Users and roles seeded successfully')
   
-  return { adminUser, teacherUser, studentUser }
+  return { 
+    adminUser, 
+    teacherUsers, 
+    studentUsers,
+    mainTeacher: teacherUsers[0],
+    mainStudent: studentUsers[0]
+  }
 } 

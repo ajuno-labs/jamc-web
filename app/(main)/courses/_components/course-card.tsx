@@ -3,19 +3,25 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Book, Users, MessageSquare } from "lucide-react"
+import { Book, Users } from "lucide-react"
 
 export type CourseCardProps = {
   id: string
   title: string
   description: string
   slug: string
-  modules: number
-  questions: number
-  topics: string[]
-  teacher: string
-  teacherId: string
-  teacherImage: string | null
+  author: {
+    id: string
+    name: string
+    image: string | null
+  }
+  tags: {
+    id: string
+    name: string
+  }[]
+  lessonCount: number
+  enrollmentCount: number
+  createdAt: Date
 }
 
 export function CourseCard({
@@ -23,14 +29,13 @@ export function CourseCard({
   title,
   description,
   slug,
-  modules,
-  questions,
-  topics,
-  teacher,
-  teacherImage
+  author,
+  tags,
+  lessonCount,
+  enrollmentCount
 }: CourseCardProps) {
   return (
-    <Link href={`/courses/${id}/${slug}`} key={id}>
+    <Link href={`/courses/${slug}`} key={id}>
       <Card className="h-full hover:shadow-lg transition-shadow duration-200">
         <CardHeader>
           <CardTitle>{title}</CardTitle>
@@ -40,19 +45,19 @@ export function CourseCard({
           <div className="flex justify-between text-sm text-muted-foreground">
             <span className="flex items-center">
               <Book className="h-4 w-4 mr-1" />
-              {modules} modules
+              {lessonCount} lessons
             </span>
             <span className="flex items-center">
-              <MessageSquare className="h-4 w-4 mr-1" />
-              {questions} questions
+              <Users className="h-4 w-4 mr-1" />
+              {enrollmentCount} enrolled
             </span>
           </div>
           <div className="mt-2 text-sm text-muted-foreground flex items-center">
             <div className="flex items-center">
-              {teacherImage ? (
+              {author.image ? (
                 <Image 
-                  src={teacherImage} 
-                  alt={teacher} 
+                  src={author.image} 
+                  alt={author.name} 
                   width={20} 
                   height={20} 
                   className="rounded-full mr-2"
@@ -60,19 +65,19 @@ export function CourseCard({
               ) : (
                 <Users className="h-4 w-4 mr-1" />
               )}
-              {teacher}
+              {author.name}
             </div>
           </div>
-          {topics.length > 0 && (
+          {tags.length > 0 && (
             <div className="mt-3 flex flex-wrap gap-1">
-              {topics.slice(0, 3).map(topic => (
-                <span key={topic} className="text-xs bg-muted px-2 py-1 rounded-full">
-                  {topic}
+              {tags.slice(0, 3).map(tag => (
+                <span key={tag.id} className="text-xs bg-muted px-2 py-1 rounded-full">
+                  {tag.name}
                 </span>
               ))}
-              {topics.length > 3 && (
+              {tags.length > 3 && (
                 <span className="text-xs bg-muted px-2 py-1 rounded-full">
-                  +{topics.length - 3}
+                  +{tags.length - 3}
                 </span>
               )}
             </div>

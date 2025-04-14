@@ -1,42 +1,54 @@
 import { prisma, slugify } from './utils'
-import { QuestionType } from '@prisma/client'
 
 export async function seedQuestions(
-  studentId: string, 
-  limitsModuleId: string, 
-  matricesModuleId: string
+  studentId: string,
+  calculus1Id: string,
+  linearAlgebraId: string
 ) {
   console.log('Seeding questions...')
   
-  // Create questions for the Limits module
-  const limitQuestion = await prisma.question.create({
-    data: {
-      title: "Understanding the epsilon-delta definition of limits",
-      content: "I'm struggling to understand the formal epsilon-delta definition of limits. Can someone explain it in simpler terms with an example?",
-      authorId: studentId,
-      moduleId: limitsModuleId,
-      slug: slugify("Understanding the epsilon-delta definition of limits"),
-      status: "OPEN",
+  const studentName = (await prisma.user.findUnique({
+    where: { id: studentId },
+    select: { name: true }
+  }))?.name?.split(' ')[0].toLowerCase() || 'student'
+  
+  // Create a question for Calculus I
+  await prisma.question.upsert({
+    where: {
+      slug: slugify(`${studentName}-help-with-limit-evaluation`)
+    },
+    update: {},
+    create: {
+      title: "Help with limit evaluation",
+      content: "I'm having trouble evaluating this limit: \\[\\lim_{x \\to 0} \\frac{\\sin x}{x}\\]\nCan someone explain the steps?",
+      type: "FORMAL",
+      topic: "Limits",
       visibility: "PUBLIC",
-      type: QuestionType.FORMAL
+      status: "OPEN",
+      slug: slugify(`${studentName}-help-with-limit-evaluation`),
+      authorId: studentId,
+      courseId: calculus1Id
     }
   })
-  
-  // Create questions for the Matrices module
-  const matrixQuestion = await prisma.question.create({
-    data: {
-      title: "Matrix multiplication order importance",
-      content: "Why does the order of multiplication matter for matrices? I understand that A×B ≠ B×A in general, but I'm looking for an intuitive explanation of why this is the case.",
-      authorId: studentId,
-      moduleId: matricesModuleId,
-      slug: slugify("Matrix multiplication order importance"),
-      status: "OPEN",
+
+  // Create a question for Linear Algebra
+  await prisma.question.upsert({
+    where: {
+      slug: slugify(`${studentName}-matrix-multiplication-order`)
+    },
+    update: {},
+    create: {
+      title: "Matrix multiplication order",
+      content: "Why does the order matter in matrix multiplication? Why isn't AB = BA?",
+      type: "FORMAL",
+      topic: "Matrices",
       visibility: "PUBLIC",
-      type: QuestionType.YOLO
+      status: "OPEN",
+      slug: slugify(`${studentName}-matrix-multiplication-order`),
+      authorId: studentId,
+      courseId: linearAlgebraId
     }
   })
-  
+
   console.log('Questions seeded successfully')
-  
-  return { limitQuestion, matrixQuestion }
 } 

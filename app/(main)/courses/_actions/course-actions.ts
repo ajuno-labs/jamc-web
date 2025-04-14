@@ -1,24 +1,41 @@
 "use server"
 
 import { prisma } from "@/lib/db/prisma"
-import { CourseCardProps, courseWithRelationsInclude, transformCourseToCardProps } from "@/lib/types/course"
 import { auth } from "@/auth"
 import { revalidatePath } from "next/cache"
 import { Prisma } from "@prisma/client"
 
-export type CourseWithStructure = Prisma.CourseGetPayload<{
+export interface Course {
+  id: string
+  title: string
+  description: string
+  slug: string
+  author: {
+    id: string
+    name: string
+    image: string | null
+  }
+  tags: {
+    id: string
+    name: string
+  }[]
+  lessonCount: number
+  enrollmentCount: number
+  createdAt: Date
+}
+
+export type CourseWithLessons = Prisma.CourseGetPayload<{
   include: {
-    volumes: {
-      include: {
-        chapters: {
-          include: {
-            modules: {
-              include: {
-                lessons: true
-              }
-            }
-          }
-        }
+    author: {
+      select: {
+        id: true
+        name: true
+        image: true
+      }
+    }
+    lessons: {
+      orderBy: {
+        order: 'asc'
       }
     }
   }
@@ -39,13 +56,15 @@ export type CourseWithBasicRelations = Prisma.CourseGetPayload<{
         name: true
       }
     }
-    volumes: {
-      include: {
-        _count: {
-          select: {
-            chapters: true
-          }
-        }
+    lessons: {
+      select: {
+        id: true
+        title: true
+        slug: true
+        order: true
+      }
+      orderBy: {
+        order: 'asc'
       }
     }
     enrollments: {
@@ -63,7 +82,7 @@ export async function getCourses(options?: {
   searchTerm?: string
   topic?: string
   teacherId?: string
-}): Promise<CourseCardProps[]> {
+}): Promise<Course[]> {
   try {
     const { searchTerm, topic, teacherId } = options || {}
     
@@ -92,14 +111,52 @@ export async function getCourses(options?: {
     // Fetch courses with related data
     const courses = await prisma.course.findMany({
       where,
-      include: courseWithRelationsInclude,
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+        tags: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        lessons: {
+          select: {
+            id: true,
+          },
+        },
+        enrollments: {
+          select: {
+            userId: true,
+          },
+        },
+      },
       orderBy: {
         createdAt: 'desc'
       }
     })
     
     // Transform the data for the frontend
-    return courses.map(transformCourseToCardProps)
+    return courses.map(course => ({
+      id: course.id,
+      title: course.title,
+      description: course.description,
+      slug: course.slug,
+      author: {
+        id: course.author.id,
+        name: course.author.name || 'Unknown',
+        image: course.author.image,
+      },
+      tags: course.tags,
+      lessonCount: course.lessons.length,
+      enrollmentCount: course.enrollments.length,
+      createdAt: course.createdAt,
+    }))
   } catch (error) {
     console.error("Error fetching courses:", error)
     return []
@@ -133,16 +190,15 @@ export async function getCourseById(id: string): Promise<CourseWithBasicRelation
             name: true,
           },
         },
-        volumes: {
-          include: {
-            _count: {
-              select: {
-                chapters: true
-              }
-            },
+        lessons: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            order: true,
           },
           orderBy: {
-            order: "asc",
+            order: 'asc',
           },
         },
         enrollments: {
@@ -272,9 +328,9 @@ export async function enrollInCourse(formData: FormData) {
 }
 
 /**
- * Get a course with its complete structure (volumes, chapters, modules, lessons)
+ * Get a course with its lessons
  */
-export async function getCourseWithStructure(id: string): Promise<CourseWithStructure | null> {
+export async function getCourseWithLessons(id: string): Promise<CourseWithLessons | null> {
   if (!id) {
     throw new Error("Course ID is required")
   }
@@ -285,30 +341,16 @@ export async function getCourseWithStructure(id: string): Promise<CourseWithStru
         id: id,
       },
       include: {
-        volumes: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+        lessons: {
           orderBy: {
             order: 'asc',
-          },
-          include: {
-            chapters: {
-              orderBy: {
-                order: 'asc',
-              },
-              include: {
-                modules: {
-                  orderBy: {
-                    order: 'asc',
-                  },
-                  include: {
-                    lessons: {
-                      orderBy: {
-                        order: 'asc',
-                      },
-                    },
-                  },
-                },
-              },
-            },
           },
         },
       },
@@ -316,7 +358,7 @@ export async function getCourseWithStructure(id: string): Promise<CourseWithStru
     
     return course
   } catch (error) {
-    console.error("Error fetching course structure:", error)
+    console.error("Error fetching course lessons:", error)
     return null
   }
 } 

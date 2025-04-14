@@ -4,6 +4,7 @@
 
 - [ ] Update README.md
 - [ ] Bring app to docker compose
+- [ ] Duplication question filtering
 
 ## Old tasks
 - [ ] Miscellaneous

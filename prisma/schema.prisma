@@ -137,26 +137,14 @@ model Question {
   votes       QuestionVote[]
   courseId    String?
   course      Course?        @relation(fields: [courseId], references: [id])
-  volumeId    String?
-  volume      Volume?        @relation(fields: [volumeId], references: [id])
-  chapterId   String?
-  chapter     Chapter?       @relation(fields: [chapterId], references: [id])
-  moduleId    String?
-  module      Module?        @relation(fields: [moduleId], references: [id])
   lessonId    String?
   lesson      Lesson?        @relation(fields: [lessonId], references: [id])
-  activityId  String?
-  activity    Activity?      @relation(fields: [activityId], references: [id])
   viewCount   Int            @default(0)
   slug        String         @unique()
   status      Status         @default(OPEN)
 
   @@index([courseId])
-  @@index([volumeId])
-  @@index([chapterId])
-  @@index([moduleId])
   @@index([lessonId])
-  @@index([activityId])
 }
 
 model Answer {
@@ -217,12 +205,12 @@ model Course {
   title       String
   description String
   slug        String             @unique()
+  structure   Json?
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt()
   authorId    String
   author      User               @relation("CourseCreator", fields: [authorId], references: [id])
-  volumes     Volume[]
-  modules     Module[]
+  lessons     Lesson[]
   tags        Tag[]
   questions   Question[]
   enrollments CourseEnrollment[]
@@ -242,88 +230,20 @@ model CourseEnrollment {
   @@unique([userId, courseId])
 }
 
-model Volume {
-  id        String     @id() @default(cuid())
-  title     String
-  overview  String?
-  order     Int
-  slug      String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt()
-  courseId  String
-  course    Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  chapters  Chapter[]
-  questions Question[]
-
-  @@unique([courseId, slug])
-}
-
-model Chapter {
-  id           String     @id() @default(cuid())
-  title        String
-  introduction String?
-  summary      String?
-  order        Int
-  slug         String
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt()
-  volumeId     String
-  volume       Volume     @relation(fields: [volumeId], references: [id], onDelete: Cascade)
-  modules      Module[]
-  questions    Question[]
-
-  @@unique([volumeId, slug])
-}
-
-model Module {
-  id        String     @id() @default(cuid())
-  title     String
-  content   String
-  order     Int
-  slug      String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt()
-  courseId  String?
-  course    Course?    @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  chapterId String?
-  chapter   Chapter?   @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  questions Question[]
-  lessons   Lesson[]
-
-  @@unique([courseId, slug], name: "courseModuleSlug")
-  @@unique([chapterId, slug], name: "chapterModuleSlug")
-}
-
 model Lesson {
   id         String     @id() @default(cuid())
   title      String
+  slug       String
   theory     String
   examples   String?
   order      Int
-  slug       String
+  parentType String?
+  parentId   String?
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt()
-  moduleId   String
-  module     Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  activities Activity[]
+  courseId   String
+  course     Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
   questions  Question[]
 
-  @@unique([moduleId, slug])
-}
-
-model Activity {
-  id          String     @id() @default(cuid())
-  title       String
-  description String
-  problemSet  String?
-  hints       String?
-  order       Int
-  slug        String
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt()
-  lessonId    String
-  lesson      Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  questions   Question[]
-
-  @@unique([lessonId, slug])
+  @@unique([courseId, slug])
 }

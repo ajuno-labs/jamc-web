@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client"
 
-// Type for basic module structure (for the old course structure)
-export type CourseModule = {
+// Type for basic lesson structure
+export type CourseLesson = {
   id: string
   title: string
   content: string
@@ -24,7 +24,16 @@ export const courseWithRelationsInclude = {
       name: true,
     },
   },
-  modules: true, // Include all module fields
+  lessons: {
+    select: {
+      id: true,
+      title: true,
+      order: true,
+    },
+    orderBy: {
+      order: 'asc',
+    },
+  },
   questions: {
     select: {
       id: true,
@@ -48,6 +57,11 @@ export const courseWithRelationsInclude = {
     },
     take: 5,
   },
+  _count: {
+    select: {
+      enrollments: true,
+    },
+  },
 } satisfies Prisma.CourseInclude
 
 // Type for course with common relations
@@ -70,14 +84,14 @@ export type CourseQuestion = {
   }
 }
 
-// Common module include object for consistent querying
-export const moduleWithRelationsInclude = {
+// Common lesson include object for consistent querying
+export const lessonWithRelationsInclude = {
   course: {
     select: {
       id: true,
       title: true,
       slug: true,
-      modules: {
+      lessons: {
         select: {
           id: true,
           title: true,
@@ -89,48 +103,12 @@ export const moduleWithRelationsInclude = {
       },
     },
   },
-  questions: {
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      createdAt: true,
-      author: {
-        select: {
-          name: true,
-        },
-      },
-      _count: {
-        select: {
-          answers: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-    take: 3,
-  },
-} satisfies Prisma.ModuleInclude
+} satisfies Prisma.LessonInclude
 
-// Type for module with common relations
-export type ModuleWithRelations = Prisma.ModuleGetPayload<{
-  include: typeof moduleWithRelationsInclude
+// Type for lesson with common relations
+export type LessonWithRelations = Prisma.LessonGetPayload<{
+  include: typeof lessonWithRelationsInclude
 }>
-
-// Type for questions in a module
-export type ModuleQuestion = {
-  id: string
-  title: string
-  slug: string
-  createdAt: Date
-  author: {
-    name: string | null
-  }
-  _count: {
-    answers: number
-  }
-}
 
 // Type for course card display
 export type CourseCardProps = {
@@ -138,12 +116,15 @@ export type CourseCardProps = {
   title: string
   description: string
   slug: string
-  modules: number
-  questions: number
-  topics: string[]
-  teacher: string
-  teacherId: string
-  teacherImage: string | null
+  lessonCount: number
+  enrollmentCount: number
+  tags: string[]
+  author: {
+    id: string
+    name: string
+    image: string | null
+  }
+  createdAt: Date
 }
 
 // Function to transform a course with relations to course card props
@@ -153,11 +134,14 @@ export function transformCourseToCardProps(course: CourseWithRelations): CourseC
     title: course.title,
     description: course.description,
     slug: course.slug,
-    modules: course.modules.length,
-    questions: course.questions.length,
-    topics: course.tags.map(tag => tag.name),
-    teacher: course.author.name || 'Unknown',
-    teacherId: course.author.id,
-    teacherImage: course.author.image
+    lessonCount: course.lessons.length,
+    enrollmentCount: course._count.enrollments,
+    tags: course.tags.map(tag => tag.name),
+    author: {
+      id: course.author.id,
+      name: course.author.name || 'Unknown',
+      image: course.author.image
+    },
+    createdAt: course.createdAt
   }
 } 
