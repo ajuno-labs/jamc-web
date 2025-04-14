@@ -1,4 +1,12 @@
-- Miscellaneous
+# TODO
+
+## Current focus
+
+- [ ] Update README.md
+- [ ] Bring app to docker compose
+
+## Old tasks
+- [ ] Miscellaneous
     - [ ] Generate seed data for testing
     - [ ] Update Next.js version
 - [ ] Authentication & User Management
