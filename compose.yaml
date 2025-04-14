@@ -25,12 +25,3 @@ services:
 
 volumes:
   postgres_data:
-
-# For development:
-# docker compose up -d
-#
-# For production:
-# docker compose up -d
-#
-# Environment variables can be set in a .env file or passed via command line:
-# TARGET=runner NODE_ENV=production COMMAND="node server.js" docker compose --profile prod up -d 
