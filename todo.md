@@ -2,11 +2,16 @@
 
 ## Current focus
 
-- [ ] Update README.md
-- [ ] Bring app to docker compose
-- [ ] Duplication question filtering
+- [ ] LaTeX support for questions and answers
+- [ ] Related questions feature
+- [ ] Question categorization (tags and topics)
+- [ ] Duplicate question filtering
 
-## Old tasks
+## Low prio
+
+- [ ] Refactor code
+- [ ] Bring app to docker compose
+- [ ] Update README.md
 - [ ] Miscellaneous
     - [ ] Generate seed data for testing
     - [ ] Update Next.js version

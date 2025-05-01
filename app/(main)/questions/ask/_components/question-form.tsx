@@ -24,6 +24,7 @@ import { QuestionContext } from "@/lib/types/question"
 import { toast } from "sonner"
 import PostingGuideline from "./posting-guideline"
 import SimilarQuestion from "./similar-question"
+import { MathContent } from "@/components/MathContent"
 
 // Define the form schema with zod
 const questionSchema = z.object({
@@ -53,6 +54,9 @@ interface QuestionFormProps {
 }
 
 export function QuestionForm({ tags, context }: QuestionFormProps) {
+  // Avoid unused variable lint errors
+  void tags;
+  void context;
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedTags, setSelectedTags] = useState<string[]>([])
@@ -75,9 +79,6 @@ export function QuestionForm({ tags, context }: QuestionFormProps) {
     },
   })
   
-  // Watch the title field to suggest similar questions
-  const titleValue = watch("title")
-  
   // Handle title changes to suggest similar questions
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // This is where you would call your AI service to get similar questions
@@ -92,6 +93,8 @@ export function QuestionForm({ tags, context }: QuestionFormProps) {
       setSimilarQuestions([])
     }
   }
+  
+  const contentValue = watch("content") // raw Markdown/LaTeX text
   
   const onSubmit = async (data: QuestionFormValues) => {
     if (selectedTags.length === 0) {
@@ -155,6 +158,14 @@ export function QuestionForm({ tags, context }: QuestionFormProps) {
             {errors.content && (
               <p className="text-sm text-destructive">{errors.content.message}</p>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <Label>Preview</Label>
+            <MathContent
+              content={contentValue}
+              className="border p-4 rounded prose"
+            />
           </div>
 
           <div className="space-y-2">
