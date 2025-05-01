@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation"
 import Link from "next/link"
 import { getUserProfile } from "./_actions/profile-actions"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
@@ -11,10 +10,7 @@ import { formatDistanceToNow } from "date-fns"
 export default async function ProfilePage() {
   const profileData = await getUserProfile()
   
-  // If no user is found, redirect to login
-  if (!profileData) {
-    redirect("/signin")
-  }
+  // assume profileData exists due to middleware guard
   
   const { user, questions, answers, stats } = profileData
   

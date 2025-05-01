@@ -1,5 +1,3 @@
-import { auth } from "@/auth"
-import { redirect } from "next/navigation"
 import { SignInForm } from "./_components/signin-form"
 import { GraduationCap, Link } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
@@ -7,14 +5,7 @@ import { SignInWithGoogle } from "./_components/signin-with-google"
 import { Card, CardContent, CardHeader, CardFooter, CardDescription, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
-export default async function SignInPage() {
-  const session = await auth()
-  
-  // Redirect if user is already authenticated
-  if (session?.user) {
-    redirect("/")
-  }
-
+export default function SignInPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col lg:flex-row">
       {/* Left side - OAuth */}

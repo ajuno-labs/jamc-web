@@ -4,19 +4,24 @@ import type { NextRequest } from "next/server"
 
 export async function middleware(request: NextRequest) {
   const session = await auth()
+  const { pathname } = request.nextUrl;
 
-  if (request.nextUrl.pathname.startsWith("/(main)")) {
-    if (!session) {
-      return NextResponse.redirect(new URL("/(auth)/signin", request.url));
+  // Public routes (no auth required)
+  const publicPaths = ["/", "/signin", "/signup"];
+  if (publicPaths.includes(pathname)) {
+    // Redirect signed-in users away from signin/signup pages
+    if (session && (pathname === "/signin" || pathname === "/signup")) {
+      return NextResponse.redirect(new URL("/", request.url));
     }
-  }
-  if (session && (
-    request.nextUrl.pathname.startsWith("/(auth)")
-  )) {
-    return NextResponse.redirect(new URL("/(main)", request.url))
+    return NextResponse.next();
   }
 
-  return NextResponse.next()
+  // All other paths require authentication
+  if (!session) {
+    return NextResponse.redirect(new URL("/signin", request.url));
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
