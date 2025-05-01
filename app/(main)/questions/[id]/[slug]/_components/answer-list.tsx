@@ -2,12 +2,12 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
 import { MessageSquare, AlertTriangle } from "lucide-react"
 import { voteAnswer } from "../_actions/question-actions"
 import { VoteButtons } from "@/components/ui/vote-buttons"
 import { useSession } from "next-auth/react"
+import { MathContent } from '@/components/MathContent'
 
 interface Answer {
   id: string
@@ -68,7 +68,7 @@ export function AnswerList({ answers, isEducator = false }: AnswerListProps) {
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-foreground">{answer.content}</p>
+              <MathContent className="text-foreground" content={answer.content} />
             </CardContent>
             <CardFooter className="flex items-center justify-between pt-2 border-t">
               <div className="flex items-center space-x-4">

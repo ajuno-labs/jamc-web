@@ -2,10 +2,11 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
+import { Card, CardContent, CardHeader} from "@/components/ui/card"
 import { Flag } from "lucide-react"
 import { voteQuestion } from "../_actions/question-actions"
 import { VoteButtons } from "@/components/ui/vote-buttons"
+import { MathContent } from '@/components/MathContent'
 
 interface QuestionHeaderProps {
   question: {
@@ -32,7 +33,7 @@ export function QuestionHeader({ question }: QuestionHeaderProps) {
         <h1 className="text-2xl font-bold">{question.title}</h1>
       </CardHeader>
       <CardContent>
-        <p className="text-foreground mb-4">{question.content}</p>
+        <MathContent className="text-foreground mb-4" content={question.content} />
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Avatar>

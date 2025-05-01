@@ -19,6 +19,5 @@ export async function typeset(latex: string, display: boolean = true): Promise<s
   // Convert the LaTeX to an HTML node
   const node = doc.convert(latex, { display });
   const rawSVG = adaptor.innerHTML(node);
-  console.log('[MathJax] raw SVG:', rawSVG);
   return rawSVG;
 } 
