@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label"
 import { Loader2 } from "lucide-react"
 import { TagFilter } from "../../components/tag-filter"
 import { createQuestion } from "../../_actions/create-question"
+import { getMyCoursesWithLessons } from "@/app/(main)/courses/_actions/course-actions"
 import { QuestionType, Visibility } from "@prisma/client"
 import { QuestionContext } from "@/lib/types/question"
 import { toast } from "sonner"
@@ -36,7 +37,6 @@ const questionSchema = z.object({
   visibility: z.nativeEnum(Visibility, {
     errorMap: () => ({ message: "Please select visibility" })
   }),
-  topic: z.string().optional(),
 })
 
 type QuestionFormValues = z.infer<typeof questionSchema>
@@ -53,11 +53,29 @@ interface QuestionFormProps {
   context: QuestionContext
 }
 
+// Shape of courses returned by getMyCoursesWithLessons
+interface EnrolledCourse {
+  id: string
+  title: string
+  slug: string
+  lessons: {
+    id: string
+    title: string
+    slug: string
+    order: number
+  }[]
+}
+
 export function QuestionForm({ tags, context }: QuestionFormProps) {
-  // Avoid unused variable lint errors
+  // Avoid unused prop lint
   void tags;
-  void context;
+  // Initialize local question context state
+  const [localContext, setLocalContext] = useState<QuestionContext>(context)
   const router = useRouter()
+  // Course selection state
+  const [courses, setCourses] = useState<EnrolledCourse[]>([])
+  const [loadingCourses, setLoadingCourses] = useState<boolean>(false)
+  const [coursesError, setCoursesError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [similarQuestions, setSimilarQuestions] = useState<string[]>([])
@@ -75,7 +93,6 @@ export function QuestionForm({ tags, context }: QuestionFormProps) {
       content: "",
       type: QuestionType.FORMAL,
       visibility: Visibility.PUBLIC,
-      topic: "",
     },
   })
   
@@ -108,6 +125,8 @@ export function QuestionForm({ tags, context }: QuestionFormProps) {
       const result = await createQuestion({
         ...data,
         tags: selectedTags,
+        courseId: localContext.courseId,
+        lessonId: localContext.lessonId,
       })
       
       if (result.success) {
@@ -124,6 +143,15 @@ export function QuestionForm({ tags, context }: QuestionFormProps) {
       setIsSubmitting(false)
     }
   }
+  
+  // Fetch courses the user is enrolled in or authored on mount
+  useEffect(() => {
+    setLoadingCourses(true)
+    getMyCoursesWithLessons()
+      .then(setCourses)
+      .catch((err: Error) => setCoursesError(err.message))
+      .finally(() => setLoadingCourses(false))
+  }, [])
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -235,15 +263,60 @@ export function QuestionForm({ tags, context }: QuestionFormProps) {
             </div>
           </div>
 
+          {/* Course / Lesson selection */}
           <div className="space-y-2">
-            <Label htmlFor="topic">Course/Module (Optional)</Label>
-            <Input
-              id="topic"
-              {...register("topic")}
-              placeholder="e.g., Mathematics 101"
-              disabled={isSubmitting}
-            />
+            <Label>Course (Optional)</Label>
+            {loadingCourses ? (
+              <Loader2 className="animate-spin" />
+            ) : coursesError ? (
+              <p className="text-sm text-destructive">{coursesError}</p>
+            ) : (
+              <Select
+                value={localContext.courseId || ""}
+                onValueChange={(value) =>
+                  setLocalContext({ courseId: value, lessonId: undefined })
+                }
+                disabled={isSubmitting}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a course" />
+                </SelectTrigger>
+                <SelectContent>
+                  {courses.map((course) => (
+                    <SelectItem key={course.id} value={course.id}>
+                      {course.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
+
+          {localContext.courseId && (
+            <div className="space-y-2">
+              <Label>Lesson (Optional)</Label>
+              <Select
+                value={localContext.lessonId || ""}
+                onValueChange={(value) =>
+                  setLocalContext((ctx) => ({ ...ctx, lessonId: value }))
+                }
+                disabled={isSubmitting}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a lesson" />
+                </SelectTrigger>
+                <SelectContent>
+                  {courses
+                    .find((c) => c.id === localContext.courseId)
+                    ?.lessons.map((lesson) => (
+                      <SelectItem key={lesson.id} value={lesson.id}>
+                        {lesson.title}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           <Button 
             type="submit" 

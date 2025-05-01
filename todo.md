@@ -5,6 +5,7 @@
 - [ ] Related questions feature
 - [ ] Question categorization (tags and topics)
 - [ ] Duplicate question filtering
+- [ ] Bug: MathJax can't display fractions
 
 ## Finished
 

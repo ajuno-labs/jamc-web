@@ -15,6 +15,8 @@ interface CreateQuestionParams {
   visibility: Visibility
   topic?: string
   tags: string[]
+  courseId?: string
+  lessonId?: string
 }
 
 /**
@@ -71,7 +73,9 @@ export async function createQuestion(data: CreateQuestionParams) {
         },
         tags: {
           connectOrCreate: tagConnections
-        }
+        },
+        ...(data.courseId ? { course: { connect: { id: data.courseId } } } : {}),
+        ...(data.lessonId ? { lesson: { connect: { id: data.lessonId } } } : {}),
       }
     })
     

@@ -361,4 +361,55 @@ export async function getCourseWithLessons(id: string): Promise<CourseWithLesson
     console.error("Error fetching course lessons:", error)
     return null
   }
+}
+
+// Server action to fetch all courses the current user is enrolled in or has authored, including lessons
+export async function getMyCoursesWithLessons() {
+  const session = await auth()
+  if (!session?.user?.email) {
+    throw new Error('You must be signed in to view your courses')
+  }
+
+  // Fetch courses the user is enrolled in
+  const enrollments = await prisma.courseEnrollment.findMany({
+    where: { user: { email: session.user.email } },
+    include: {
+      course: {
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          lessons: {
+            select: { id: true, title: true, slug: true, order: true },
+            orderBy: { order: 'asc' },
+          },
+        },
+      },
+    },
+  })
+  const enrolledCourses = enrollments.map((e) => e.course)
+
+  // Fetch courses the user has authored
+  const authoredCourses = await prisma.course.findMany({
+    where: { author: { email: session.user.email } },
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      lessons: {
+        select: { id: true, title: true, slug: true, order: true },
+        orderBy: { order: 'asc' },
+      },
+    },
+  })
+
+  // Merge and dedupe courses
+  const allCourses: typeof authoredCourses = [...enrolledCourses]
+  for (const course of authoredCourses) {
+    if (!allCourses.find((c) => c.id === course.id)) {
+      allCourses.push(course)
+    }
+  }
+
+  return allCourses
 } 
