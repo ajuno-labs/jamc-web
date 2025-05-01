@@ -2,10 +2,14 @@
 
 ## Current focus
 
-- [ ] LaTeX support for questions and answers
 - [ ] Related questions feature
 - [ ] Question categorization (tags and topics)
 - [ ] Duplicate question filtering
+
+## Finished
+
+- [x] LaTeX support for questions and answers
+- [x] Add course linkage in questions
 
 ## Low prio
 
