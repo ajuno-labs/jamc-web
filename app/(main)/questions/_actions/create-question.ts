@@ -53,11 +53,21 @@ export async function createQuestion(data: CreateQuestionParams) {
     // Generate slug from title
     const slug = slugify(data.title)
     
-    // Connect or create tags
-    const tagConnections = data.tags.map(tagName => ({
-      where: { name: tagName },
-      create: { name: tagName }
-    }))
+    // Resolve tags: connect existing & create new to avoid update policy
+    // Find tags that already exist
+    const existingTags = await prisma.tag.findMany({
+      where: { name: { in: data.tags } },
+      select: { id: true, name: true }
+    })
+    const existingNames = existingTags.map(t => t.name)
+    // Determine which tags are new
+    const newTagNames = data.tags.filter(name => !existingNames.includes(name))
+    // If user attempts to create new tags, block and inform them
+    if (newTagNames.length > 0) {
+      throw new Error(
+        `You do not have permission to create new tags: ${newTagNames.join(", ")}. Please use existing tags instead.`
+      )
+    }
     
     // Use the enhanced client to create the question according to access policies
     const question = await enhancedPrisma.question.create({
@@ -68,11 +78,10 @@ export async function createQuestion(data: CreateQuestionParams) {
         visibility: data.visibility,
         topic: data.topic,
         slug,
-        author: {
-          connect: { id: user.id }
-        },
+        author: { connect: { id: user.id } },
+        // Connect existing tags only
         tags: {
-          connectOrCreate: tagConnections
+          connect: existingTags.map(t => ({ id: t.id })),
         },
         ...(data.courseId ? { course: { connect: { id: data.courseId } } } : {}),
         ...(data.lessonId ? { lesson: { connect: { id: data.lessonId } } } : {}),

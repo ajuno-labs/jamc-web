@@ -256,7 +256,7 @@ model Tag {
   
   @@allow('create', auth() != null)
   @@allow('read', true)
-  @@allow('update', auth().roles?[permissions?[name == UPDATE]])
+  @@allow('update', auth() != null)
   @@allow('delete', auth().roles?[permissions?[name == DELETE]])
 }
 
