@@ -12,18 +12,14 @@ import { notFound, redirect } from "next/navigation"
 import { hasPermission } from "@/lib/types/prisma"
 
 interface QuestionPageProps {
-  params: {
-    id: string
-    slug: string
-  }
+  params: Promise<{ id: string; slug: string }>
 }
 
 export default async function QuestionPage({
   params,
 }: QuestionPageProps) {
-  // Store params in local variables to avoid Next.js warnings
-  const questionId = params?.id
-  const questionSlug = params?.slug
+  // Await params for Next.js async dynamic APIs
+  const { id: questionId, slug: questionSlug } = await params
   
   // Validate params before using them
   if (!questionId || typeof questionId !== 'string') {

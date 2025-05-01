@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { QuestionType } from "@prisma/client"
+import { MathContent } from '@/components/MathContent'
 
 interface QuestionCardProps {
   id: string
@@ -49,9 +50,7 @@ export function QuestionCard({
           {type}
         </Badge>
       </div>
-      <p className="text-muted-foreground mb-4 line-clamp-2">
-        {content}
-      </p>
+      <MathContent className="text-muted-foreground mb-4 line-clamp-2" content={content} />
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">
