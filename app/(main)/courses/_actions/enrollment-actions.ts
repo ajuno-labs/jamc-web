@@ -21,7 +21,7 @@ export async function enrollInCourse(courseId: string) {
     const userId = session.user.id
     
     // Check if the user is already enrolled
-    const existingEnrollment = await prisma.enrollment.findFirst({
+    const existingEnrollment = await prisma.courseEnrollment.findFirst({
       where: {
         userId,
         courseId
@@ -36,12 +36,10 @@ export async function enrollInCourse(courseId: string) {
     }
     
     // Create the enrollment
-    await prisma.enrollment.create({
+    await prisma.courseEnrollment.create({
       data: {
         userId,
-        courseId,
-        status: "ACTIVE",
-        enrolledAt: new Date()
+        courseId
       }
     })
     
@@ -78,7 +76,7 @@ export async function unenrollFromCourse(courseId: string) {
     const userId = session.user.id
     
     // Check if the user is enrolled
-    const existingEnrollment = await prisma.enrollment.findFirst({
+    const existingEnrollment = await prisma.courseEnrollment.findFirst({
       where: {
         userId,
         courseId
@@ -93,7 +91,7 @@ export async function unenrollFromCourse(courseId: string) {
     }
     
     // Delete the enrollment
-    await prisma.enrollment.delete({
+    await prisma.courseEnrollment.delete({
       where: {
         id: existingEnrollment.id
       }
@@ -131,7 +129,7 @@ export async function checkEnrollmentStatus(courseId: string) {
     const userId = session.user.id
     
     // Check if the user is enrolled
-    const existingEnrollment = await prisma.enrollment.findFirst({
+    const existingEnrollment = await prisma.courseEnrollment.findFirst({
       where: {
         userId,
         courseId
@@ -140,99 +138,13 @@ export async function checkEnrollmentStatus(courseId: string) {
     
     return {
       isEnrolled: !!existingEnrollment,
-      status: existingEnrollment?.status || null,
-      enrolledAt: existingEnrollment?.enrolledAt || null
+      enrolledAt: existingEnrollment?.createdAt || null
     }
   } catch (error) {
     console.error("Error checking enrollment status:", error)
     return {
       isEnrolled: false,
       error: "Failed to check enrollment status"
-    }
-  }
-}
-
-/**
- * Mark a module as completed
- */
-export async function markModuleAsCompleted(moduleId: string) {
-  try {
-    const session = await auth()
-    
-    if (!session?.user?.id) {
-      return {
-        success: false,
-        message: "You must be logged in to track progress"
-      }
-    }
-    
-    const userId = session.user.id
-    
-    // Get the course ID for this module
-    const module = await prisma.module.findUnique({
-      where: { id: moduleId },
-      select: { courseId: true }
-    })
-    
-    if (!module) {
-      return {
-        success: false,
-        message: "Module not found"
-      }
-    }
-    
-    // Check if the user is enrolled in the course
-    const enrollment = await prisma.enrollment.findFirst({
-      where: {
-        userId,
-        courseId: module.courseId
-      }
-    })
-    
-    if (!enrollment) {
-      return {
-        success: false,
-        message: "You must be enrolled in this course to track progress"
-      }
-    }
-    
-    // Check if the module is already completed
-    const existingProgress = await prisma.moduleProgress.findFirst({
-      where: {
-        userId,
-        moduleId
-      }
-    })
-    
-    if (existingProgress) {
-      return {
-        success: true,
-        message: "Module already marked as completed",
-        alreadyCompleted: true
-      }
-    }
-    
-    // Create the progress record
-    await prisma.moduleProgress.create({
-      data: {
-        userId,
-        moduleId,
-        completedAt: new Date()
-      }
-    })
-    
-    // Revalidate the module page
-    revalidatePath(`/courses/[slug]/modules/[moduleId]`)
-    
-    return {
-      success: true,
-      message: "Module marked as completed"
-    }
-  } catch (error) {
-    console.error("Error marking module as completed:", error)
-    return {
-      success: false,
-      message: "Failed to mark module as completed"
     }
   }
 } 

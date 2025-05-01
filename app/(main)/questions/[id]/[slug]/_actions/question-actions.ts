@@ -23,6 +23,20 @@ export async function getQuestionDetails(id: string) {
         }
       },
       tags: true,
+      course: {
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+        }
+      },
+      lesson: {
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+        }
+      },
     },
   })
   return question

@@ -7,6 +7,8 @@ import { Flag } from "lucide-react"
 import { voteQuestion } from "../_actions/question-actions"
 import { VoteButtons } from "@/components/ui/vote-buttons"
 import { MathContent } from '@/components/MathContent'
+import Link from "next/link"
+import { Badge } from "@/components/ui/badge"
 
 interface QuestionHeaderProps {
   question: {
@@ -20,6 +22,9 @@ interface QuestionHeaderProps {
     createdAt: Date
     votes: Array<{ value: number, userId?: string }>
     currentUserVote?: number | null
+    tags: Array<{ id: string; name: string }>
+    course?: { id: string; title: string; slug: string }
+    lesson?: { id: string; title: string; slug: string }
   }
 }
 
@@ -30,7 +35,35 @@ export function QuestionHeader({ question }: QuestionHeaderProps) {
   return (
     <Card className="mb-8">
       <CardHeader>
-        <h1 className="text-2xl font-bold">{question.title}</h1>
+        <div className="flex flex-col space-y-2">
+          <h1 className="text-2xl font-bold">{question.title}</h1>
+          <div className="flex flex-wrap gap-2">
+            {question.course && (
+              <Link href={`/courses/${question.course.slug}`}>
+                <Badge variant="secondary" className="cursor-pointer">
+                  Course: {question.course.title}
+                </Badge>
+              </Link>
+            )}
+            {question.lesson && question.course && (
+              <Link href={`/courses/${question.course.slug}/lessons/${question.lesson.id}/${question.lesson.slug}`}>
+                <Badge variant="outline" className="cursor-pointer">
+                  Lesson: {question.lesson.title}
+                </Badge>
+              </Link>
+            )}
+          </div>
+          {/* Display tags */}
+          {question.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {question.tags.map((tag) => (
+                <Badge key={tag.id} variant="outline">
+                  {tag.name}
+                </Badge>
+              ))}
+            </div>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <MathContent className="text-foreground mb-4" content={question.content} />
