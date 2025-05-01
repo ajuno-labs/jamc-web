@@ -5,9 +5,12 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { GraduationCap, Menu, X } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { useSession, signOut } from "next-auth/react"
+import { UserNav } from "@/components/layout/user-nav"
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const { data: session } = useSession()
 
   return (
     <header className="sticky flex justify-center top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -19,18 +22,30 @@ export function Header() {
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex md:gap-6">
+          {session && (
+            <>
+              <Link href="/questions" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">Q&A</Link>
+              <Link href="/courses" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">Courses</Link>
+            </>
+          )}
           <a href="#features" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">Features</a>
           <a href="#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">How It Works</a>
           <a href="#testimonials" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">Testimonials</a>
         </nav>
         
         <div className="hidden md:flex items-center gap-2">
-          <Button variant="outline" asChild>
-            <Link href="/signin">Sign In</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/signup">Sign Up</Link>
-          </Button>
+          {session ? (
+            <UserNav user={session.user} />
+          ) : (
+            <> 
+              <Button variant="outline" asChild>
+                <Link href="/signin">Sign In</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/signup">Sign Up</Link>
+              </Button>
+            </>
+          )}
         </div>
         
         {/* Mobile Navigation */}
@@ -55,22 +70,40 @@ export function Header() {
               </div>
               
               <nav className="flex flex-col gap-4 py-8">
-                <a 
-                  href="#features" 
+                {session && (
+                  <>
+                    <Link
+                      href="/questions"
+                      className="text-base font-medium py-2 text-foreground hover:text-primary transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Q&A
+                    </Link>
+                    <Link
+                      href="/courses"
+                      className="text-base font-medium py-2 text-foreground hover:text-primary transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Courses
+                    </Link>
+                  </>
+                )}
+                <a
+                  href="#features"
                   className="text-base font-medium py-2 text-foreground hover:text-primary transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   Features
                 </a>
-                <a 
-                  href="#how-it-works" 
+                <a
+                  href="#how-it-works"
                   className="text-base font-medium py-2 text-foreground hover:text-primary transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   How It Works
                 </a>
-                <a 
-                  href="#testimonials" 
+                <a
+                  href="#testimonials"
                   className="text-base font-medium py-2 text-foreground hover:text-primary transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
@@ -79,12 +112,20 @@ export function Header() {
               </nav>
               
               <div className="mt-auto flex flex-col gap-3 py-6">
-                <Button variant="outline" asChild className="w-full">
-                  <Link href="/signin">Sign In</Link>
-                </Button>
-                <Button asChild className="w-full">
-                  <Link href="/signup">Sign Up</Link>
-                </Button>
+                {session ? (
+                  <Button variant="ghost" className="w-full" onClick={() => signOut()}>
+                    Sign Out
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="outline" asChild className="w-full">
+                      <Link href="/signin">Sign In</Link>
+                    </Button>
+                    <Button asChild className="w-full">
+                      <Link href="/signup">Sign Up</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </SheetContent>
