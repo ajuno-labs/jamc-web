@@ -38,18 +38,17 @@ async function getTags(): Promise<Tag[]> {
 }
 
 interface AskQuestionPageProps {
-  searchParams: {
-    courseId?: string
-  }
+  searchParams: Promise<{ courseId?: string }>
 }
 
 export default async function AskQuestionPage({ searchParams }: AskQuestionPageProps) {
   const tags = await getTags()
-  
+  const { courseId } = await searchParams
+
   // Create initial context with courseId if provided
   const context: QuestionContext = {}
-  if (searchParams.courseId) {
-    context.courseId = searchParams.courseId
+  if (courseId) {
+    context.courseId = courseId
   }
 
   return (
