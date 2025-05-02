@@ -44,35 +44,7 @@ export const questionWithRelationsInclude = {
       slug: true,
     },
   },
-  volume: {
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-    },
-  },
-  chapter: {
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-    },
-  },
-  module: {
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-    },
-  },
   lesson: {
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-    },
-  },
-  activity: {
     select: {
       id: true,
       title: true,
@@ -128,4 +100,7 @@ export const questionWithRelationsInclude = {
 // Question type with all relations
 export type QuestionWithRelations = Prisma.QuestionGetPayload<{
   include: typeof questionWithRelationsInclude
-}> 
+}>
+
+// A lightweight type for sidebar related questions
+export type RelatedQuestion = Pick<QuestionWithRelations, 'id' | 'title' | 'content' | 'slug'> 

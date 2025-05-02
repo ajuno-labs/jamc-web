@@ -57,10 +57,12 @@ export default async function QuestionPage({
     }
   }
   
-  // Enhance question with current user's vote
+  // Enhance question with current user's vote and normalize nulls to undefined for optional props
   const enhancedQuestion = {
     ...question,
-    currentUserVote
+    currentUserVote,
+    course: question.course ?? undefined,
+    lesson: question.lesson ?? undefined,
   }
 
   return (

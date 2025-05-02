@@ -2,7 +2,6 @@
 
 ## Current focus
 
-- [ ] Related questions feature
 - [ ] Question categorization (tags and topics)
 - [ ] Duplicate question filtering
 - [ ] Bug: MathJax can't display fractions
@@ -10,7 +9,9 @@
 ## Finished
 
 - [x] LaTeX support for questions and answers
+- [x] Related questions feature
 - [x] Add course linkage in questions
+- [x] Upvote/downvote functionality
 
 ## Low prio
 
@@ -55,7 +56,6 @@
     - [ ] Answer submission with LaTeX support
     - [ ] Official answer marking by teachers
     - [ ] Question categorization (tags and topics)
-    - [x] Upvote/downvote functionality
     - [ ] Question subscription
     - [ ] Related questions
     - [ ] Ask question button in question details page
@@ -71,6 +71,7 @@
     - [ ] Full-text search implementation
     - [ ] Filtering by topics, teachers, and tags
     - [ ] Search results page optimization
+    - [ ] Enhance related questions similarity algorithm (full-text/TF-IDF)
 
 - [ ] Notification System
     - [ ] New answer notifications

@@ -1,13 +1,13 @@
 import { Lightbulb } from "lucide-react"
 import Link from "next/link"
-import { QuestionWithRelations } from "@/lib/types/prisma"
+import { RelatedQuestion } from "@/lib/types/question"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 // Type for related questions, using a subset of the question properties
-type RelatedQuestionType = Pick<QuestionWithRelations, "id" | "title" | "content" | "slug">
-
+// (now imported from our centralized type)
+// RelatedQuestion = { id: string; title: string; content: string; slug: string }
 interface RelatedQuestionsProps {
-  questions: RelatedQuestionType[]
+  questions: RelatedQuestion[]
 }
 
 export function RelatedQuestions({ questions }: RelatedQuestionsProps) {

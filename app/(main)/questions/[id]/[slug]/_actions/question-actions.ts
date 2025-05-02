@@ -205,26 +205,47 @@ export async function voteAnswer(answerId: string, value: 1 | -1) {
   }
 }
 
-export async function getRelatedQuestions(questionId: string) {
-  // For now, just get recent questions
-  // TODO: Implement proper relevance-based fetching
-  const questions = await prisma.question.findMany({
-    where: {
-      id: {
-        not: questionId,
-      },
-      visibility: "PUBLIC",
-    },
-    take: 5,
-    orderBy: {
-      createdAt: "desc",
-    },
-    select: {
-      id: true,
-      title: true,
-      content: true,
-      slug: true,
-    },
+export async function getRelatedQuestions(questionId: string, limit = 5) {
+  // Tag-based similarity: fetch questions sharing tags, ordered by shared-tag count then recency
+  const tagData = await prisma.question.findUnique({
+    where: { id: questionId },
+    select: { tags: { select: { id: true } } },
   })
-  return questions
+  const tagIds = tagData?.tags.map(t => t.id) ?? []
+
+  if (tagIds.length > 0) {
+    const primary = await prisma.question.findMany({
+      where: {
+        id: { not: questionId },
+        visibility: "PUBLIC",
+        tags: { some: { id: { in: tagIds } } },
+      },
+      orderBy: [
+        { tags: { _count: 'desc' } },
+        { createdAt: 'desc' },
+      ],
+      take: limit,
+      select: { id: true, title: true, content: true, slug: true },
+    })
+    if (primary.length >= limit) return primary
+
+    const secondary = await prisma.question.findMany({
+      where: {
+        id: { notIn: [questionId, ...primary.map(q => q.id)] },
+        visibility: "PUBLIC",
+      },
+      orderBy: { createdAt: 'desc' },
+      take: limit - primary.length,
+      select: { id: true, title: true, content: true, slug: true },
+    })
+    return [...primary, ...secondary]
+  }
+
+  // Fallback: most recent public questions
+  return prisma.question.findMany({
+    where: { id: { not: questionId }, visibility: "PUBLIC" },
+    orderBy: { createdAt: 'desc' },
+    take: limit,
+    select: { id: true, title: true, content: true, slug: true },
+  })
 } 
