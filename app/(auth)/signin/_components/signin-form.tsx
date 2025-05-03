@@ -8,8 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loader2, Eye, EyeOff, Mail, Lock } from "lucide-react"
 import { signInWithCredentials } from "@/app/(auth)/signin/_actions/signin"
-import { signInSchema } from "@/app/(auth)/signin/_actions/auth"
-import type { SignInInput } from "@/app/(auth)/signin/_actions/auth"
+import { signInSchema } from "@/lib/types/auth"
+import type { SignInInput } from "@/app/(auth)/signin/_actions/signin"
 
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false)
