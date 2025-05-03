@@ -23,5 +23,14 @@ services:
     depends_on:
       - db
 
+  qa-service:
+    build:
+      context: ./services/qa-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
 volumes:
   postgres_data:
