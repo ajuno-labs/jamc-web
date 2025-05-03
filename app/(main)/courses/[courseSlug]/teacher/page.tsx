@@ -1,8 +1,8 @@
+import React from "react"
 import { notFound } from "next/navigation"
 import { getAuthUser } from "@/lib/auth/get-user"
 import { getEnhancedPrisma } from "@/lib/db/enhanced"
-import TeacherDashboardTable from "./_components/TeacherDashboardTable"
-import StudentStats from "./_components/StudentStats"
+import { DashboardPage } from "./_components/DashboardPage"
 
 interface TeacherDashboardPageProps {
   params: Promise<{ courseSlug: string }>
@@ -35,7 +35,6 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
     include: { user: { select: { id: true, name: true } } },
   })
   const students = enrollments.map(e => ({ id: e.user.id, name: e.user.name ?? 'Unknown' }))
-  const studentCount = students.length
 
   // Fetch questions for this course with author and answer counts
   const rawQuestions = await db.question.findMany({
@@ -57,12 +56,5 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
     _count: q._count
   }))
 
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4">{course.title} – Q&A Dashboard</h1>
-      <p className="mb-4 text-lg">Enrolled Students: {studentCount}</p>
-      <StudentStats students={students} />
-      <TeacherDashboardTable questions={questions} />
-    </div>
-  )
+  return <DashboardPage students={students} questions={questions} />
 } 
