@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
 import { getAuthUser } from "@/lib/auth/get-user"
-import { prisma } from "@/lib/db/prisma"
+import { getEnhancedPrisma } from "@/lib/db/enhanced"
 import TeacherDashboardTable from "./_components/TeacherDashboardTable"
 
 interface TeacherDashboardPageProps {
@@ -16,8 +16,11 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
     notFound()
   }
 
+  // Initialize enhanced Prisma client with access policies
+  const db = await getEnhancedPrisma()
+
   // Verify that the current user is the course instructor
-  const course = await prisma.course.findUnique({
+  const course = await db.course.findUnique({
     where: { slug: courseSlug },
     select: { id: true, authorId: true, title: true }
   })
@@ -26,7 +29,7 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
   }
 
   // Fetch questions for this course with author and answer counts
-  const rawQuestions = await prisma.question.findMany({
+  const rawQuestions = await db.question.findMany({
     where: { courseId: course.id },
     include: {
       author: { select: { id: true, name: true } },

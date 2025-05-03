@@ -32,7 +32,8 @@ model User {
   
   // Add access policies
   @@allow('create', true) // Allow signups
-  @@allow('read,update', auth() == this) // Users can read/update their own profile
+  @@allow('read', auth() == this || auth().roles?[name == "TEACHER"]) // Allow teachers and self to read user profiles
+  @@allow('update', auth() == this) // Users can update their own profile
   @@deny('delete', true) // Prevent direct deletions
 
   questions     Question[]
@@ -236,7 +237,7 @@ model Answer {
   
   // Access control
   @@allow('create', auth() != null)
-  @@allow('read', question.visibility == PUBLIC || auth() == author || auth() == question.author)
+  @@allow('read', question.visibility == PUBLIC || auth() == author || auth() == question.author || auth().roles?[name == "TEACHER"])
   @@allow('update', auth() == author)
   @@allow('delete', auth() == author || auth().roles?[permissions?[name == DELETE]])
 }
