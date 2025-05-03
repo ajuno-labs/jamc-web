@@ -3,11 +3,7 @@ import { Prisma } from "@prisma/client"
 // Question context types
 export type QuestionContext = {
   courseId?: string
-  volumeId?: string
-  chapterId?: string
-  moduleId?: string
   lessonId?: string
-  activityId?: string
 }
 
 export type QuestionContextBreadcrumb = {
