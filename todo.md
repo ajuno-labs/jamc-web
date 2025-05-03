@@ -6,8 +6,10 @@
 - [ ] Duplicate question filtering
 - [ ] Bug: MathJax can't display fractions
 - [ ] Fix: landing page doesn't display logged in user without refreshing
+- [ ] Fix: flow of sign in should be directly to the qa page, not landing page.
 - [ ] Refactor code
-    - [ ] Duplicate lib folder
+    - [x] Duplicate lib folder
+- [ ] Using enhanced prisma gracefully (for teacher dashboard)
 
 ## Finished
 

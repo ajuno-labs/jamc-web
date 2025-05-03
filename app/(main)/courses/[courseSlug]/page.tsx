@@ -5,6 +5,8 @@ import { prisma } from "@/lib/db/prisma"
 import { CourseContent } from "./_components/course-content"
 import { CourseStats } from "./_components/course-stats"
 import { CourseSidebar } from "./_components/course-sidebar"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 interface StructureItem {
   id: string
@@ -59,6 +61,7 @@ export default async function CourseDetailPage({
       enrollments: true,
       author: {
         select: {
+          id: true,
           name: true,
           image: true
         }
@@ -112,6 +115,11 @@ export default async function CourseDetailPage({
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-4">{course.title}</h1>
             <p className="text-muted-foreground">{course.description}</p>
+            {userId === course.author.id && (
+              <Button className="mt-4" asChild>
+                <Link href={`/courses/${courseSlug}/teacher`}>Q&A Dashboard</Link>
+              </Button>
+            )}
           </div>
 
           <CourseStats 
