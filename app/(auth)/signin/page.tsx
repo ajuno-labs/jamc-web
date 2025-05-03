@@ -1,5 +1,6 @@
 import { SignInForm } from "./_components/signin-form"
-import { GraduationCap, Link } from "lucide-react"
+import { GraduationCap} from "lucide-react"
+import Link from "next/link"
 import { Separator } from "@/components/ui/separator"
 import { SignInWithGoogle } from "./_components/signin-with-google"
 import { Card, CardContent, CardHeader, CardFooter, CardDescription, CardTitle } from "@/components/ui/card"
@@ -40,7 +41,10 @@ export default function SignInPage() {
             </p>
             <p className="text-xs text-muted-foreground">By continuing, you agree to JAMC&apos;s Terms of Service</p>
             <div className="text-center text-sm text-muted-foreground">
-              Don&apos;t have an account? <Link href="/signup" className="text-primary hover:underline">Sign up</Link>
+              Don&apos;t have an account? 
+              <Button variant="link" className="px-2 h-auto font-medium" asChild>
+                <Link href="/signup"> Sign up </Link>
+              </Button>
             </div>
           </CardFooter>
         </Card>
@@ -48,4 +52,3 @@ export default function SignInPage() {
     </div>
   )
 }
-
