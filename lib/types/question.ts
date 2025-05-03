@@ -13,7 +13,7 @@ export type QuestionContext = {
 export type QuestionContextBreadcrumb = {
   id: string
   title: string
-  type: 'course' | 'volume' | 'chapter' | 'module' | 'lesson' | 'activity'
+  type: 'course' | 'lesson' 
   slug: string
 }
 

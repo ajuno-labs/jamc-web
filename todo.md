@@ -1,10 +1,13 @@
 # TODO
 
-## Current focus
+## Current
 
 - [ ] Question categorization (tags and topics)
 - [ ] Duplicate question filtering
 - [ ] Bug: MathJax can't display fractions
+- [ ] Fix: landing page doesn't display logged in user without refreshing
+- [ ] Refactor code
+    - [ ] Duplicate lib folder
 
 ## Finished
 
@@ -15,7 +18,6 @@
 
 ## Low prio
 
-- [ ] Refactor code
 - [ ] Bring app to docker compose
 - [ ] Update README.md
 - [ ] Miscellaneous

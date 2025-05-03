@@ -26,6 +26,7 @@ import { toast } from "sonner"
 import PostingGuideline from "./posting-guideline"
 import SimilarQuestion from "./similar-question"
 import { MathContent } from "@/components/MathContent"
+import { Tag, ExistingQuestion } from "../_actions/ask-data"
 
 // Define the form schema with zod
 const questionSchema = z.object({
@@ -41,16 +42,10 @@ const questionSchema = z.object({
 
 type QuestionFormValues = z.infer<typeof questionSchema>
 
-interface Tag {
-  id: string
-  name: string
-  description: string | null
-  count: number
-}
-
 interface QuestionFormProps {
   tags: Tag[]
   context: QuestionContext
+  existingQuestions: ExistingQuestion[]
 }
 
 // Shape of courses returned by getMyCoursesWithLessons
@@ -66,19 +61,19 @@ interface EnrolledCourse {
   }[]
 }
 
-export function QuestionForm({ tags, context }: QuestionFormProps) {
-  // Avoid unused prop lint
+export function QuestionForm({ tags, context, existingQuestions }: QuestionFormProps) {
   void tags;
-  // Initialize local question context state
   const [localContext, setLocalContext] = useState<QuestionContext>(context)
+  const [allQuestions] = useState<ExistingQuestion[]>(existingQuestions)
   const router = useRouter()
-  // Course selection state
   const [courses, setCourses] = useState<EnrolledCourse[]>([])
   const [loadingCourses, setLoadingCourses] = useState<boolean>(false)
   const [coursesError, setCoursesError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const [similarQuestions, setSimilarQuestions] = useState<string[]>([])
+  const [similarQuestions, setSimilarQuestions] = useState<ExistingQuestion[]>([])
+  const [isSimilarityLoading, setIsSimilarityLoading] = useState(false)
+  const [similarityError, setSimilarityError] = useState<string | null>(null)
   
   const {
     register,
@@ -96,18 +91,43 @@ export function QuestionForm({ tags, context }: QuestionFormProps) {
     },
   })
   
-  // Handle title changes to suggest similar questions
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // This is where you would call your AI service to get similar questions
-    // For now, we'll just set some dummy data
-    if (e.target.value.length > 10) {
-      setSimilarQuestions([
-        "What is the difference between velocity and acceleration?",
-        "How do you calculate the area of a circle?",
-        "What are the main types of chemical reactions?",
-      ])
+  // Handle title changes to fetch similarity-based suggestions
+  const handleTitleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const title = e.target.value
+    // propagate to react-hook-form
+    register("title").onChange(e)
+    if (title.length > 10) {
+      setIsSimilarityLoading(true)
+      setSimilarityError(null)
+      try {
+        // Compute similarity with each existing question
+        const scored = await Promise.all(
+          allQuestions.map(async (q) => {
+            const res = await fetch('/api/similarity', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ sentence1: title, sentence2: q.title }),
+            })
+            if (!res.ok) throw new Error('Similarity API error')
+            const { similarity } = await res.json()
+            return { ...q, similarity }
+          })
+        )
+        // sort by descending similarity and pick top 5
+        const top = scored
+          .sort((a, b) => b.similarity - a.similarity)
+          .slice(0, 5)
+        setSimilarQuestions(top)
+      } catch (err) {
+        console.error(err)
+        setSimilarityError('Failed to fetch similar questions')
+        setSimilarQuestions([])
+      } finally {
+        setIsSimilarityLoading(false)
+      }
     } else {
       setSimilarQuestions([])
+      setSimilarityError(null)
     }
   }
   
@@ -162,10 +182,7 @@ export function QuestionForm({ tags, context }: QuestionFormProps) {
             <Input
               id="title"
               {...register("title")}
-              onChange={(e) => {
-                register("title").onChange(e)
-                handleTitleChange(e)
-              }}
+              onChange={handleTitleChange}
               placeholder="e.g., How do I solve quadratic equations?"
               disabled={isSubmitting}
             />
@@ -336,6 +353,9 @@ export function QuestionForm({ tags, context }: QuestionFormProps) {
       </div>
 
       <div>
+        {/* Similarity suggestions */}
+        {isSimilarityLoading && <Loader2 className="animate-spin" />}
+        {similarityError && <p className="text-sm text-destructive">{similarityError}</p>}
         {similarQuestions.length > 0 && (
           <SimilarQuestion similarQuestions={similarQuestions} />
         )}
