@@ -2,6 +2,7 @@
 
 ## Current
 
+- [ ] Enhance course content
 - [ ] Question categorization (tags and topics)
 - [ ] Duplicate question filtering
 - [ ] Bug: MathJax can't display fractions
@@ -10,6 +11,8 @@
 - [ ] Refactor code
     - [x] Duplicate lib folder
 - [ ] Using enhanced prisma gracefully (for teacher dashboard)
+- [ ] Link between teacher and their courses aren't clear
+    - [ ] In course page, the teacher account still displays the enroll button
 
 ## Finished
 
