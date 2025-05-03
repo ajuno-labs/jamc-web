@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { GoogleIcon } from "@/components/icons/google"
-import { signInWithGoogle } from "@/app/lib/server-actions/auth/signin"
+import { signInWithGoogle } from "../_actions/signin"
 
 export function SignInWithGoogle() {
   return (

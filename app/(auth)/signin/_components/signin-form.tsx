@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loader2, Eye, EyeOff, Mail, Lock } from "lucide-react"
-import { signInWithCredentials } from "@/app/lib/server-actions/auth/signin"
-import { signInSchema } from "@/app/lib/validations/auth"
-import type { SignInInput } from "@/app/lib/validations/auth"
+import { signInWithCredentials } from "@/app/(auth)/signin/_actions/signin"
+import { signInSchema } from "@/app/(auth)/signin/_actions/auth"
+import type { SignInInput } from "@/app/(auth)/signin/_actions/auth"
 
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false)
