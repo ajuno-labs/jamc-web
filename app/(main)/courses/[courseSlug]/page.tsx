@@ -1,111 +1,120 @@
-import { notFound } from "next/navigation"
-import { Metadata } from "next"
-import { auth } from "@/auth"
-import { prisma } from "@/lib/db/prisma"
-import { CourseContent } from "./_components/course-content"
-import { CourseStats } from "./_components/course-stats"
-import { CourseSidebar } from "./_components/course-sidebar"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { notFound } from "next/navigation";
+import { Metadata } from "next";
+import { getAuthUser } from "@/lib/auth/get-user";
+import { getPublicEnhancedPrisma } from "@/lib/db/enhanced";
+import { CourseContent } from "./_components/course-content";
+import { CourseStats } from "./_components/course-stats";
+import { CourseSidebar } from "./_components/course-sidebar";
 
 interface StructureItem {
-  id: string
-  title: string
-  children?: StructureItem[]
+  id: string;
+  title: string;
+  children?: StructureItem[];
 }
 
 interface DisplayInfo {
-  title: string
+  title: string;
   parent?: {
-    title: string
-  }
+    title: string;
+  };
 }
 
 // Generate metadata for the page
 export async function generateMetadata({
   params,
 }: {
-  params: { courseSlug: string }
+  params: Promise<{ courseSlug: string }>;
 }): Promise<Metadata> {
-  const course = await prisma.course.findUnique({
-    where: { slug: params.courseSlug }
-  })
-  
+  const { courseSlug } = await params;
+  const db = getPublicEnhancedPrisma();
+  const course = await db.course.findUnique({ where: { slug: courseSlug } });
+
   if (!course) {
     return {
       title: "Course Not Found",
       description: "The requested course could not be found.",
-    }
+    };
   }
-  
+
   return {
     title: course.title,
     description: course.description,
-  }
+  };
 }
 
 export default async function CourseDetailPage({
   params,
 }: {
-  params: { courseSlug: string }
+  params: Promise<{ courseSlug: string }>;
 }) {
-  const { courseSlug } = params
+  const { courseSlug } = await params;
+  const db = getPublicEnhancedPrisma();
 
   // Get course with lessons and enrollment count
-  const course = await prisma.course.findUnique({
+  const course = await db.course.findUnique({
     where: { slug: courseSlug },
     include: {
       lessons: {
-        orderBy: { order: 'asc' }
+        orderBy: { order: "asc" },
       },
       enrollments: true,
       author: {
         select: {
           id: true,
           name: true,
-          image: true
-        }
-      }
-    }
-  })
-  
-  if (!course) {
-    notFound()
-  }
-  
-  // Get current user session
-  const session = await auth()
-  const userId = session?.user?.id
-  
-  // Check if user is enrolled
-  const isEnrolled = userId ? course.enrollments.some(e => e.userId === userId) : false
+          image: true,
+        },
+      },
+    },
+  });
 
-  // Parse the course structure from JSON
-  const structure = course.structure ? JSON.parse(course.structure as string) : null
-  
+  if (!course) {
+    notFound();
+  }
+
+  // Get current user session
+  const user = await getAuthUser();
+  const userId = user?.id;
+
+  // Check if user is enrolled
+  const isEnrolled = userId
+    ? course.enrollments.some((e) => e.userId === userId)
+    : false;
+
+  // Detect if the current user is the course instructor
+  const isInstructor = userId === course.author.id;
+
+  // Parse the course structure (already a JS object) into typed array
+  const structure: StructureItem[] | null = Array.isArray(course.structure)
+    ? (course.structure as unknown as StructureItem[])
+    : null;
+
   // Function to get lesson display info based on parent info
   const getLessonDisplayInfo = (lesson: { parentId: string | null }) => {
-    if (!structure || !lesson.parentId) return null
-    
-    const findInStructure = (items: StructureItem[], targetId: string): DisplayInfo | null => {
+    if (!structure || !lesson.parentId) return null;
+
+    const findInStructure = (
+      items: StructureItem[],
+      targetId: string
+    ): DisplayInfo | null => {
       for (const item of items) {
-        if (item.id === targetId) return { title: item.title }
+        if (item.id === targetId) return { title: item.title };
         if (item.children) {
-          const found = findInStructure(item.children, targetId)
-          if (found) return { ...found, parent: { title: item.title } }
+          const found = findInStructure(item.children, targetId);
+          if (found) return { ...found, parent: { title: item.title } };
         }
       }
-      return null
-    }
-    
-    return findInStructure(structure, lesson.parentId)
-  }
+      return null;
+    };
+
+    return findInStructure(structure, lesson.parentId);
+  };
 
   // Add display info to lessons
-  const lessonsWithDisplayInfo = course.lessons.map(lesson => ({
+  const lessonsWithDisplayInfo = course.lessons.map((lesson) => ({
     ...lesson,
-    displayInfo: getLessonDisplayInfo(lesson)
-  }))
+    displayInfo: getLessonDisplayInfo(lesson),
+  }));
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -115,20 +124,15 @@ export default async function CourseDetailPage({
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-4">{course.title}</h1>
             <p className="text-muted-foreground">{course.description}</p>
-            {userId === course.author.id && (
-              <Button className="mt-4" asChild>
-                <Link href={`/courses/${courseSlug}/teacher`}>Q&A Dashboard</Link>
-              </Button>
-            )}
           </div>
 
-          <CourseStats 
+          <CourseStats
             lessonCount={course.lessons.length}
             studentCount={course.enrollments.length}
             updatedAt={course.updatedAt}
           />
 
-          <CourseContent 
+          <CourseContent
             courseSlug={courseSlug}
             lessons={lessonsWithDisplayInfo}
           />
@@ -141,17 +145,22 @@ export default async function CourseDetailPage({
             courseSlug={courseSlug}
             isEnrolled={isEnrolled}
             isLoggedIn={!!userId}
-            firstLesson={course.lessons[0] ? {
-              id: course.lessons[0].id,
-              slug: course.lessons[0].slug
-            } : null}
+            isInstructor={isInstructor}
+            firstLesson={
+              course.lessons[0]
+                ? {
+                    id: course.lessons[0].id,
+                    slug: course.lessons[0].slug,
+                  }
+                : null
+            }
             instructor={{
               name: course.author.name,
-              image: course.author.image
+              image: course.author.image,
             }}
           />
         </div>
       </div>
     </div>
-  )
-} 
+  );
+}

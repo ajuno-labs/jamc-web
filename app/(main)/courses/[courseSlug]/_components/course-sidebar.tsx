@@ -1,29 +1,31 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 interface CourseSidebarProps {
-  courseId: string
-  courseSlug: string
-  isEnrolled: boolean
-  isLoggedIn: boolean
+  courseId: string;
+  courseSlug: string;
+  isEnrolled: boolean;
+  isLoggedIn: boolean;
+  isInstructor: boolean;
   firstLesson?: {
-    id: string
-    slug: string
-  } | null
+    id: string;
+    slug: string;
+  } | null;
   instructor: {
-    name: string | null
-    image: string | null
-  }
+    name: string | null;
+    image: string | null;
+  };
 }
 
-export function CourseSidebar({ 
-  courseId, 
-  courseSlug, 
-  isEnrolled, 
+export function CourseSidebar({
+  courseId,
+  courseSlug,
+  isEnrolled,
   isLoggedIn,
+  isInstructor,
   firstLesson,
-  instructor 
+  instructor,
 }: CourseSidebarProps) {
   return (
     <Card className="p-6">
@@ -31,9 +33,9 @@ export function CourseSidebar({
         <h3 className="text-lg font-semibold mb-2">Course Instructor</h3>
         <div className="flex items-center gap-3">
           {instructor.image && (
-            <img 
-              src={instructor.image} 
-              alt={instructor.name || 'Instructor'} 
+            <img
+              src={instructor.image}
+              alt={instructor.name || "Instructor"}
               className="h-10 w-10 rounded-full"
             />
           )}
@@ -42,12 +44,19 @@ export function CourseSidebar({
       </div>
 
       {isLoggedIn ? (
-        isEnrolled ? (
+        isInstructor ? (
           <Button className="w-full" asChild>
-            <Link 
-              href={firstLesson 
-                ? `/courses/${courseSlug}/lessons/${firstLesson.id}/${firstLesson.slug}` 
-                : `/courses/${courseSlug}`
+            <Link href={`/courses/${courseSlug}/teacher`}>
+              Go to Course Dashboard
+            </Link>
+          </Button>
+        ) : isEnrolled ? (
+          <Button className="w-full" asChild>
+            <Link
+              href={
+                firstLesson
+                  ? `/courses/${courseSlug}/lessons/${firstLesson.id}/${firstLesson.slug}`
+                  : `/courses/${courseSlug}`
               }
             >
               Continue Learning
@@ -66,5 +75,5 @@ export function CourseSidebar({
         </Button>
       )}
     </Card>
-  )
-} 
+  );
+}
