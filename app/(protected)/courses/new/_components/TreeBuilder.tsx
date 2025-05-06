@@ -2,7 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Menu, MenuTrigger, MenuContent, MenuItem } from "@/components/ui/menu";
+import {
+  DropdownMenu as Menu,
+  DropdownMenuTrigger as MenuTrigger,
+  DropdownMenuContent as MenuContent,
+  DropdownMenuItem as MenuItem,
+} from "@/components/ui/dropdown-menu";
 import React from "react";
 
 // Types for flexible course structure nodes
@@ -29,7 +34,11 @@ function allowedChildTypes(type: NodeType | null): NodeType[] {
   return [];
 }
 
-export default function TreeBuilder({ nodes, onChange, parentType }: TreeBuilderProps) {
+export default function TreeBuilder({
+  nodes,
+  onChange,
+  parentType,
+}: TreeBuilderProps) {
   // Add a new node at this level
   const addNode = (type: NodeType) => {
     const newNode: TreeNode = {
@@ -128,6 +137,3 @@ export default function TreeBuilder({ nodes, onChange, parentType }: TreeBuilder
     </ul>
   );
 }
-
-// Re-export the TreeNode type for imports
-export type { TreeNode }
