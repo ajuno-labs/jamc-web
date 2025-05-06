@@ -361,6 +361,7 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
                   {allowedChildTypes(null).map((t) => (
                     <Button
                       key={t}
+                      type="button"
                       size="sm"
                       variant="outline"
                       onClick={() => {
@@ -686,28 +687,36 @@ function TreeNodeItem({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   {allowedChildTypes(node.type).map((type) => (
-                    <DropdownMenuItem
-                      key={type}
-                      onClick={() =>
-                        updateNode(node.id, {
-                          children: [
-                            ...node.children,
-                            {
-                              id: crypto.randomUUID(),
-                              type,
-                              title: "",
-                              children: [],
-                            },
-                          ],
-                        })
-                      }
-                    >
-                      <div className="flex items-center gap-2">
-                        {type === "module" && <Folder className="h-4 w-4" />}
-                        {type === "chapter" && <BookOpen className="h-4 w-4" />}
-                        {type === "lesson" && <FileText className="h-4 w-4" />}
-                        <span className="capitalize">Add {type}</span>
-                      </div>
+                    <DropdownMenuItem asChild key={type}>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        className="w-full text-left"
+                        onClick={() =>
+                          updateNode(node.id, {
+                            children: [
+                              ...node.children,
+                              {
+                                id: crypto.randomUUID(),
+                                type,
+                                title: "",
+                                children: [],
+                              },
+                            ],
+                          })
+                        }
+                      >
+                        <div className="flex items-center gap-2">
+                          {type === "module" && <Folder className="h-4 w-4" />}
+                          {type === "chapter" && (
+                            <BookOpen className="h-4 w-4" />
+                          )}
+                          {type === "lesson" && (
+                            <FileText className="h-4 w-4" />
+                          )}
+                          <span className="capitalize">Add {type}</span>
+                        </div>
+                      </Button>
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
