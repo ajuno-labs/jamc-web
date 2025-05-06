@@ -8,20 +8,13 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import {
-  ChevronRight,
-  BookOpen,
-  CheckCircle,
-  Clock,
-  Layers,
-  Menu,
-} from "lucide-react";
+import { ChevronRight, CheckCircle, Clock, Layers, Menu } from "lucide-react";
 import type { Lesson } from "@prisma/client";
 import {
-  Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
+  Accordion,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -68,83 +61,52 @@ export function CourseContent({
       ? Math.round((completedLessons / lessons.length) * 100)
       : 0;
 
-  const renderStructure = (items: StructureItem[]) => (
-    <Accordion type="multiple" className="space-y-3">
-      {items.map((item) => {
-        const sectionLessons = lessons.filter((l) => l.parentId === item.id);
-        const completedInSection = sectionLessons.filter(
-          (l) => l.completed
-        ).length;
-        const sectionProgress =
-          sectionLessons.length > 0
-            ? Math.round((completedInSection / sectionLessons.length) * 100)
-            : 0;
+  // Count lessons purely from the structure: leaf nodes count as 1
+  function countLessons(node: StructureItem): number {
+    if (!node.children?.length) return 1;
+    return node.children.reduce((sum, child) => sum + countLessons(child), 0);
+  }
 
+  // Map of lesson ID to lesson object for quick lookup
+  const lessonMap = new Map<string, (typeof lessons)[number]>(
+    lessons.map((l) => [l.id, l])
+  );
+
+  // Render any structure nodes as an accordion, with lessons at leaves
+  const renderStructure = (nodes: StructureItem[]) => (
+    <Accordion type="multiple" className="space-y-3">
+      {nodes.map((node) => {
+        const total = countLessons(node);
         return (
           <AccordionItem
-            key={item.id}
-            value={item.id}
-            className="border rounded-lg overflow-hidden shadow-sm"
+            key={node.id}
+            value={node.id}
+            className="border rounded-lg overflow-hidden"
           >
-            <AccordionTrigger className="flex items-center justify-between px-4 py-3 bg-card hover:bg-accent/30 transition-colors">
-              <div className="flex items-center gap-3 text-left">
-                <Layers className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <span className="font-medium">{item.title}</span>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Badge variant="outline" className="text-xs font-normal">
-                      {sectionLessons.length}{" "}
-                      {sectionLessons.length === 1 ? "lesson" : "lessons"}
-                    </Badge>
-                    {sectionProgress > 0 && (
-                      <Badge
-                        variant="secondary"
-                        className="text-xs font-normal"
-                      >
-                        {sectionProgress}% complete
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </div>
+            <AccordionTrigger className="flex justify-between px-4 py-3 bg-card hover:bg-accent/30">
+              <span>{node.title}</span>
+              <Badge variant="outline" className="text-xs">
+                {total} {total === 1 ? "lesson" : "lessons"}
+              </Badge>
             </AccordionTrigger>
-            <AccordionContent className="p-0 border-t">
-              <div className="flex flex-col divide-y">
-                {sectionLessons.map((lesson) => (
-                  <Link
-                    key={lesson.id}
-                    href={`/courses/${courseSlug}/lessons/${lesson.id}/${lesson.slug}`}
-                    className={cn(
-                      "flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors",
-                      currentLessonId === lesson.id &&
-                        "bg-accent/40 hover:bg-accent/40"
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      {lesson.completed ? (
-                        <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                      ) : (
-                        <BookOpen className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                      )}
-                      <span
-                        className={cn(
-                          "text-sm",
-                          lesson.completed && "text-muted-foreground",
-                          currentLessonId === lesson.id && "font-medium"
-                        )}
+            <AccordionContent className="p-0">
+              {node.children && node.children.length > 0
+                ? // Recurse into nested structure
+                  renderStructure(node.children)
+                : // Leaf: show lesson link
+                  (() => {
+                    const lesson = lessonMap.get(node.id);
+                    if (!lesson) return null;
+                    return (
+                      <Link
+                        key={lesson.id}
+                        href={`/courses/${courseSlug}/lessons/${lesson.id}/${lesson.slug}`}
+                        className="block px-4 py-2 hover:bg-muted/50"
                       >
                         {lesson.title}
-                      </span>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                  </Link>
-                ))}
-              </div>
-              {item.children && item.children.length > 0 && (
-                <div className="pl-4 pr-2 py-2 bg-muted/30">
-                  {renderStructure(item.children)}
-                </div>
-              )}
+                      </Link>
+                    );
+                  })()}
             </AccordionContent>
           </AccordionItem>
         );

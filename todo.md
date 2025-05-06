@@ -5,7 +5,7 @@
 - [ ] Enhance course content
     - [ ] Allow pasting files, like images, pdfs, etc. for lesson summary that can quickly help students upon reviewing the lesson and go for questions.
 - [ ] Question categorization (tags and topics)
-- [ ] Bug: MathJax can't display fractions
+- [ ] Bug: MathJax can't display fraction
 - [ ] Fix: landing page doesn't display logged in user without refreshing
 - [ ] Course Management
     - [ ] Course/lesson progress bar in dashboard (Paused - awaiting LMS tracking support)

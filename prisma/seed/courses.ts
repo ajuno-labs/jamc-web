@@ -66,9 +66,26 @@ export async function seedCourses(teacherId: string) {
       tags: {
         connect: [{ id: mathTag.id }, { id: calculusTag.id }],
       },
+      structure: [
+        {
+          id: slugify("Part 1: Limits"),
+          title: "Part 1: Limits",
+          children: [
+            {
+              id: slugify("Introduction to Limits"),
+              title: "Introduction to Limits",
+            },
+            {
+              id: slugify("Properties of Limits"),
+              title: "Properties of Limits",
+            },
+          ],
+        },
+      ],
       lessons: {
         create: [
           {
+            id: slugify("Introduction to Limits"),
             title: "Introduction to Limits",
             slug: slugify("Introduction to Limits"),
             summary: `# Introduction to Limits
@@ -91,6 +108,7 @@ This means that as \\(x\\) approaches \\(a\\), the function \\(f(x)\\) approache
             order: 1,
           },
           {
+            id: slugify("Properties of Limits"),
             title: "Properties of Limits",
             slug: slugify("Properties of Limits"),
             summary: `# Properties of Limits
@@ -132,9 +150,23 @@ For functions \\(f(x)\\) and \\(g(x)\\), and constant \\(c\\):
       tags: {
         connect: [{ id: mathTag.id }, { id: algebraTag.id }],
       },
+      structure: [
+        {
+          id: slugify("Part 1: Matrices"),
+          title: "Part 1: Matrices",
+          children: [
+            {
+              id: slugify("Introduction to Matrices"),
+              title: "Introduction to Matrices",
+            },
+            { id: slugify("Matrix Operations"), title: "Matrix Operations" },
+          ],
+        },
+      ],
       lessons: {
         create: [
           {
+            id: slugify("Introduction to Matrices"),
             title: "Introduction to Matrices",
             slug: slugify("Introduction to Matrices"),
             summary: `# Introduction to Matrices
@@ -150,6 +182,7 @@ a_{11} & a_{12} & \\cdots & a_{1n} \\ a_{21} & a_{22} & \\cdots & a_{2n} \\ \\vd
             order: 1,
           },
           {
+            id: slugify("Matrix Operations"),
             title: "Matrix Operations",
             slug: slugify("Matrix Operations"),
             summary: `# Matrix Operations

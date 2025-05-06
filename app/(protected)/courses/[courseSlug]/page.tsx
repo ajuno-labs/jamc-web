@@ -91,8 +91,8 @@ export default async function CourseDetailPage({
     : null;
 
   // Function to get lesson display info based on parent info
-  const getLessonDisplayInfo = (lesson: { parentId: string | null }) => {
-    if (!structure || !lesson.parentId) return null;
+  const getLessonDisplayInfo = (lessonId: string) => {
+    if (!structure) return null;
 
     const findInStructure = (
       items: StructureItem[],
@@ -108,13 +108,13 @@ export default async function CourseDetailPage({
       return null;
     };
 
-    return findInStructure(structure, lesson.parentId);
+    return findInStructure(structure, lessonId);
   };
 
   // Add display info to lessons
   const lessonsWithDisplayInfo = course.lessons.map((lesson) => ({
     ...lesson,
-    displayInfo: getLessonDisplayInfo(lesson),
+    displayInfo: getLessonDisplayInfo(lesson.id),
   }));
 
   return (
