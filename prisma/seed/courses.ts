@@ -69,15 +69,20 @@ export async function seedCourses(teacherId: string) {
       structure: [
         {
           id: slugify("Part 1: Limits"),
+          type: "module",
           title: "Part 1: Limits",
           children: [
             {
               id: slugify("Introduction to Limits"),
+              type: "lesson",
               title: "Introduction to Limits",
+              children: [],
             },
             {
               id: slugify("Properties of Limits"),
+              type: "lesson",
               title: "Properties of Limits",
+              children: [],
             },
           ],
         },
@@ -153,13 +158,21 @@ For functions \\(f(x)\\) and \\(g(x)\\), and constant \\(c\\):
       structure: [
         {
           id: slugify("Part 1: Matrices"),
+          type: "module",
           title: "Part 1: Matrices",
           children: [
             {
               id: slugify("Introduction to Matrices"),
+              type: "lesson",
               title: "Introduction to Matrices",
+              children: [],
             },
-            { id: slugify("Matrix Operations"), title: "Matrix Operations" },
+            {
+              id: slugify("Matrix Operations"),
+              type: "lesson",
+              title: "Matrix Operations",
+              children: [],
+            },
           ],
         },
       ],

@@ -16,15 +16,19 @@
     - [ ] Active student
         - Within a week: viewed lessons, asked/answered questions
     - [ ] Test lesson viewed toggle
-- [ ] Redirect to new course after creation.
 - [ ] progress bar (server handling?) in course content
 - [ ] Testing: Duplicate question filtering
 - [ ] Update course content accordingly to the new lesson schema
 - [ ] feat: Create new course button somewhere
 - [ ] refactor: reduce size and duplicate code of create course form
+- [ ] feat: new approach for sbert: precompute embeddings
+    - Currently trying to compute each new question on the fly but that's gonna be too slow
+- [ ] Enrollment flow
+- [ ] feat: ux error handling in empty titles of nodes in course structure
 
 ## Finished
 
+- [x] Redirect to new course after creation.
 - [x] Hide 'add' button inside the lesson node in course structure
 - [x] style: update create course form button position and spacing
 - [x] Fix: flow of sign in should be directly to the qa page, not landing page.

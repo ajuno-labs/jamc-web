@@ -23,14 +23,20 @@ async function _unview(userId: string, lessonId: string) {
 }
 
 // Server actions wrapped with activity logging
-export const markLessonViewed = withActivity(
-  ActivityType.VIEW_LESSON,
-  "Lesson",
-  _markViewed
-);
+export async function markLessonViewed(lessonId: string): Promise<void> {
+  const action = await withActivity(
+    ActivityType.VIEW_LESSON,
+    "Lesson",
+    _markViewed
+  );
+  return action(lessonId);
+}
 
-export const unmarkLessonViewed = withActivity(
-  ActivityType.UNVIEW_LESSON,
-  "Lesson",
-  _unview
-);
+export async function unmarkLessonViewed(lessonId: string): Promise<void> {
+  const action = await withActivity(
+    ActivityType.UNVIEW_LESSON,
+    "Lesson",
+    _unview
+  );
+  return action(lessonId);
+}

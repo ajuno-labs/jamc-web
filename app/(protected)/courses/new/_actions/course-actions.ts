@@ -3,6 +3,9 @@
 import { getEnhancedPrisma } from "@/lib/db/enhanced";
 import { getAuthUser } from "@/lib/auth/get-user";
 import { revalidatePath } from "next/cache";
+import { slugify } from "@/lib/utils";
+import type { TreeNode } from "@/lib/types/course-structure";
+import { Prisma } from "@prisma/client";
 
 export async function createCourse(formData: FormData) {
   const user = await getAuthUser();
@@ -31,6 +34,28 @@ export async function createCourse(formData: FormData) {
   // Handle optional structure and tags
   const structureStr = formData.get("structure") as string | null;
   const parsedStructure = structureStr ? JSON.parse(structureStr) : undefined;
+  // Normalize lesson IDs to unique slugified titles for consistent lookup
+  let normalizedStructure: TreeNode[] | undefined;
+  if (parsedStructure) {
+    const slugSet = new Set<string>();
+    const normalizeNodes = (nodes: TreeNode[]): TreeNode[] =>
+      nodes.map((node) => {
+        const children = node.children ? normalizeNodes(node.children) : [];
+        let id = node.id;
+        if (node.type === "lesson") {
+          const base = slugify(node.title);
+          let unique = base;
+          let counter = 1;
+          while (slugSet.has(unique)) {
+            unique = `${base}-${counter++}`;
+          }
+          slugSet.add(unique);
+          id = unique;
+        }
+        return { ...node, id, children };
+      });
+    normalizedStructure = normalizeNodes(parsedStructure as TreeNode[]);
+  }
   const tags = formData.getAll("tags").map((tag) => tag as string);
   try {
     const course = await db.course.create({
@@ -39,7 +64,12 @@ export async function createCourse(formData: FormData) {
         description,
         slug,
         authorId: user.id,
-        structure: parsedStructure,
+        ...(normalizedStructure
+          ? {
+              structure:
+                normalizedStructure as unknown as Prisma.InputJsonValue,
+            }
+          : {}),
         tags: {
           connectOrCreate: tags.map((name) => ({
             where: { name },
@@ -50,8 +80,9 @@ export async function createCourse(formData: FormData) {
     });
 
     // Create Lesson records for each 'lesson' node in the structure
-    if (parsedStructure) {
+    if (normalizedStructure) {
       type StructureNode = {
+        id: string;
         type: string;
         title: string;
         children?: StructureNode[];
@@ -63,35 +94,26 @@ export async function createCourse(formData: FormData) {
           if (node.children) traverse(node.children);
         }
       }
-      traverse(parsedStructure as StructureNode[]);
+      traverse(normalizedStructure as StructureNode[]);
 
       let lessonOrder = 1;
       for (const node of lessonNodes) {
-        // generate unique slug per lesson
-        const baseLessonSlug = node.title
-          .trim()
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-+|-+$/g, "");
-        let lessonSlug = baseLessonSlug;
-        let suffix = 1;
-        while (
-          await db.lesson.findFirst({
-            where: { courseId: course.id, slug: lessonSlug },
-          })
-        ) {
-          lessonSlug = `${baseLessonSlug}-${suffix}`;
-          suffix++;
-        }
-        await db.lesson.create({
-          data: {
+        // Upsert lesson: create or skip if already exists
+        await db.lesson.upsert({
+          where: { courseId_slug: { courseId: course.id, slug: node.id } },
+          create: {
             title: node.title,
-            slug: lessonSlug,
+            slug: node.id,
             summary: null,
-            order: lessonOrder++,
+            order: lessonOrder,
             courseId: course.id,
           },
+          update: {
+            title: node.title,
+            order: lessonOrder,
+          },
         });
+        lessonOrder++;
       }
     }
 

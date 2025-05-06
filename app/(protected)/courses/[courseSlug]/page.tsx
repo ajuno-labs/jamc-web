@@ -3,21 +3,9 @@ import { Metadata } from "next";
 import { getAuthUser } from "@/lib/auth/get-user";
 import { getPublicEnhancedPrisma, getEnhancedPrisma } from "@/lib/db/enhanced";
 import { CourseContent } from "./_components/course-content";
+import { parseRawStructure, buildLessonMap } from "@/lib/course-structure";
 import { CourseStats } from "./_components/course-stats";
 import { CourseSidebar } from "./_components/course-sidebar";
-
-interface StructureItem {
-  id: string;
-  title: string;
-  children?: StructureItem[];
-}
-
-interface DisplayInfo {
-  title: string;
-  parent?: {
-    title: string;
-  };
-}
 
 // Generate metadata for the page
 export async function generateMetadata({
@@ -85,37 +73,9 @@ export default async function CourseDetailPage({
   // Detect if the current user is the course instructor
   const isInstructor = userId === course.author.id;
 
-  // Parse the course structure (already a JS object) into typed array
-  const structure: StructureItem[] | null = Array.isArray(course.structure)
-    ? (course.structure as unknown as StructureItem[])
-    : null;
-
-  // Function to get lesson display info based on parent info
-  const getLessonDisplayInfo = (lessonId: string) => {
-    if (!structure) return null;
-
-    const findInStructure = (
-      items: StructureItem[],
-      targetId: string
-    ): DisplayInfo | null => {
-      for (const item of items) {
-        if (item.id === targetId) return { title: item.title };
-        if (item.children) {
-          const found = findInStructure(item.children, targetId);
-          if (found) return { ...found, parent: { title: item.title } };
-        }
-      }
-      return null;
-    };
-
-    return findInStructure(structure, lessonId);
-  };
-
-  // Add display info to lessons
-  const lessonsWithDisplayInfo = course.lessons.map((lesson) => ({
-    ...lesson,
-    displayInfo: getLessonDisplayInfo(lesson.id),
-  }));
+  // Normalize and map structure
+  const structure = parseRawStructure(course.structure);
+  const { lessonMap } = buildLessonMap(structure, course.lessons);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -135,7 +95,7 @@ export default async function CourseDetailPage({
 
           <CourseContent
             courseSlug={courseSlug}
-            lessons={lessonsWithDisplayInfo}
+            lessonMap={lessonMap}
             structure={structure}
           />
         </div>
