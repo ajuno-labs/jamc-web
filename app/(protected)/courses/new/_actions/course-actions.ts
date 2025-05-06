@@ -98,7 +98,7 @@ export async function createCourse(formData: FormData) {
     // Revalidate both list and detail pages
     revalidatePath("/courses");
     revalidatePath(`/courses/${course.id}`);
-    return { success: true };
+    return { success: true, slug };
   } catch (error) {
     console.error("Error creating course:", error);
     throw error;

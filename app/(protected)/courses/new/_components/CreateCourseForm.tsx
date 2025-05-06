@@ -24,7 +24,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import {
@@ -249,7 +255,7 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
       const result = await createCourse(formData);
       if (result.success) {
         toast.success("Course created successfully");
-        router.push("/courses");
+        router.push(`/courses/${result.slug}`);
       } else {
         toast.error("Failed to create course");
       }
@@ -270,25 +276,25 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
             setActiveTab(v as "basic" | "structure" | "tags")
           }
         >
-          <TabsList className="flex space-x-1 bg-gray-100 rounded-full p-1 shadow-inner">
+          <TabsList className="inline-flex h-9 items-center justify-center space-x-1 rounded-full bg-muted p-1 text-muted-foreground">
             <TabsTrigger
               value="basic"
               disabled={activeTab !== "basic"}
-              className="flex-1 px-4 py-2 text-sm font-medium rounded-full data-[state=active]:bg-white data-[state=active]:shadow"
+              className="flex-1 px-4 py-2 text-sm font-medium whitespace-nowrap rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow"
             >
               Basic
             </TabsTrigger>
             <TabsTrigger
               value="structure"
               disabled={activeTab !== "structure"}
-              className="flex-1 px-4 py-2 text-sm font-medium rounded-full data-[state=active]:bg-white data-[state=active]:shadow"
+              className="flex-1 px-4 py-2 text-sm font-medium whitespace-nowrap rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow"
             >
               Structure
             </TabsTrigger>
             <TabsTrigger
               value="tags"
               disabled={activeTab !== "tags"}
-              className="flex-1 px-4 py-2 text-sm font-medium rounded-full data-[state=active]:bg-white data-[state=active]:shadow"
+              className="flex-1 px-4 py-2 text-sm font-medium whitespace-nowrap rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow"
             >
               Tags & Preview
             </TabsTrigger>
@@ -411,7 +417,7 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
                   )}
                 />
               </CardContent>
-              <div className="flex justify-between p-4 pt-0">
+              <CardFooter className="flex justify-between p-4 pt-0">
                 <Button
                   variant="outline"
                   onClick={prevTab}
@@ -425,7 +431,7 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
                 >
                   Next: Tags
                 </Button>
-              </div>
+              </CardFooter>
             </Card>
           </TabsContent>
 
@@ -502,24 +508,23 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
                   )}
                 </div>
               </CardContent>
+              <CardFooter className="flex justify-between p-4 pt-0">
+                <Button
+                  variant="outline"
+                  onClick={prevTab}
+                  className="px-4 py-2 transition-colors hover:bg-primary/10 focus:ring-2 focus:ring-primary/50"
+                >
+                  Back
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-4 py-2 transition-colors focus:ring-2 focus:ring-primary/50"
+                >
+                  {isSubmitting ? "Creating..." : "Create Course"}
+                </Button>
+              </CardFooter>
             </Card>
-
-            <div className="flex justify-between">
-              <Button
-                variant="outline"
-                onClick={prevTab}
-                className="px-4 py-2 transition-colors hover:bg-primary/10 focus:ring-2 focus:ring-primary/50"
-              >
-                Back
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="px-4 py-2 transition-colors focus:ring-2 focus:ring-primary/50"
-              >
-                {isSubmitting ? "Creating..." : "Create Course"}
-              </Button>
-            </div>
           </TabsContent>
         </Tabs>
       </form>
@@ -674,53 +679,57 @@ function TreeNodeItem({
               >
                 <Edit2 className="h-4 w-4" />
               </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="ghost"
-                    className="h-8 w-8"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {allowedChildTypes(node.type).map((type) => (
-                    <DropdownMenuItem asChild key={type}>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className="w-full text-left"
-                        onClick={() =>
-                          updateNode(node.id, {
-                            children: [
-                              ...node.children,
-                              {
-                                id: crypto.randomUUID(),
-                                type,
-                                title: "",
-                                children: [],
-                              },
-                            ],
-                          })
-                        }
-                      >
-                        <div className="flex items-center gap-2">
-                          {type === "module" && <Folder className="h-4 w-4" />}
-                          {type === "chapter" && (
-                            <BookOpen className="h-4 w-4" />
-                          )}
-                          {type === "lesson" && (
-                            <FileText className="h-4 w-4" />
-                          )}
-                          <span className="capitalize">Add {type}</span>
-                        </div>
-                      </Button>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {allowedChildTypes(node.type).length > 0 && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {allowedChildTypes(node.type).map((type) => (
+                      <DropdownMenuItem asChild key={type}>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          className="w-full text-left"
+                          onClick={() =>
+                            updateNode(node.id, {
+                              children: [
+                                ...node.children,
+                                {
+                                  id: crypto.randomUUID(),
+                                  type,
+                                  title: "",
+                                  children: [],
+                                },
+                              ],
+                            })
+                          }
+                        >
+                          <div className="flex items-center gap-2">
+                            {type === "module" && (
+                              <Folder className="h-4 w-4" />
+                            )}
+                            {type === "chapter" && (
+                              <BookOpen className="h-4 w-4" />
+                            )}
+                            {type === "lesson" && (
+                              <FileText className="h-4 w-4" />
+                            )}
+                            <span className="capitalize">Add {type}</span>
+                          </div>
+                        </Button>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
               <Button
                 type="button"
                 size="icon"
