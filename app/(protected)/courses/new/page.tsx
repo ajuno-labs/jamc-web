@@ -1,16 +1,9 @@
 import React from "react"
-import { redirect } from "next/navigation"
-import { getAuthUser } from "@/lib/auth/get-user"
 import { CreateCourseForm } from "./_components/create-course-form"
 import { getCourseTags } from "./_actions/tag-actions"
 
 export default async function NewCoursePage() {
-  const user = await getAuthUser()
-  if (!user) {
-    redirect("/api/auth/signin")
-  }
 
-  // Fetch available tags for courses
   const availableTags = await getCourseTags()
 
   return (
