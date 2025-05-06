@@ -356,7 +356,6 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
                             <EnhancedTreeBuilder
                               nodes={field.value}
                               onChange={field.onChange}
-                              parentType={null}
                             />
                           ) : (
                             <div className="text-center text-muted-foreground mt-16">
@@ -479,11 +478,9 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
 function EnhancedTreeBuilder({
   nodes,
   onChange,
-  parentType,
 }: {
   nodes: TreeNode[];
   onChange: (nodes: TreeNode[]) => void;
-  parentType: NodeType | null;
 }) {
   const updateNode = (id: string, patch: Partial<TreeNode>) => {
     onChange(nodes.map((n) => (n.id === id ? { ...n, ...patch } : n)));
@@ -681,7 +678,6 @@ function TreeNodeItem({
           <EnhancedTreeBuilder
             nodes={node.children}
             onChange={(children) => updateNode(node.id, { children })}
-            parentType={node.type}
           />
         </div>
       )}

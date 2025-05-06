@@ -1,5 +1,5 @@
 import React from "react"
-import { CreateCourseForm } from "./_components/create-course-form"
+import { CreateCourseForm } from "./_components/CreateCourseForm"
 import { getCourseTags } from "./_actions/tag-actions"
 
 export default async function NewCoursePage() {
