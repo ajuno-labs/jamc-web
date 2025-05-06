@@ -46,7 +46,10 @@ export function SignInForm() {
         const errorCode = result.error;
         let message = errorCode;
         // Show a friendly message for invalid credentials or misconfiguration
-        if (errorCode === "CredentialsSignin" || errorCode === "Configuration") {
+        if (
+          errorCode === "CredentialsSignin" ||
+          errorCode === "Configuration"
+        ) {
           message = "Invalid email or password";
         }
         setError(message);

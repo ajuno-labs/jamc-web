@@ -24,10 +24,10 @@
 - [ ] Testing: Duplicate question filtering
 - [ ] Update course content accordingly to the new lesson schema
 - [ ] Style: update create course form button position and spacing
-- [ ] ux: wrong email or password alert
 
 ## Finished
 
+- [x] ux: wrong email or password alert
 - [x] Implement callback url handling in middleware
 - [x] Duplicate question filtering
 - [x] Link between teacher and their courses aren't clear
