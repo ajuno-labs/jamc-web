@@ -219,9 +219,16 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
   const nextTab = async () => {
     if (activeTab === "basic") {
       const valid = await trigger(["title", "description"]);
-      if (valid) setActiveTab("structure");
+      if (valid) {
+        setActiveTab("structure");
+      }
     } else if (activeTab === "structure") {
-      setActiveTab("tags");
+      const struct = watch("structure");
+      if (struct && struct.length > 0) {
+        setActiveTab("tags");
+      } else {
+        toast.error("Please add at least one item to the structure");
+      }
     }
   };
 
@@ -264,9 +271,15 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
           }
         >
           <TabsList className="grid grid-cols-3 bg-muted/10 rounded-lg p-1">
-            <TabsTrigger value="basic">Basic</TabsTrigger>
-            <TabsTrigger value="structure">Structure</TabsTrigger>
-            <TabsTrigger value="tags">Tags & Preview</TabsTrigger>
+            <TabsTrigger value="basic" disabled={activeTab !== "basic"}>
+              Basic
+            </TabsTrigger>
+            <TabsTrigger value="structure" disabled={activeTab !== "structure"}>
+              Structure
+            </TabsTrigger>
+            <TabsTrigger value="tags" disabled={activeTab !== "tags"}>
+              Tags & Preview
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="basic">
