@@ -78,7 +78,6 @@
     - [ ] Teacher encouragement: Starter questions to normalize asking
 
 - [ ] Q&A System
-    - [ ] Question creation with LaTeX support
     - [ ] Answer submission with LaTeX support
     - [ ] Official answer marking by teachers
     - [ ] Question categorization (tags and topics)
@@ -122,7 +121,6 @@
     - [ ] Dark mode support
 
 - [ ] Future Enhancements
-    - [ ] AI-suggested similar questions
     - [ ] AI-generated answer suggestions
     - [ ] Sentiment analysis for content moderation
     - [ ] RAG model suggested by lecturer
