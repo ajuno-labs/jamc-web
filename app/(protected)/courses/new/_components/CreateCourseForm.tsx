@@ -126,7 +126,7 @@ function TagSelector({
             <Badge
               key={tag}
               variant="secondary"
-              className="flex items-center gap-1 px-3 py-1"
+              className="flex items-center gap-1 px-2.5 py-0.5 rounded-md text-sm font-medium"
             >
               {tag}
               <button
@@ -270,32 +270,48 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
             setActiveTab(v as "basic" | "structure" | "tags")
           }
         >
-          <TabsList className="grid grid-cols-3 bg-muted/10 rounded-lg p-1">
-            <TabsTrigger value="basic" disabled={activeTab !== "basic"}>
+          <TabsList className="flex space-x-1 bg-gray-100 rounded-full p-1 shadow-inner">
+            <TabsTrigger
+              value="basic"
+              disabled={activeTab !== "basic"}
+              className="flex-1 px-4 py-2 text-sm font-medium rounded-full data-[state=active]:bg-white data-[state=active]:shadow"
+            >
               Basic
             </TabsTrigger>
-            <TabsTrigger value="structure" disabled={activeTab !== "structure"}>
+            <TabsTrigger
+              value="structure"
+              disabled={activeTab !== "structure"}
+              className="flex-1 px-4 py-2 text-sm font-medium rounded-full data-[state=active]:bg-white data-[state=active]:shadow"
+            >
               Structure
             </TabsTrigger>
-            <TabsTrigger value="tags" disabled={activeTab !== "tags"}>
+            <TabsTrigger
+              value="tags"
+              disabled={activeTab !== "tags"}
+              className="flex-1 px-4 py-2 text-sm font-medium rounded-full data-[state=active]:bg-white data-[state=active]:shadow"
+            >
               Tags & Preview
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="basic">
-            <Card className="border">
+            <Card className="shadow-sm rounded-lg">
               <CardHeader>
                 <CardTitle>Basic Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6">
                 <FormField
                   control={control}
                   name="title"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Course Title</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Course Title" />
+                      <FormControl className="border border-gray-200 rounded-md px-3 py-2 focus-within:ring-1 focus-within:ring-primary focus-within:border-transparent">
+                        <Input
+                          {...field}
+                          placeholder="Course Title"
+                          className="border-0"
+                        />
                       </FormControl>
                       <FormDescription>
                         Enter the name of your course.
@@ -310,11 +326,12 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Description</FormLabel>
-                      <FormControl>
+                      <FormControl className="border border-gray-200 rounded-md px-3 py-2 focus-within:ring-1 focus-within:ring-primary focus-within:border-transparent">
                         <Textarea
                           {...field}
                           placeholder="What will students learn?"
                           rows={4}
+                          className="border-0 resize-none"
                         />
                       </FormControl>
                       <FormDescription>
@@ -325,14 +342,19 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
                   )}
                 />
                 <div className="flex justify-end">
-                  <Button onClick={nextTab}>Next: Structure</Button>
+                  <Button
+                    onClick={nextTab}
+                    className="px-4 py-2 transition-colors focus:ring-2 focus:ring-primary/50"
+                  >
+                    Next: Structure
+                  </Button>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="structure">
-            <Card className="border">
+            <Card className="shadow-sm rounded-lg">
               <CardHeader className="flex items-center justify-between">
                 <CardTitle>Course Structure</CardTitle>
                 <div className="flex space-x-2">
@@ -389,16 +411,25 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
                 />
               </CardContent>
               <div className="flex justify-between p-4 pt-0">
-                <Button variant="outline" onClick={prevTab}>
+                <Button
+                  variant="outline"
+                  onClick={prevTab}
+                  className="px-4 py-2 transition-colors hover:bg-primary/10 focus:ring-2 focus:ring-primary/50"
+                >
                   Back
                 </Button>
-                <Button onClick={nextTab}>Next: Tags</Button>
+                <Button
+                  onClick={nextTab}
+                  className="px-4 py-2 transition-colors focus:ring-2 focus:ring-primary/50"
+                >
+                  Next: Tags
+                </Button>
               </div>
             </Card>
           </TabsContent>
 
           <TabsContent value="tags">
-            <Card className="border">
+            <Card className="shadow-sm rounded-lg">
               <CardHeader>
                 <CardTitle>Tags</CardTitle>
               </CardHeader>
@@ -408,7 +439,7 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
                   name="tags"
                   render={({ field }) => (
                     <FormItem>
-                      <FormControl>
+                      <FormControl className="border border-gray-200 rounded-md px-3 py-2 focus-within:ring-1 focus-within:ring-primary focus-within:border-transparent">
                         <TagSelector
                           selectedTags={field.value || []}
                           onTagsChange={field.onChange}
@@ -425,7 +456,7 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
               </CardContent>
             </Card>
 
-            <Card className="border">
+            <Card className="shadow-sm rounded-lg">
               <CardHeader>
                 <CardTitle>Preview</CardTitle>
               </CardHeader>
@@ -473,10 +504,18 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
             </Card>
 
             <div className="flex justify-between">
-              <Button variant="outline" onClick={prevTab}>
+              <Button
+                variant="outline"
+                onClick={prevTab}
+                className="px-4 py-2 transition-colors hover:bg-primary/10 focus:ring-2 focus:ring-primary/50"
+              >
                 Back
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-4 py-2 transition-colors hover:bg-primary/10 focus:ring-2 focus:ring-primary/50"
+              >
                 {isSubmitting ? "Creating..." : "Create Course"}
               </Button>
             </div>
