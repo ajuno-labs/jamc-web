@@ -26,6 +26,7 @@
 
 ## Finished
 
+- [x] Implement callback url handling in middleware
 - [x] Duplicate question filtering
 - [x] Link between teacher and their courses aren't clear
     - [x] In course page, the teacher account still displays the enroll button
