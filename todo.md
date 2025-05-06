@@ -3,19 +3,33 @@
 ## Current
 
 - [ ] Enhance course content
+    - [ ] Allow pasting files, like images, pdfs, etc. for lesson summary that can quickly help students upon reviewing the lesson and go for questions.
 - [ ] Question categorization (tags and topics)
-- [ ] Duplicate question filtering
 - [ ] Bug: MathJax can't display fractions
 - [ ] Fix: landing page doesn't display logged in user without refreshing
 - [ ] Fix: flow of sign in should be directly to the qa page, not landing page.
-- [ ] Refactor code
-    - [x] Duplicate lib folder
 - [ ] Using enhanced prisma gracefully (for teacher dashboard)
-- [ ] Link between teacher and their courses aren't clear
-    - [ ] In course page, the teacher account still displays the enroll button
+- [ ] Course Management
+    - [ ] Course/lesson progress bar in dashboard (Paused - awaiting LMS tracking support)
+    - [ ] Define requirements and content for course-specific questions page
+    - [ ] Define requirements and content for teacher-specific students page (student stats)
+    - [ ] Active student
+- [ ] Student activity log
+    - [ ] Active student
+        - Within a week: viewed lessons, asked/answered questions
+    - [ ] Test lesson viewed toggle
+- [ ] Remove 'add' button inside the lesson node in course structure
+- [ ] Redirect to new course after creation.
+- [ ] progress bar (server handling?) in course content
+- [ ] Testing: Duplicate question filtering
+- [ ] Update course content accordingly to the new lesson schema.
 
 ## Finished
 
+- [x] Duplicate question filtering
+- [x] Link between teacher and their courses aren't clear
+    - [x] In course page, the teacher account still displays the enroll button
+- [x] Refactor code: Duplicate lib folder
 - [x] LaTeX support for questions and answers
 - [x] Related questions feature
 - [x] Add course linkage in questions
