@@ -43,7 +43,13 @@ export function SignInForm() {
         callbackUrl,
       });
       if (result?.error) {
-        setError(result.error);
+        const errorCode = result.error;
+        let message = errorCode;
+        // Show a friendly message for invalid credentials or misconfiguration
+        if (errorCode === "CredentialsSignin" || errorCode === "Configuration") {
+          message = "Invalid email or password";
+        }
+        setError(message);
       } else if (result?.url) {
         router.push(result.url);
         router.refresh();

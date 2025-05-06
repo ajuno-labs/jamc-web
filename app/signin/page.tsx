@@ -15,7 +15,7 @@ export default function SignInPage() {
           <CardHeader className="space-y-1 text-center">
             <GraduationCap className="mx-auto h-12 w-12 text-primary" />
             <CardTitle className="text-3xl font-bold">Welcome back</CardTitle>
-            <CardDescription>Motto goes here</CardDescription>
+            <CardDescription>Work hard, play hard</CardDescription>
           </CardHeader>
           <CardContent>
             <SignInWithGoogle />

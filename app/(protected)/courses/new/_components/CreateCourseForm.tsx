@@ -515,7 +515,7 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-4 py-2 transition-colors hover:bg-primary/10 focus:ring-2 focus:ring-primary/50"
+                className="px-4 py-2 transition-colors focus:ring-2 focus:ring-primary/50"
               >
                 {isSubmitting ? "Creating..." : "Create Course"}
               </Button>

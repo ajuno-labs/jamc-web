@@ -22,7 +22,9 @@
 - [ ] Redirect to new course after creation.
 - [ ] progress bar (server handling?) in course content
 - [ ] Testing: Duplicate question filtering
-- [ ] Update course content accordingly to the new lesson schema.
+- [ ] Update course content accordingly to the new lesson schema
+- [ ] Style: update create course form button position and spacing
+- [ ] ux: wrong email or password alert
 
 ## Finished
 

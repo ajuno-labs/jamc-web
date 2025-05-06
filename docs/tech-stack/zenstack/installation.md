@@ -1,3 +1,0 @@
-- Install ZenStack
-    - npx zenstack@latest init
-- schema.zmodel -> zenstack generate -> prisma/schema.prisma
