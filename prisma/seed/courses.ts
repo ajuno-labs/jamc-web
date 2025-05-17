@@ -66,34 +66,26 @@ export async function seedCourses(teacherId: string) {
       tags: {
         connect: [{ id: mathTag.id }, { id: calculusTag.id }],
       },
-      structure: [
-        {
-          id: slugify("Part 1: Limits"),
-          type: "module",
-          title: "Part 1: Limits",
-          children: [
-            {
-              id: slugify("Introduction to Limits"),
-              type: "lesson",
-              title: "Introduction to Limits",
-              children: [],
-            },
-            {
-              id: slugify("Properties of Limits"),
-              type: "lesson",
-              title: "Properties of Limits",
-              children: [],
-            },
-          ],
-        },
-      ],
-      lessons: {
+      modules: {
         create: [
           {
-            id: slugify("Introduction to Limits"),
-            title: "Introduction to Limits",
-            slug: slugify("Introduction to Limits"),
-            summary: `# Introduction to Limits
+            title: "Part 1: Limits",
+            slug: slugify("Part 1: Limits"),
+            order: 1,
+            chapters: {
+              create: [
+                {
+                  title: "Part 1: Limits",
+                  slug: slugify("Part 1: Limits"),
+                  order: 1,
+                  lessons: {
+                    create: [
+                      {
+                        course: { connect: { slug: "calculus-i" } },
+                        id: slugify("Introduction to Limits"),
+                        title: "Introduction to Limits",
+                        slug: slugify("Introduction to Limits"),
+                        summary: `# Introduction to Limits
 
 A limit is the value that a function approaches as the input approaches some value. Limits are essential for understanding continuity, derivatives, and integrals.
 
@@ -110,13 +102,14 @@ The concept of a limit can be expressed mathematically as:
 \\[ \\lim_{x \\to a} f(x) = L \\]
 
 This means that as \\(x\\) approaches \\(a\\), the function \\(f(x)\\) approaches the value \\(L\\).`,
-            order: 1,
-          },
-          {
-            id: slugify("Properties of Limits"),
-            title: "Properties of Limits",
-            slug: slugify("Properties of Limits"),
-            summary: `# Properties of Limits
+                        order: 1,
+                      },
+                      {
+                        course: { connect: { slug: "calculus-i" } },
+                        id: slugify("Properties of Limits"),
+                        title: "Properties of Limits",
+                        slug: slugify("Properties of Limits"),
+                        summary: `# Properties of Limits
 
 Limits follow several important properties that make them easier to work with.
 
@@ -131,7 +124,13 @@ For functions \\(f(x)\\) and \\(g(x)\\), and constant \\(c\\):
 3. Quotient Rule: \\[\\lim_{x \\to a} \\frac{f(x)}{g(x)} = \\frac{\\lim_{x \\to a} f(x)}{\\lim_{x \\to a} g(x)}\\] (when denominator ≠ 0)
 
 4. Constant Multiple: \\[\\lim_{x \\to a} [c \\cdot f(x)] = c \\cdot \\lim_{x \\to a} f(x)\\]`,
-            order: 2,
+                        order: 2,
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
           },
         ],
       },
@@ -155,34 +154,26 @@ For functions \\(f(x)\\) and \\(g(x)\\), and constant \\(c\\):
       tags: {
         connect: [{ id: mathTag.id }, { id: algebraTag.id }],
       },
-      structure: [
-        {
-          id: slugify("Part 1: Matrices"),
-          type: "module",
-          title: "Part 1: Matrices",
-          children: [
-            {
-              id: slugify("Introduction to Matrices"),
-              type: "lesson",
-              title: "Introduction to Matrices",
-              children: [],
-            },
-            {
-              id: slugify("Matrix Operations"),
-              type: "lesson",
-              title: "Matrix Operations",
-              children: [],
-            },
-          ],
-        },
-      ],
-      lessons: {
+      modules: {
         create: [
           {
-            id: slugify("Introduction to Matrices"),
-            title: "Introduction to Matrices",
-            slug: slugify("Introduction to Matrices"),
-            summary: `# Introduction to Matrices
+            title: "Part 1: Matrices",
+            slug: slugify("Part 1: Matrices"),
+            order: 1,
+            chapters: {
+              create: [
+                {
+                  title: "Part 1: Matrices",
+                  slug: slugify("Part 1: Matrices"),
+                  order: 1,
+                  lessons: {
+                    create: [
+                      {
+                        course: { connect: { slug: "linear-algebra" } },
+                        id: slugify("Introduction to Matrices"),
+                        title: "Introduction to Matrices",
+                        slug: slugify("Introduction to Matrices"),
+                        summary: `# Introduction to Matrices
 
 A matrix is a rectangular array of numbers arranged in rows and columns. Matrices are fundamental to linear algebra and have numerous applications.
 
@@ -192,18 +183,25 @@ A matrix is written as:
 
 \\[A = \\begin{pmatrix}
 a_{11} & a_{12} & \\cdots & a_{1n} \\ a_{21} & a_{22} & \\cdots & a_{2n} \\ \\vdots & \\vdots & \\ddots & \\vdots \\ a_{m1} & a_{m2} & \\cdots & a_{mn}\\end{pmatrix}\\]`,
-            order: 1,
-          },
-          {
-            id: slugify("Matrix Operations"),
-            title: "Matrix Operations",
-            slug: slugify("Matrix Operations"),
-            summary: `# Matrix Operations
+                        order: 1,
+                      },
+                      {
+                        course: { connect: { slug: "linear-algebra" } },
+                        id: slugify("Matrix Operations"),
+                        title: "Matrix Operations",
+                        slug: slugify("Matrix Operations"),
+                        summary: `# Matrix Operations
 
 The product of two matrices A and B is defined only when the number of columns in A equals the number of rows in B.
 
 \\[(AB)_{ij} = \\sum_{k=1}^n a_{ik}b_{kj}\\]`,
-            order: 2,
+                        order: 2,
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
           },
         ],
       },

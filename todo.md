@@ -8,6 +8,11 @@
     - [ ] feat: enhance lesson content display
         - [ ] Just refer to the uploaded files and students can download them.
     - [ ] metadata handling: tags, reading time, etc.
+- [ ] Course management
+    - [ ] Use new models for chapters and modules
+        - [ ] update seed data 
+        - [ ] update the whole course page structure
+            - [ ] remove lib/course-structure.ts
 - [ ] Question categorization (tags and topics)
 - [ ] Bug: MathJax can't display fraction
 - [ ] Fix: landing page doesn't display logged in user without refreshing

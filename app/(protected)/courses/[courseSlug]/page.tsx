@@ -3,19 +3,17 @@ import { Metadata } from "next";
 import { getAuthUser } from "@/lib/auth/get-user";
 import { getPublicEnhancedPrisma, getEnhancedPrisma } from "@/lib/db/enhanced";
 import { CourseContent } from "./_components/course-content";
-import { parseRawStructure, buildLessonMap } from "@/lib/course-structure";
 import { CourseStats } from "./_components/course-stats";
 import { CourseSidebar } from "./_components/course-sidebar";
 
 // Generate metadata for the page
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ courseSlug: string }>;
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ courseSlug: string }> }): Promise<Metadata> {
   const { courseSlug } = await params;
   const db = getPublicEnhancedPrisma();
-  const course = await db.course.findUnique({ where: { slug: courseSlug } });
+  const course = await db.course.findUnique({
+    where: { slug: courseSlug },
+    select: { title: true, description: true },
+  });
 
   if (!course) {
     return {
@@ -46,18 +44,44 @@ export default async function CourseDetailPage({
   // Get course with lessons and enrollment count
   const course = await db.course.findUnique({
     where: { slug: courseSlug },
-    include: {
-      lessons: {
-        orderBy: { order: "asc" },
-      },
-      enrollments: true,
-      author: {
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      slug: true,
+      createdAt: true,
+      updatedAt: true,
+      modules: {
         select: {
           id: true,
-          name: true,
-          image: true,
+          title: true,
+          slug: true,
+          order: true,
+          chapters: {
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              order: true,
+              lessons: {
+                select: {
+                  id: true,
+                  title: true,
+                  slug: true,
+                  order: true,
+                },
+                orderBy: { order: "asc" },
+              },
+            },
+            orderBy: { order: "asc" },
+          },
         },
+        orderBy: { order: "asc" },
       },
+      enrollments: {
+        select: { userId: true },
+      },
+      author: { select: { id: true, name: true, image: true } },
     },
   });
 
@@ -73,10 +97,6 @@ export default async function CourseDetailPage({
   // Detect if the current user is the course instructor
   const isInstructor = userId === course.author.id;
 
-  // Normalize and map structure
-  const structure = parseRawStructure(course.structure);
-  const { lessonMap } = buildLessonMap(structure, course.lessons);
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -88,15 +108,18 @@ export default async function CourseDetailPage({
           </div>
 
           <CourseStats
-            lessonCount={course.lessons.length}
+            lessonCount={course.modules.reduce(
+              (total, module) =>
+                total + module.chapters.reduce((ctotal, chap) => ctotal + chap.lessons.length, 0),
+              0
+            )}
             studentCount={course.enrollments.length}
             updatedAt={course.updatedAt}
           />
 
           <CourseContent
             courseSlug={courseSlug}
-            lessonMap={lessonMap}
-            structure={structure}
+            modules={course.modules}
           />
         </div>
 
@@ -109,10 +132,10 @@ export default async function CourseDetailPage({
             isLoggedIn={!!userId}
             isInstructor={isInstructor}
             firstLesson={
-              course.lessons[0]
+              course.modules[0]?.chapters[0]?.lessons[0]
                 ? {
-                    id: course.lessons[0].id,
-                    slug: course.lessons[0].slug,
+                    id: course.modules[0].chapters[0].lessons[0].id,
+                    slug: course.modules[0].chapters[0].lessons[0].slug,
                   }
                 : null
             }

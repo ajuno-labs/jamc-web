@@ -5,7 +5,6 @@ import { getAuthUser } from "@/lib/auth/get-user";
 import { revalidatePath } from "next/cache";
 import { slugify } from "@/lib/utils";
 import type { TreeNode } from "@/lib/types/course-structure";
-import { Prisma } from "@prisma/client";
 
 export async function createCourse(formData: FormData) {
   const user = await getAuthUser();
@@ -58,18 +57,13 @@ export async function createCourse(formData: FormData) {
   }
   const tags = formData.getAll("tags").map((tag) => tag as string);
   try {
+    // First, create the base course
     const course = await db.course.create({
       data: {
         title,
         description,
         slug,
         authorId: user.id,
-        ...(normalizedStructure
-          ? {
-              structure:
-                normalizedStructure as unknown as Prisma.InputJsonValue,
-            }
-          : {}),
         tags: {
           connectOrCreate: tags.map((name) => ({
             where: { name },
@@ -79,41 +73,39 @@ export async function createCourse(formData: FormData) {
       },
     });
 
-    // Create Lesson records for each 'lesson' node in the structure
+    // Then sequentially create modules, chapters, and lessons
     if (normalizedStructure) {
-      type StructureNode = {
-        id: string;
-        type: string;
-        title: string;
-        children?: StructureNode[];
-      };
-      const lessonNodes: StructureNode[] = [];
-      function traverse(nodes: StructureNode[]) {
-        for (const node of nodes) {
-          if (node.type === "lesson") lessonNodes.push(node);
-          if (node.children) traverse(node.children);
-        }
-      }
-      traverse(normalizedStructure as StructureNode[]);
-
-      let lessonOrder = 1;
-      for (const node of lessonNodes) {
-        // Upsert lesson: create or skip if already exists
-        await db.lesson.upsert({
-          where: { courseId_slug: { courseId: course.id, slug: node.id } },
-          create: {
-            title: node.title,
-            slug: node.id,
-            summary: null,
-            order: lessonOrder,
+      for (const [moduleIndex, moduleNode] of normalizedStructure.entries()) {
+        const courseModule = await db.courseModule.create({
+          data: {
+            title: moduleNode.title,
+            slug: moduleNode.id,
+            order: moduleIndex + 1,
             courseId: course.id,
           },
-          update: {
-            title: node.title,
-            order: lessonOrder,
-          },
         });
-        lessonOrder++;
+        for (const [chapterIndex, chapterNode] of moduleNode.children.entries()) {
+          const chapter = await db.courseChapter.create({
+            data: {
+              title: chapterNode.title,
+              slug: chapterNode.id,
+              order: chapterIndex + 1,
+              moduleId: courseModule.id,
+            },
+          });
+          for (const [lessonIndex, lessonNode] of chapterNode.children.entries()) {
+            await db.lesson.create({
+              data: {
+                title: lessonNode.title,
+                slug: lessonNode.id,
+                summary: null,
+                order: lessonIndex + 1,
+                chapterId: chapter.id,
+                courseId: course.id,
+              },
+            });
+          }
+        }
       }
     }
 

@@ -112,7 +112,7 @@ export function FileUpload({ onFilesSelected }: FileUploadProps) {
           <p className="text-xs text-muted-foreground">Supports: PDF, JPG, PNG, GIF</p>
           <div className="mt-2">
             <label htmlFor="file-upload">
-              <Button
+              <Button type="button"
                 variant="outline"
                 size="sm"
                 className="cursor-pointer"

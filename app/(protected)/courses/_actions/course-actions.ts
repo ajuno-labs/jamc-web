@@ -112,7 +112,12 @@ export async function getCourses(options?: {
     const db = getPublicEnhancedPrisma();
     const courses = await db.course.findMany({
       where,
-      include: {
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        slug: true,
+        createdAt: true,
         author: {
           select: {
             id: true,

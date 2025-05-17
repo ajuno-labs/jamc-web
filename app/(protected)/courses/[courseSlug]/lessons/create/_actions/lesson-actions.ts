@@ -4,6 +4,7 @@ import { getAuthUser } from '@/lib/auth/get-user'
 import { getEnhancedPrisma } from '@/lib/db/enhanced'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { Buffer } from 'buffer'
+import { slugify } from '@/lib/utils'
 
 export async function createLesson(formData: FormData) {
   const user = await getAuthUser()
@@ -63,6 +64,46 @@ export async function createLesson(formData: FormData) {
   const metadataRaw = formData.get('metadata')?.toString() || '{}'
   const metadata = JSON.parse(metadataRaw)
 
+  // Handle module creation or selection
+  const moduleId = formData.get('moduleId')?.toString() || ''
+  const newModuleTitle = formData.get('newModuleTitle')?.toString().trim() || ''
+  let moduleRecord = null
+  if (newModuleTitle) {
+    // Create a new module
+    const lastModule = await prisma.courseModule.findFirst({ where: { courseId: course.id }, orderBy: { order: 'desc' }, select: { order: true } })
+    const moduleOrder = lastModule ? lastModule.order + 1 : 1
+    const baseModuleSlug = slugify(newModuleTitle)
+    let moduleSlug = baseModuleSlug
+    let suffix = 1
+    while (await prisma.courseModule.findUnique({ where: { courseId_slug: { courseId: course.id, slug: moduleSlug } } })) {
+      moduleSlug = `${baseModuleSlug}-${suffix++}`
+    }
+    moduleRecord = await prisma.courseModule.create({ data: { title: newModuleTitle, slug: moduleSlug, order: moduleOrder, courseId: course.id } })
+  } else {
+    moduleRecord = await prisma.courseModule.findUnique({ where: { id: moduleId } })
+    if (!moduleRecord) throw new Error('Module not found')
+  }
+
+  // Handle chapter creation or selection
+  const chapterId = formData.get('chapterId')?.toString() || ''
+  const newChapterTitle = formData.get('newChapterTitle')?.toString().trim() || ''
+  let chapterRecord = null
+  if (newChapterTitle) {
+    // Create a new chapter
+    const lastChapter = await prisma.courseChapter.findFirst({ where: { moduleId: moduleRecord.id }, orderBy: { order: 'desc' }, select: { order: true } })
+    const chapterOrder = lastChapter ? lastChapter.order + 1 : 1
+    const baseChapterSlug = slugify(newChapterTitle)
+    let chapterSlug = baseChapterSlug
+    let suffixChap = 1
+    while (await prisma.courseChapter.findUnique({ where: { moduleId_slug: { moduleId: moduleRecord.id, slug: chapterSlug } } })) {
+      chapterSlug = `${baseChapterSlug}-${suffixChap++}`
+    }
+    chapterRecord = await prisma.courseChapter.create({ data: { title: newChapterTitle, slug: chapterSlug, order: chapterOrder, moduleId: moduleRecord.id } })
+  } else {
+    chapterRecord = await prisma.courseChapter.findUnique({ where: { id: chapterId } })
+    if (!chapterRecord) throw new Error('Chapter not found')
+  }
+
   await prisma.lesson.create({
     data: {
       title,
@@ -71,6 +112,7 @@ export async function createLesson(formData: FormData) {
       order,
       metadata,
       course: { connect: { id: course.id } },
+      chapter: { connect: { id: chapterRecord.id } },
       files: { create: fileCreateData },
     },
   })
