@@ -371,7 +371,11 @@ model Lesson {
   course    Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   questions Question[]  // Questions linked to this lesson
   views     LessonView[]
+  files     LessonFile[]
   
+  // Arbitrary metadata storage for lessons
+  metadata   Json?      @default("{}")
+
   // Unique constraint for slug within a course
   @@unique([courseId, slug])
   
@@ -379,6 +383,20 @@ model Lesson {
   @@allow('create', auth() != null)
   @@allow('read', true)
   @@allow('update', auth() != null && auth().roles?[permissions?[name == UPDATE]])
+  @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
+}
+
+// New model for LessonFile
+model LessonFile {
+  id        String   @id @default(cuid())
+  url       String
+  type      String
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@allow('create', auth() != null)
+  @@allow('read', true)
   @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
 }
 

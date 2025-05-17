@@ -255,8 +255,19 @@ model Lesson {
   course    Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   questions Question[]
   views     LessonView[]
+  files     LessonFile[]
+  metadata  Json?        @default("{}")
 
   @@unique([courseId, slug])
+}
+
+model LessonFile {
+  id        String   @id() @default(cuid())
+  url       String
+  type      String
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
 
 model LessonView {
