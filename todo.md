@@ -3,16 +3,18 @@
 ## Current
 
 - [ ] Lesson page
-    - [ ] Create lesson
+    - [x] Create lesson
         - [ ] feat: save draft
+        - [ ] feat: file limit 1MB handling
     - [ ] feat: enhance lesson content display
-        - [ ] Just refer to the uploaded files and students can download them.
+        - [x] Just refer to the uploaded files and students can download them.
+        - [ ] LaTeX support for lesson summary section
     - [ ] metadata handling: tags, reading time, etc.
 - [ ] Course management
-    - [ ] Use new models for chapters and modules
+    - [x] Use new models for chapters and modules
         - [x] update seed data 
-        - [ ] update the whole course page structure
-            - [ ] remove lib/course-structure.ts
+        - [x] update the whole course page structure
+            - [x] remove lib/course-structure.ts
     - [ ] Add a button to edit lessons
 - [ ] Question categorization (tags and topics)
 - [ ] Bug: MathJax can't display fraction

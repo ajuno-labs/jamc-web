@@ -1,65 +1,35 @@
 import { notFound, redirect } from "next/navigation";
-import { Metadata } from "next";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import {
-  getLessonById,
-  canAccessLesson,
-  type LessonWithNavigation,
-} from "./_actions/lesson-actions";
-import LessonViewedToggle from "./_components/LessonViewedToggle";
+import { getLessonSummary } from "./_actions/summary-actions";
 import { getAuthUser } from "@/lib/auth/get-user";
-import { getEnhancedPrisma } from "@/lib/db/enhanced";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
-// Generate metadata for the page
-export async function generateMetadata({
-  params,
-}: {
-  params: { courseSlug: string; lessonId: string; lessonSlug: string };
-}): Promise<Metadata> {
-  const lesson = await getLessonById(params.lessonId);
+import LessonSummaryHeader from "./_components/LessonSummaryHeader";
+import LessonSummary from "./_components/LessonSummary";
+import RelatedQuestions from "./_components/RelatedQuestions";
+import LessonResources from "./_components/LessonResources";
+import QuickActions from "./_components/QuickActions";
 
-  if (!lesson) {
-    return {
-      title: "Lesson Not Found",
-      description: "The requested lesson could not be found.",
-    };
-  }
+export default async function LessonSummaryPage({ params }: { params: { courseSlug: string; lessonId: string; lessonSlug: string } }) {
+  const { courseSlug, lessonId, lessonSlug } = params;
 
-  return {
-    title: `${lesson.title} - ${lesson.course.title}`,
-    description: lesson.summary?.slice(0, 160) || "",
-  };
-}
-
-export default async function LessonPage({
-  params,
-}: {
-  params: { courseSlug: string; lessonId: string; lessonSlug: string };
-}) {
-  // Get lesson with course and navigation info
-  const lesson = (await getLessonById(
-    params.lessonId
-  )) as LessonWithNavigation | null;
-
+  const lesson = await getLessonSummary(lessonId);
   if (!lesson) {
     notFound();
   }
 
-  // Verify the slugs match
-  if (
-    lesson.course.slug !== params.courseSlug ||
-    lesson.slug !== params.lessonSlug
-  ) {
-    redirect(
-      `/courses/${lesson.course.slug}/lessons/${params.lessonId}/${lesson.slug}`
-    );
+  if (lesson.course.slug !== courseSlug || lesson.slug !== lessonSlug) {
+    return redirect(`/courses/${lesson.course.slug}/lessons/${lessonId}/${lesson.slug}`);
   }
 
-  // Check if user can access the lesson
-  const hasAccess = await canAccessLesson(lesson);
+  const user = await getAuthUser();
+  const hasAccess = Boolean(
+    user &&
+      (lesson.course.author.id === user.id ||
+        lesson.course.enrollments.some((e) => e.userId === user.id))
+  );
+
   if (!hasAccess) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -69,87 +39,33 @@ export default async function LessonPage({
             You need to be enrolled in this course to view this lesson.
           </p>
           <Button asChild>
-            <Link href={`/courses/${params.courseSlug}`}>
-              Go to Course Page
-            </Link>
+            <Link href={`/courses/${lesson.course.slug}`}>Go to Course Page</Link>
           </Button>
         </Card>
       </div>
     );
   }
 
-  // Determine if the user has already viewed this lesson
-  const user = await getAuthUser();
-  let initialViewed = false;
-  if (user) {
-    const db = await getEnhancedPrisma();
-    const view = await db.lessonView.findUnique({
-      where: {
-        userId_lessonId: { userId: user.id, lessonId: params.lessonId },
-      },
-    });
-    initialViewed = Boolean(view);
-  }
-
-  // Get previous and next lessons
-  const prevLesson = lesson.course.lessons.find(
-    (l) => l.order === lesson.order - 1
-  );
-  const nextLesson = lesson.course.lessons.find(
-    (l) => l.order === lesson.order + 1
-  );
+  const nextLesson = lesson.course.lessons.find((l) => l.order === lesson.order + 1);
+  const nextUrl = nextLesson ? `/courses/${courseSlug}/lessons/${nextLesson.id}/${nextLesson.slug}` : undefined;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Breadcrumb */}
-        <div className="mb-8">
-          <Link
-            href={`/courses/${params.courseSlug}`}
-            className="text-sm text-muted-foreground hover:text-primary transition-colors"
-          >
-            ← Back to {lesson.course.title}
-          </Link>
+    <div className="container mx-auto px-4 max-w-5xl py-8 space-y-8">
+      {/* Header */}
+      <LessonSummaryHeader lesson={lesson} nextLessonUrl={nextUrl} />
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Left Column: Summary & Related Questions */}
+        <div className="md:col-span-2 space-y-8">
+          <LessonSummary summary={lesson.summary || ""} />
+          <RelatedQuestions questions={lesson.questions} />
         </div>
 
-        {/* Lesson Content */}
-        <div className="prose prose-slate dark:prose-invert max-w-none">
-          <h1>{lesson.title}</h1>
-          <div className="mt-4">
-            <LessonViewedToggle
-              lessonId={params.lessonId}
-              initialViewed={initialViewed}
-            />
-          </div>
-
-          <div dangerouslySetInnerHTML={{ __html: lesson.summary || "" }} />
-        </div>
-
-        {/* Navigation */}
-        <div className="mt-12 flex items-center justify-between">
-          {prevLesson ? (
-            <Button variant="outline" asChild>
-              <Link
-                href={`/courses/${params.courseSlug}/lessons/${prevLesson.id}/${prevLesson.slug}`}
-              >
-                <ChevronLeft className="h-4 w-4 mr-2" />
-                {prevLesson.title}
-              </Link>
-            </Button>
-          ) : (
-            <div /> // Empty div for spacing
-          )}
-
-          {nextLesson && (
-            <Button asChild>
-              <Link
-                href={`/courses/${params.courseSlug}/lessons/${nextLesson.id}/${nextLesson.slug}`}
-              >
-                {nextLesson.title}
-                <ChevronRight className="h-4 w-4 ml-2" />
-              </Link>
-            </Button>
-          )}
+        {/* Right Column: Resources & Quick Actions */}
+        <div className="space-y-6">
+          <LessonResources files={lesson.files} />
+          <QuickActions files={lesson.files} />
         </div>
       </div>
     </div>
