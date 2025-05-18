@@ -5,10 +5,10 @@
 - [ ] Lesson page
     - [x] Create lesson
         - [ ] feat: save draft
-        - [ ] feat: file limit 1MB handling
+        - [x] feat: file limit 1MB handling
     - [ ] feat: enhance lesson content display
         - [x] Just refer to the uploaded files and students can download them.
-        - [ ] LaTeX support for lesson summary section
+        - [x] LaTeX support for lesson summary section
         - [ ] Mark as read button for student
     - [ ] metadata handling: tags, reading time, etc.
 - [ ] Course management
@@ -18,7 +18,7 @@
             - [x] remove lib/course-structure.ts
     - [ ] Add a button to edit lessons
 - [ ] Question categorization (tags and topics)
-- [ ] Bug: MathJax can't display fraction
+- [x] Bug: MathJax can't display fraction
 - [ ] Fix: landing page doesn't display logged in user without refreshing
 - [ ] Course Management
     - [ ] Course/lesson progress bar in dashboard (Paused - awaiting LMS tracking support)

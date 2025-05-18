@@ -6,6 +6,7 @@ import { useState } from "react"
 import { Upload, File as FileIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import { MAX_UPLOAD_SIZE_BYTES, MAX_UPLOAD_SIZE_MB } from "@/lib/config/upload"
 
 type UploadingFile = {
   id: string
@@ -21,6 +22,7 @@ export interface FileUploadProps {
 export function FileUpload({ onFilesSelected }: FileUploadProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([])
+  const [errorMessages, setErrorMessages] = useState<string[]>([])
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
@@ -49,14 +51,24 @@ export function FileUpload({ onFilesSelected }: FileUploadProps) {
   }
 
   const handleFiles = (files: File[]) => {
-    // Filter for accepted file types
+    // Validate file sizes
+    const oversize = files.filter(file => file.size > MAX_UPLOAD_SIZE_BYTES)
+    if (oversize.length > 0) {
+      setErrorMessages(oversize.map(f => `${f.name} is too large. Max size is ${MAX_UPLOAD_SIZE_MB} MB.`))
+    } else {
+      setErrorMessages([])
+    }
+    // Filter for accepted file types and sizes
     const acceptedFiles = files.filter((file) => {
       const fileType = file.type.toLowerCase()
+      const isSizeOk = file.size <= MAX_UPLOAD_SIZE_BYTES
       return (
-        fileType.includes("pdf") ||
-        fileType.includes("image/jpeg") ||
-        fileType.includes("image/png") ||
-        fileType.includes("image/gif")
+        isSizeOk && (
+          fileType.includes("pdf") ||
+          fileType.includes("image/jpeg") ||
+          fileType.includes("image/png") ||
+          fileType.includes("image/gif")
+        )
       )
     })
 
@@ -98,6 +110,14 @@ export function FileUpload({ onFilesSelected }: FileUploadProps) {
 
   return (
     <div className="space-y-4">
+      {/* Display file size errors */}
+      {errorMessages.length > 0 && (
+        <div className="mb-2">
+          {errorMessages.map((msg, idx) => (
+            <p key={idx} className="text-sm text-red-500">{msg}</p>
+          ))}
+        </div>
+      )}
       <div
         className={`border-2 border-dashed rounded-lg p-6 text-center ${
           isDragging ? "border-primary bg-primary/10" : "border-input"
