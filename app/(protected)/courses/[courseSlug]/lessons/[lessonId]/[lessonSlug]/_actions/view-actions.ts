@@ -2,13 +2,13 @@
 
 import { getAuthUser } from "@/lib/auth/get-user";
 import { getEnhancedPrisma } from "@/lib/db/enhanced";
+import { Prisma } from "@prisma/client";
 
 /**
  * Server action to mark the current lesson as viewed by the authenticated user.
  */
-export async function markLessonViewed(formData: FormData) {
-  const lessonId = formData.get("lessonId");
-  if (typeof lessonId !== "string") {
+export async function markLessonViewed(lessonId: string) {
+  if (!lessonId) {
     throw new Error("Lesson ID is required");
   }
 
@@ -25,4 +25,30 @@ export async function markLessonViewed(formData: FormData) {
     create: { userId: user.id, lessonId },
     update: {},
   });
+}
+
+/**
+ * Server action to unmark the current lesson as viewed by the authenticated user.
+ */
+export async function unmarkLessonViewed(lessonId: string) {
+  if (!lessonId) {
+    throw new Error("Lesson ID is required");
+  }
+
+  const user = await getAuthUser();
+  if (!user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const db = await getEnhancedPrisma();
+  try {
+    await db.lessonView.delete({
+      where: { userId_lessonId: { userId: user.id, lessonId } },
+    });
+  } catch (error) {
+    // Ignore if no record to delete
+    if (!(error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025')) {
+      throw error;
+    }
+  }
 } 

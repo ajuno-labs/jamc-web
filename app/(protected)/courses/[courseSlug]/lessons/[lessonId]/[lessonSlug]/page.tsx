@@ -4,7 +4,8 @@ import { getLessonSummary } from "./_actions/summary-actions";
 import { getAuthUser } from "@/lib/auth/get-user";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { markLessonViewed } from "./_actions/view-actions";
+import { getEnhancedPrisma } from "@/lib/db/enhanced";
+import ViewToggle from "./_components/ViewToggle";
 
 import LessonSummaryHeader from "./_components/LessonSummaryHeader";
 import LessonSummary from "./_components/LessonSummary";
@@ -25,6 +26,14 @@ export default async function LessonSummaryPage({ params }: { params: { courseSl
   }
 
   const user = await getAuthUser();
+  const db = await getEnhancedPrisma();
+  const viewRecord = user
+    ? await db.lessonView.findUnique({
+        where: { userId_lessonId: { userId: user.id, lessonId } },
+      })
+    : null;
+  const viewed = Boolean(viewRecord);
+
   const hasAccess = Boolean(
     user &&
       (lesson.course.author.id === user.id ||
@@ -64,10 +73,7 @@ export default async function LessonSummaryPage({ params }: { params: { courseSl
             </Link>
           </Button>
         ) : (
-          <form action={markLessonViewed} className="inline">
-            <input type="hidden" name="lessonId" value={lessonId} />
-            <Button type="submit">Mark as Viewed</Button>
-          </form>
+          <ViewToggle lessonId={lessonId} initiallyViewed={viewed} />
         )}
       </div>
 

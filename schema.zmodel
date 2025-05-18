@@ -425,6 +425,11 @@ model LessonView {
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   lesson   Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
+  @@allow('create', auth() != null)
+  @@allow('read', true)
+  @@allow('update', auth() == user)
+  @@allow('delete', auth() == user)
+
   @@id([userId, lessonId])
 }
 

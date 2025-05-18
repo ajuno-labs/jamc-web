@@ -16,7 +16,8 @@
         - [x] update seed data 
         - [x] update the whole course page structure
             - [x] remove lib/course-structure.ts
-    - [ ] Add a button to edit lessons
+    - [x] Add a button to edit lessons
+    - [ ] Edit course page
 - [ ] Question categorization (tags and topics)
 - [x] Bug: MathJax can't display fraction
 - [ ] Fix: landing page doesn't display logged in user without refreshing
