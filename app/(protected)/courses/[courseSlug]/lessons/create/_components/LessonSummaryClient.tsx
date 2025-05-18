@@ -31,6 +31,8 @@ export default function LessonSummaryClient({ courseSlug, courseId, modules }: L
     formData.append('chapterId', data.chapterId)
     formData.append('title', data.title)
     formData.append('summary', data.summary)
+    formData.append('newModuleTitle', data.newModuleTitle)
+    formData.append('newChapterTitle', data.newChapterTitle)
     // Append uploaded files
     files.forEach((file) => formData.append('files', file))
     // Append metadata as JSON

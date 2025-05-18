@@ -10,7 +10,7 @@
     - [ ] metadata handling: tags, reading time, etc.
 - [ ] Course management
     - [ ] Use new models for chapters and modules
-        - [ ] update seed data 
+        - [x] update seed data 
         - [ ] update the whole course page structure
             - [ ] remove lib/course-structure.ts
     - [ ] Add a button to edit lessons
