@@ -1,3 +1,5 @@
+"use client"
+import { MathContent } from '@/components/MathContent';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { FileText } from "lucide-react";
 
@@ -15,7 +17,7 @@ export default function LessonSummary({ summary }: LessonSummaryProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground leading-relaxed">{summary}</p>
+        <MathContent content={summary} className="text-muted-foreground leading-relaxed" />
       </CardContent>
     </Card>
   );

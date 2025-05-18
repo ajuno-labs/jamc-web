@@ -1,7 +1,8 @@
-import LessonSummaryClient from './_components/LessonSummaryClient'
+import LessonForm from '../_components/LessonForm'
 import { getAuthUser } from '@/lib/auth/get-user'
 import { getEnhancedPrisma } from '@/lib/db/enhanced'
 import { notFound } from 'next/navigation'
+import { createLesson } from './_actions/lesson-actions'
 
 interface PageProps {
   params: Promise<{ courseSlug: string }>
@@ -42,10 +43,12 @@ export default async function Page({ params }: PageProps) {
   }
 
   return (
-    <LessonSummaryClient
+    <LessonForm
       courseSlug={courseSlug}
       courseId={course.id}
       modules={course.modules}
+      onSubmit={createLesson}
+      redirectUrl={`/courses/${courseSlug}`}
     />
   )
 }

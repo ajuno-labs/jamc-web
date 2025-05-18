@@ -4,6 +4,7 @@ import { getLessonSummary } from "./_actions/summary-actions";
 import { getAuthUser } from "@/lib/auth/get-user";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { markLessonViewed } from "./_actions/view-actions";
 
 import LessonSummaryHeader from "./_components/LessonSummaryHeader";
 import LessonSummary from "./_components/LessonSummary";
@@ -53,6 +54,22 @@ export default async function LessonSummaryPage({ params }: { params: { courseSl
     <div className="container mx-auto px-4 max-w-5xl py-8 space-y-8">
       {/* Header */}
       <LessonSummaryHeader lesson={lesson} nextLessonUrl={nextUrl} />
+
+      {/* Teacher or Student Action */}
+      <div className="flex justify-end space-x-2 mb-4">
+        {lesson.course.author.id === user!.id ? (
+          <Button asChild>
+            <Link href={`/courses/${courseSlug}/lessons/${lessonId}/${lesson.slug}/edit`}>
+              Edit Lesson
+            </Link>
+          </Button>
+        ) : (
+          <form action={markLessonViewed} className="inline">
+            <input type="hidden" name="lessonId" value={lessonId} />
+            <Button type="submit">Mark as Viewed</Button>
+          </form>
+        )}
+      </div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
