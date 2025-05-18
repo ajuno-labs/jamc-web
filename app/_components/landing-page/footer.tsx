@@ -9,7 +9,7 @@ export function Footer() {
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center space-x-2">
               <GraduationCap className="h-6 w-6" />
-              <span className="font-bold text-xl">JamC</span>
+              <span className="font-bold text-xl">JAMC</span>
             </Link>
             <p className="mt-4 text-sm text-muted-foreground">
               Connecting students and educators in a collaborative learning environment.
@@ -94,7 +94,7 @@ export function Footer() {
         
         <div className="mt-12 pt-8 border-t flex flex-col sm:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} JamC. All rights reserved.
+            © {new Date().getFullYear()} JAMC. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 sm:mt-0">
             <Link href="#" className="text-muted-foreground hover:text-foreground">
