@@ -7,6 +7,7 @@ import { MetadataSection, LessonHeader, LessonBasics, LessonStructure, LessonFil
 import { useRouter } from 'next/navigation'
 import { createLesson } from '../_actions/lesson-actions'
 import type { Module, LessonFormValues } from './LessonSummaryClient.types'
+import { MathContent } from '@/components/MathContent'
 
 interface LessonSummaryClientProps {
   courseSlug: string
@@ -18,6 +19,7 @@ export default function LessonSummaryClient({ courseSlug, courseId, modules }: L
   const router = useRouter()
   const form = useForm<LessonFormValues>({ defaultValues: { title: '', summary: '', moduleId: '', chapterId: '', newModuleTitle: '', newChapterTitle: '' } })
   const { handleSubmit, control, watch, setValue } = form
+  const summary = watch('summary')
   // State for file uploads and metadata
   const [files, setFiles] = useState<File[]>([])
   const [tags, setTags] = useState<string>('')
@@ -53,6 +55,11 @@ export default function LessonSummaryClient({ courseSlug, courseId, modules }: L
 
           <div className='bg-card text-card-foreground rounded-lg shadow-sm p-6 mt-4'>
             <LessonBasics control={control} />
+            {/* Summary Preview using MathContent */}
+            <div className="mt-6 mb-6">
+              <h3 className="text-lg font-semibold mb-2">Summary Preview</h3>
+              <MathContent content={summary} className="prose" />
+            </div>
             <LessonStructure control={control} watch={watch} setValue={setValue} modules={modules} />
             <LessonFiles files={files} onFilesSelected={(selectedFiles) => setFiles((prev) => [...prev, ...selectedFiles])} onRemove={(file) => setFiles((prev) => prev.filter((f) => f !== file))} />
             <MetadataSection tags={tags} readingTime={readingTime} onTagsChange={setTags} onReadingTimeChange={setReadingTime} />

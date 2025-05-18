@@ -9,6 +9,7 @@
     - [ ] feat: enhance lesson content display
         - [x] Just refer to the uploaded files and students can download them.
         - [ ] LaTeX support for lesson summary section
+        - [ ] Mark as read button for student
     - [ ] metadata handling: tags, reading time, etc.
 - [ ] Course management
     - [x] Use new models for chapters and modules
