@@ -311,7 +311,8 @@ model Course {
   slug        String             @unique
   
   // New field for course structure/hierarchy
-  structure   Json?       // Stores the visual hierarchy (volumes, modules, etc)
+  // structure   Json?       // (Deprecated – use modules/chapters instead)
+  modules     CourseModule[]
   
   // Metadata
   createdAt   DateTime           @default(now())
@@ -320,7 +321,7 @@ model Course {
   // Relations
   authorId    String
   author      User               @relation("CourseCreator", fields: [authorId], references: [id])
-  lessons     Lesson[]    // Direct relation to lessons
+  lessons     Lesson[]           // Direct relation to lessons
   tags        Tag[]
   questions   Question[]
   enrollments CourseEnrollment[]
@@ -360,18 +361,26 @@ model Lesson {
   title     String       @length(min: 1, max: 100)
   slug      String
   summary   String?      // Optional summary or resource link
-  order     Int          // For ordering lessons
+  order     Int
   
   // Metadata
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   
-  // Relations
+  // New relations for module/chapter
+  chapterId String?
+  chapter   CourseChapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  
+  // Existing course relation retained
   courseId  String
   course    Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   questions Question[]  // Questions linked to this lesson
   views     LessonView[]
+  files     LessonFile[]
   
+  // Arbitrary metadata storage for lessons
+  metadata   Json?       @default("{}")
+
   // Unique constraint for slug within a course
   @@unique([courseId, slug])
   
@@ -379,6 +388,20 @@ model Lesson {
   @@allow('create', auth() != null)
   @@allow('read', true)
   @@allow('update', auth() != null && auth().roles?[permissions?[name == UPDATE]])
+  @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
+}
+
+// New model for LessonFile
+model LessonFile {
+  id        String   @id @default(cuid())
+  url       String
+  type      String
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@allow('create', auth() != null)
+  @@allow('read', true)
   @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
 }
 
@@ -418,4 +441,42 @@ model ActivityLog {
 
   @@index([userId, type])
   @@index([entityType, entityId])
+}
+
+// New model for course modules
+model CourseModule {
+  id         String        @id @default(cuid())
+  title      String        @length(min: 1, max: 100)
+  slug       String
+  order      Int
+  courseId   String
+  course     Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  chapters   CourseChapter[]
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @default(now())
+
+  @@unique([courseId, slug])
+  @@allow('create', auth() != null)
+  @@allow('read', true)
+  @@allow('update', auth() != null && auth().roles?[permissions?[name == UPDATE]])
+  @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
+}
+
+// New model for course chapters
+model CourseChapter {
+  id         String        @id @default(cuid())
+  title      String        @length(min: 1, max: 100)
+  slug       String
+  order      Int
+  moduleId   String
+  module     CourseModule  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  lessons    Lesson[]
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @default(now())
+
+  @@unique([moduleId, slug])
+  @@allow('create', auth() != null)
+  @@allow('read', true)
+  @@allow('update', auth() != null && auth().roles?[permissions?[name == UPDATE]])
+  @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
 }

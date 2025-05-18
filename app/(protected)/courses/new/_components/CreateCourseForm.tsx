@@ -38,7 +38,6 @@ import {
   EnhancedTreeBuilder,
   allowedChildTypes,
 } from "./CourseStructureBuilder";
-import { slugify } from "@/lib/utils";
 
 // Zod schema for course form
 const courseFormSchema = z.object({
@@ -103,32 +102,11 @@ export function CreateCourseForm({ availableTags }: CreateCourseFormProps) {
   const onSubmit = async (data: CourseFormValues) => {
     setIsSubmitting(true);
     try {
-      // Normalize lesson IDs to unique slugified titles
-      const slugSet = new Set<string>();
-      const normalizeNodes = (nodes: TreeNode[]): TreeNode[] =>
-        nodes.map((node) => {
-          const children = node.children ? normalizeNodes(node.children) : [];
-          let id = node.id;
-          if (node.type === "lesson") {
-            const base = slugify(node.title);
-            let unique = base;
-            let counter = 1;
-            while (slugSet.has(unique)) {
-              unique = `${base}-${counter++}`;
-            }
-            slugSet.add(unique);
-            id = unique;
-          }
-          return { id, type: node.type, title: node.title, children };
-        });
-      const normalizedStructure: TreeNode[] =
-        Array.isArray(data.structure) && data.structure.length > 0
-          ? normalizeNodes(data.structure as TreeNode[])
-          : [];
+      // Serialize form data
       const formData = new FormData();
       formData.append("title", data.title);
       formData.append("description", data.description);
-      formData.append("structure", JSON.stringify(normalizedStructure));
+      formData.append("structure", JSON.stringify(data.structure || []));
       data.tags?.forEach((tag) => formData.append("tags", tag));
 
       const result = await createCourse(formData);
