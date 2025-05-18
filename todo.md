@@ -5,8 +5,10 @@
 - [ ] Lesson page
     - [x] Create lesson
         - [ ] feat: save draft
+        - [ ] feat: file limit 1MB handling
     - [ ] feat: enhance lesson content display
-        - [ ] Just refer to the uploaded files and students can download them.
+        - [x] Just refer to the uploaded files and students can download them.
+        - [ ] LaTeX support for lesson summary section
     - [ ] metadata handling: tags, reading time, etc.
 - [ ] Course management
     - [x] Use new models for chapters and modules

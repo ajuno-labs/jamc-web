@@ -65,7 +65,7 @@ export default async function LessonSummaryPage({ params }: { params: { courseSl
         {/* Right Column: Resources & Quick Actions */}
         <div className="space-y-6">
           <LessonResources files={lesson.files} />
-          <QuickActions />
+          <QuickActions files={lesson.files} />
         </div>
       </div>
     </div>
