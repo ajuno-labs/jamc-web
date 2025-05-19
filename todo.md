@@ -2,6 +2,10 @@
 
 ## Current
 
+- [ ] Enrollment
+    - [ ] Generate random code
+    - [ ] Enroll button
+    - [ ] Enrolled course
 - [ ] Lesson page
     - [x] Create lesson
         - [ ] feat: save draft
@@ -9,7 +13,7 @@
     - [ ] feat: enhance lesson content display
         - [x] Just refer to the uploaded files and students can download them.
         - [x] LaTeX support for lesson summary section
-        - [ ] Mark as read button for student
+        - [x] Mark as read button for student
     - [ ] metadata handling: tags, reading time, etc.
 - [ ] Course management
     - [x] Use new models for chapters and modules
@@ -18,6 +22,7 @@
             - [x] remove lib/course-structure.ts
     - [x] Add a button to edit lessons
     - [ ] Edit course page
+    - [ ] Dashboard page
 - [ ] Question categorization (tags and topics)
 - [x] Bug: MathJax can't display fraction
 - [ ] Fix: landing page doesn't display logged in user without refreshing

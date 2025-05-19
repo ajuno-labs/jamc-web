@@ -1,19 +1,12 @@
 "use client"
 
-import React, { useState } from "react"
+import React from "react"
 import { BookOpen, ChevronDown, GraduationCap, HelpCircle, LayoutDashboard, Settings, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { EnrollmentChart } from "./EnrollmentChart"
-import { QuestionsList } from "./QuestionsList"
-import { StudentsList } from "./StudentsList"
-import { WeeklyActivityChart } from "./WeeklyActivityChart"
 import {
   Sidebar,
   SidebarContent,
@@ -28,6 +21,13 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { EnrollmentCodeCard } from "./EnrollmentCodeCard"
+import { StatsOverview } from "./StatsOverview"
+import { WeeklyActivityCard } from "./WeeklyActivityCard"
+import { ModuleCompletionCard } from "./ModuleCompletionCard"
+import { RecentQuestionsSection } from "./RecentQuestionsSection"
+import { EnrollmentChartCard } from "./EnrollmentChartCard"
+import { StudentsSection } from "./StudentsSection"
 
 export interface DashboardPageProps {
   students: { id: string; name: string }[]
@@ -41,11 +41,11 @@ export interface DashboardPageProps {
   }[]
   courses: { slug: string; title: string }[]
   currentCourseSlug: string
+  joinCode: string | null
 }
 
-export function DashboardPage({ students, questions, courses, currentCourseSlug }: DashboardPageProps) {
+export function DashboardPage({ students, questions, courses, currentCourseSlug, joinCode }: DashboardPageProps) {
   const selectedCourse = courses.find(c => c.slug === currentCourseSlug)?.title || ''
-  const [questionTab, setQuestionTab] = useState<'all' | 'unanswered' | 'flagged'>('all')
   const router = useRouter()
 
   return (
@@ -160,161 +160,25 @@ export function DashboardPage({ students, questions, courses, currentCourseSlug 
             </div>
           </header>
           <main className="p-6">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Total Students</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{students.length}</div>
-                  <p className="text-xs text-muted-foreground">+4 new this week</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Active Students (7 days)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">64</div>
-                  <p className="text-xs text-muted-foreground">73% of total students</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Open Questions</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{questions.length}</div>
-                  <p className="text-xs text-muted-foreground">{questions.filter(q => q._count.answers === 0).length} unanswered</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Average Completion</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">68%</div>
-                  <Progress value={68} className="mt-2" />
-                </CardContent>
-              </Card>
-            </div>
-
+            <EnrollmentCodeCard joinCode={joinCode} />
+            <StatsOverview
+              studentsCount={students.length}
+              newThisWeekCount={4}
+              activeStudentsCount={64}
+              activeStudentsPercentage={73}
+              openQuestionsCount={questions.length}
+              unansweredCount={questions.filter(q => q._count.answers === 0).length}
+              averageCompletion={68}
+            />
             <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-              <Card className="lg:col-span-4">
-                <CardHeader>
-                  <CardTitle>Weekly Activity</CardTitle>
-                  <CardDescription>Student logins and engagement over time</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <WeeklyActivityChart />
-                </CardContent>
-              </Card>
-              <Card className="lg:col-span-3">
-                <CardHeader>
-                  <CardTitle>Module Completion</CardTitle>
-                  <CardDescription>Progress through course modules</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="mb-1 flex items-center justify-between text-sm">
-                        <div>Module 1: HTML Basics</div>
-                        <div className="font-medium">98%</div>
-                      </div>
-                      <Progress value={98} className="h-2" />
-                    </div>
-                    <div>
-                      <div className="mb-1 flex items-center justify-between text-sm">
-                        <div>Module 2: CSS Fundamentals</div>
-                        <div className="font-medium">87%</div>
-                      </div>
-                      <Progress value={87} className="h-2" />
-                    </div>
-                    <div>
-                      <div className="mb-1 flex items-center justify-between text-sm">
-                        <div>Module 3: JavaScript Intro</div>
-                        <div className="font-medium">76%</div>
-                      </div>
-                      <Progress value={76} className="h-2" />
-                    </div>
-                    <div>
-                      <div className="mb-1 flex items-center justify-between text-sm">
-                        <div>Module 4: DOM Manipulation</div>
-                        <div className="font-medium">54%</div>
-                      </div>
-                      <Progress value={54} className="h-2" />
-                    </div>
-                    <div>
-                      <div className="mb-1 flex items-center justify-between text-sm">
-                        <div>Module 5: API Integration</div>
-                        <div className="font-medium">23%</div>
-                      </div>
-                      <Progress value={23} className="h-2" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <WeeklyActivityCard />
+              <ModuleCompletionCard />
             </div>
-
             <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-              <Card className="lg:col-span-3">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle>Recent Questions</CardTitle>
-                    <CardDescription>Latest student questions from the course</CardDescription>
-                  </div>
-                  <Tabs value={questionTab} onValueChange={(value) => setQuestionTab(value as 'all' | 'unanswered' | 'flagged')}>
-                    <TabsList className="grid w-full grid-cols-3">
-                      <TabsTrigger value="all">All</TabsTrigger>
-                      <TabsTrigger value="unanswered">Unanswered</TabsTrigger>
-                      <TabsTrigger value="flagged">Flagged</TabsTrigger>
-                    </TabsList>
-                  </Tabs>
-                </CardHeader>
-                <CardContent>
-                  {(() => {
-                    const filteredQuestions = questions.filter(q => {
-                      if (questionTab === 'unanswered') return q._count.answers === 0
-                      if (questionTab === 'flagged') return q._count.answers > 0
-                      return true
-                    })
-                    return <QuestionsList questions={filteredQuestions} />
-                  })()}
-                </CardContent>
-                <CardFooter>
-                  <Link href={`/courses/${currentCourseSlug}/teacher/questions`} className="w-full">
-                    <Button variant="outline" className="w-full">
-                      View All Questions
-                    </Button>
-                  </Link>
-                </CardFooter>
-              </Card>
-              <Card className="lg:col-span-4">
-                <CardHeader>
-                  <CardTitle>Student Enrollment</CardTitle>
-                  <CardDescription>New enrollments and student activity</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <EnrollmentChart />
-                </CardContent>
-              </Card>
+              <RecentQuestionsSection questions={questions} currentCourseSlug={currentCourseSlug} />
+              <EnrollmentChartCard />
             </div>
-
-            <div className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Students</CardTitle>
-                  <CardDescription>Manage and monitor student progress</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <StudentsList />
-                </CardContent>
-                <CardFooter className="flex justify-between">
-                  <Button variant="outline">Export List</Button>
-                  <Button>Message All</Button>
-                </CardFooter>
-              </Card>
-            </div>
+            <StudentsSection />
           </main>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { getAuthUser } from "@/lib/auth/get-user"
 import { getEnhancedPrisma } from "@/lib/db/enhanced"
 import { DashboardPage } from "./_components/DashboardPage"
+import { randomBytes } from "crypto"
 
 interface TeacherDashboardPageProps {
   params: Promise<{ courseSlug: string }>
@@ -21,12 +22,22 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
   const db = await getEnhancedPrisma()
 
   // Verify that the current user is the course instructor
-  const course = await db.course.findUnique({
+  let course = await db.course.findUnique({
     where: { slug: courseSlug },
-    select: { id: true, authorId: true, title: true }
+    select: { id: true, authorId: true, title: true, joinCode: true }
   })
   if (!course || course.authorId !== user.id) {
     notFound()
+  }
+
+  // Generate a unique join code if not already set
+  if (!course!.joinCode) {
+    const code = randomBytes(4).toString('hex').toUpperCase()
+    await db.course.update({
+      where: { id: course!.id },
+      data: { joinCode: code }
+    })
+    course = { ...course, joinCode: code }
   }
 
   // Fetch enrolled students for dashboard stats
@@ -67,5 +78,6 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
     questions={questions}
     courses={courses}
     currentCourseSlug={courseSlug}
+    joinCode={course!.joinCode}
   />
 } 

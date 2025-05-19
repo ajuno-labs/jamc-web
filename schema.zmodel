@@ -309,6 +309,7 @@ model Course {
   title       String             @length(min: 3, max: 100)
   description String             @length(min: 10, max: 1000)
   slug        String             @unique
+  joinCode    String?            @unique  // Unique code for students to join the course
   
   // New field for course structure/hierarchy
   // structure   Json?       // (Deprecated – use modules/chapters instead)
