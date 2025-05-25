@@ -2,17 +2,12 @@
 
 ## Current
 
+- [ ] Question page
+    - [ ] Question categorization (tags and topics)
 - [ ] Notification System
     - [ ] New answer notifications
     - [ ] Content update notifications
     - [ ] Following/subscription management
-- Course page
-    - [ ] Pagination for courses
-    - [ ] Layout update: switch navigation to sidebar and change header features
-- [ ] Enrollment
-    - [x] Generate random code
-    - [ ] Enroll button
-    - [ ] Enrolled course
 - [ ] Lesson page
     - [x] Create lesson
         - [ ] allow teacher permission only accessing the page
@@ -31,8 +26,6 @@
     - [x] Add a button to edit lessons
     - [ ] Edit course page
     - [ ] Dashboard page
-- [ ] Question categorization (tags and topics)
-- [x] Bug: MathJax can't display fraction
 - [ ] Fix: landing page doesn't display logged in user without refreshing
 - [ ] Course Management
     - [ ] Course/lesson progress bar in dashboard (Paused - awaiting LMS tracking support)
@@ -46,15 +39,16 @@
 - [ ] progress bar (server handling?) in course content
 - [ ] Testing: Duplicate question filtering
 - [ ] Update course content accordingly to the new lesson schema
-- [ ] feat: Create new course button somewhere
 - [ ] refactor: reduce size and duplicate code of create course form
 - [ ] feat: new approach for sbert: precompute embeddings
     - Currently trying to compute each new question on the fly but that's gonna be too slow
-- [ ] Enrollment flow
 - [ ] feat: ux error handling in empty titles of nodes in course structure
 
 ## Finished
 
+- [x] Bug: MathJax can't display fraction
+- [x] Enrollment flow
+- [x] feat: Create new course button somewhere
 - [x] Redirect to new course after creation.
 - [x] Hide 'add' button inside the lesson node in course structure
 - [x] style: update create course form button position and spacing
@@ -70,6 +64,13 @@
 - [x] Related questions feature
 - [x] Add course linkage in questions
 - [x] Upvote/downvote functionality
+- [x] Course page
+    - [x] Pagination for courses
+    - [x] Layout update: switch navigation to sidebar and change header features
+- [x] Enrollment
+    - [x] Generate random code
+    - [x] Enroll button
+    - [x] Enrolled course
 
 ## Low prio
 
