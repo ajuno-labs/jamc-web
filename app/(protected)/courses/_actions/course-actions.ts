@@ -429,3 +429,88 @@ export async function getMyCoursesWithLessons() {
 
   return allCourses;
 }
+
+/**
+ * Get courses the user has access to (enrolled + authored)
+ */
+export async function getMyAccessibleCourses(): Promise<Course[]> {
+  try {
+    const user = await getAuthUser();
+    if (!user?.id) {
+      return [];
+    }
+
+    const db = await getEnhancedPrisma();
+
+    // Get courses where user is enrolled OR is the author
+    const courses = await db.course.findMany({
+      where: {
+        OR: [
+          {
+            enrollments: {
+              some: {
+                userId: user.id,
+              },
+            },
+          },
+          {
+            authorId: user.id,
+          },
+        ],
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        slug: true,
+        createdAt: true,
+        author: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+        tags: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        lessons: {
+          select: {
+            id: true,
+          },
+        },
+        enrollments: {
+          select: {
+            userId: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    // Transform the data for the frontend
+    return courses.map((course) => ({
+      id: course.id,
+      title: course.title,
+      description: course.description,
+      slug: course.slug,
+      author: {
+        id: course.author.id,
+        name: course.author.name || "Unknown",
+        image: course.author.image,
+      },
+      tags: course.tags,
+      lessonCount: course.lessons.length,
+      enrollmentCount: course.enrollments.length,
+      createdAt: course.createdAt,
+    }));
+  } catch (error) {
+    console.error("Error fetching user's accessible courses:", error);
+    return [];
+  }
+}

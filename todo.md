@@ -2,12 +2,15 @@
 
 ## Current
 
+- [ ] 
+- [ ] Layout update: switch navigation to sidebar and change header features
 - [ ] Enrollment
     - [ ] Generate random code
     - [ ] Enroll button
     - [ ] Enrolled course
 - [ ] Lesson page
     - [x] Create lesson
+        - [ ] allow teacher permission only accessing the page
         - [ ] feat: save draft
         - [x] feat: file limit 1MB handling
     - [ ] feat: enhance lesson content display
