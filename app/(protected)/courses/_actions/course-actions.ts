@@ -75,16 +75,31 @@ export type CourseWithBasicRelations = Prisma.CourseGetPayload<{
   };
 }>;
 
+export interface PaginatedResult<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
+
 /**
- * Get all courses with filtering options
+ * Get all courses with filtering options and pagination
  */
 export async function getCourses(options?: {
   searchTerm?: string;
   topic?: string;
   teacherId?: string;
-}): Promise<Course[]> {
+  page?: number;
+  limit?: number;
+}): Promise<PaginatedResult<Course>> {
   try {
-    const { searchTerm, topic, teacherId } = options || {};
+    const { searchTerm, topic, teacherId, page = 1, limit = 12 } = options || {};
+    const skip = (page - 1) * limit;
 
     // Build the where clause based on filter options
     const where: Prisma.CourseWhereInput = {};
@@ -110,6 +125,10 @@ export async function getCourses(options?: {
 
     // Fetch courses with related data
     const db = getPublicEnhancedPrisma();
+    
+    // Get total count for pagination
+    const total = await db.course.count({ where });
+    
     const courses = await db.course.findMany({
       where,
       select: {
@@ -145,10 +164,12 @@ export async function getCourses(options?: {
       orderBy: {
         createdAt: "desc",
       },
+      skip,
+      take: limit,
     });
 
     // Transform the data for the frontend
-    return courses.map((course) => ({
+    const transformedCourses = courses.map((course) => ({
       id: course.id,
       title: course.title,
       description: course.description,
@@ -163,9 +184,33 @@ export async function getCourses(options?: {
       enrollmentCount: course.enrollments.length,
       createdAt: course.createdAt,
     }));
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data: transformedCourses,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+    };
   } catch (error) {
     console.error("Error fetching courses:", error);
-    return [];
+    return {
+      data: [],
+      pagination: {
+        page: 1,
+        limit: 12,
+        total: 0,
+        totalPages: 0,
+        hasNext: false,
+        hasPrev: false,
+      },
+    };
   }
 }
 
@@ -431,33 +476,54 @@ export async function getMyCoursesWithLessons() {
 }
 
 /**
- * Get courses the user has access to (enrolled + authored)
+ * Get courses the user has access to (enrolled + authored) with pagination
  */
-export async function getMyAccessibleCourses(): Promise<Course[]> {
+export async function getMyAccessibleCourses(options?: {
+  page?: number;
+  limit?: number;
+}): Promise<PaginatedResult<Course>> {
   try {
     const user = await getAuthUser();
     if (!user?.id) {
-      return [];
+      return {
+        data: [],
+        pagination: {
+          page: 1,
+          limit: 12,
+          total: 0,
+          totalPages: 0,
+          hasNext: false,
+          hasPrev: false,
+        },
+      };
     }
+
+    const { page = 1, limit = 12 } = options || {};
+    const skip = (page - 1) * limit;
 
     const db = await getEnhancedPrisma();
 
-    // Get courses where user is enrolled OR is the author
-    const courses = await db.course.findMany({
-      where: {
-        OR: [
-          {
-            enrollments: {
-              some: {
-                userId: user.id,
-              },
+    const where = {
+      OR: [
+        {
+          enrollments: {
+            some: {
+              userId: user.id,
             },
           },
-          {
-            authorId: user.id,
-          },
-        ],
-      },
+        },
+        {
+          authorId: user.id,
+        },
+      ],
+    };
+
+    // Get total count for pagination
+    const total = await db.course.count({ where });
+
+    // Get courses where user is enrolled OR is the author
+    const courses = await db.course.findMany({
+      where,
       select: {
         id: true,
         title: true,
@@ -491,10 +557,12 @@ export async function getMyAccessibleCourses(): Promise<Course[]> {
       orderBy: {
         createdAt: "desc",
       },
+      skip,
+      take: limit,
     });
 
     // Transform the data for the frontend
-    return courses.map((course) => ({
+    const transformedCourses = courses.map((course) => ({
       id: course.id,
       title: course.title,
       description: course.description,
@@ -509,8 +577,98 @@ export async function getMyAccessibleCourses(): Promise<Course[]> {
       enrollmentCount: course.enrollments.length,
       createdAt: course.createdAt,
     }));
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data: transformedCourses,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+    };
   } catch (error) {
     console.error("Error fetching user's accessible courses:", error);
-    return [];
+    return {
+      data: [],
+      pagination: {
+        page: 1,
+        limit: 12,
+        total: 0,
+        totalPages: 0,
+        hasNext: false,
+        hasPrev: false,
+      },
+    };
+  }
+}
+
+/**
+ * Join a course using a join code
+ */
+export async function joinCourseWithCode(formData: FormData) {
+  const user = await getAuthUser();
+  if (!user?.id) {
+    throw new Error("You must be logged in to join a course");
+  }
+
+  const joinCode = formData.get("joinCode") as string;
+  if (!joinCode) {
+    throw new Error("Join code is required");
+  }
+
+  const db = await getEnhancedPrisma();
+
+  try {
+    // Find the course by join code
+    const course = await db.course.findUnique({
+      where: { joinCode: joinCode.trim() },
+      select: { id: true, title: true, slug: true },
+    });
+
+    if (!course) {
+      throw new Error("Invalid join code. Please check and try again.");
+    }
+
+    // Check if user is already enrolled
+    const existingEnrollment = await db.courseEnrollment.findUnique({
+      where: {
+        userId_courseId: {
+          userId: user.id,
+          courseId: course.id,
+        },
+      },
+    });
+
+    if (existingEnrollment) {
+      throw new Error("You are already enrolled in this course.");
+    }
+
+    // Create enrollment
+    await db.courseEnrollment.create({
+      data: {
+        userId: user.id,
+        courseId: course.id,
+      },
+    });
+
+    revalidatePath("/courses");
+    revalidatePath(`/courses/${course.slug}`);
+    
+    return { 
+      success: true, 
+      message: `Successfully joined "${course.title}"!`,
+      courseSlug: course.slug,
+    };
+  } catch (error: unknown) {
+    console.error("Failed to join course:", error);
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("Failed to join course");
   }
 }

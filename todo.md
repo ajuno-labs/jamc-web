@@ -2,10 +2,11 @@
 
 ## Current
 
-- [ ] 
-- [ ] Layout update: switch navigation to sidebar and change header features
+- Course page
+    - [ ] Pagination for courses
+    - [ ] Layout update: switch navigation to sidebar and change header features
 - [ ] Enrollment
-    - [ ] Generate random code
+    - [x] Generate random code
     - [ ] Enroll button
     - [ ] Enrolled course
 - [ ] Lesson page

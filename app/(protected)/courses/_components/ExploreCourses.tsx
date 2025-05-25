@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useTransition } from "react";
 import {
   getCourses,
   getTopics,
   getTeachers,
+  type PaginatedResult,
   type Course,
 } from "../_actions/course-actions";
 import { Card } from "@/components/ui/card";
@@ -12,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, BookOpen, Users } from "lucide-react";
 import Link from "next/link";
+import Pagination from "./Pagination";
 
 interface Topic {
   name: string;
@@ -29,55 +31,120 @@ export default function ExploreCourses() {
   const [searchTerm, setSearchTerm] = useState("");
   const [topicFilter, setTopicFilter] = useState("all");
   const [teacherFilter, setTeacherFilter] = useState("all");
-  const [courses, setCourses] = useState<Course[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [result, setResult] = useState<PaginatedResult<Course>>({
+    data: [],
+    pagination: {
+      page: 1,
+      limit: 12,
+      total: 0,
+      totalPages: 0,
+      hasNext: false,
+      hasPrev: false,
+    },
+  });
   const [topics, setTopics] = useState<Topic[]>([]);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isPending, startTransition] = useTransition();
+  const [initialLoading, setInitialLoading] = useState(true);
 
-  // Fetch initial data
+  // Fetch initial data (topics and teachers)
   useEffect(() => {
-    async function fetchInitial() {
-      setLoading(true);
+    async function fetchInitialData() {
       try {
-        const [coursesData, topicsData, teachersData] = await Promise.all([
-          getCourses(),
+        const [topicsData, teachersData] = await Promise.all([
           getTopics(),
           getTeachers(),
         ]);
-        setCourses(coursesData);
         setTopics(topicsData);
         setTeachers(teachersData);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching initial data:", error);
       } finally {
-        setLoading(false);
+        setInitialLoading(false);
       }
     }
-    fetchInitial();
+    fetchInitialData();
   }, []);
 
-  // Fetch filtered courses when filters change
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      async function fetchFiltered() {
-        setLoading(true);
-        try {
-          const data = await getCourses({
-            searchTerm: searchTerm || undefined,
-            topic: topicFilter !== "all" ? topicFilter : undefined,
-            teacherId: teacherFilter !== "all" ? teacherFilter : undefined,
-          });
-          setCourses(data);
-        } catch (error) {
-          console.error("Error fetching filtered courses:", error);
-        } finally {
-          setLoading(false);
-        }
+  // Fetch courses with filters and pagination
+  const fetchCourses = (page: number, resetPage = false) => {
+    if (resetPage) {
+      setCurrentPage(1);
+      page = 1;
+    }
+    
+    startTransition(async () => {
+      try {
+        const data = await getCourses({
+          searchTerm: searchTerm || undefined,
+          topic: topicFilter !== "all" ? topicFilter : undefined,
+          teacherId: teacherFilter !== "all" ? teacherFilter : undefined,
+          page,
+          limit: 12,
+        });
+        setResult(data);
+      } catch (error) {
+        console.error("Error fetching courses:", error);
       }
-      fetchFiltered();
-    }, 300);
+    });
+  };
+
+  // Initial load
+  useEffect(() => {
+    if (!initialLoading) {
+      fetchCourses(1);
+    }
+  }, [initialLoading]);
+
+  // Fetch when filters change (with debounce for search)
+  useEffect(() => {
+    if (initialLoading) return;
+    
+    const handler = setTimeout(() => {
+      fetchCourses(1, true);
+    }, searchTerm ? 300 : 0);
+    
     return () => clearTimeout(handler);
-  }, [searchTerm, topicFilter, teacherFilter]);
+  }, [searchTerm, topicFilter, teacherFilter, initialLoading]);
+
+  // Fetch when page changes
+  useEffect(() => {
+    if (!initialLoading && currentPage > 1) {
+      fetchCourses(currentPage);
+    }
+  }, [currentPage, initialLoading]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top when page changes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (initialLoading) {
+    return (
+      <div className="space-y-6">
+        {/* Loading skeletons for filters */}
+        <div className="space-y-4">
+          <div className="h-10 bg-muted rounded animate-pulse" />
+          <div className="flex gap-4">
+            <div className="h-16 w-32 bg-muted rounded animate-pulse" />
+            <div className="h-16 w-32 bg-muted rounded animate-pulse" />
+          </div>
+        </div>
+        {/* Loading skeletons for courses */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Card key={i} className="p-4 space-y-4">
+              <div className="h-4 bg-muted rounded w-3/4 animate-pulse" />
+              <div className="h-4 bg-muted rounded w-1/2 animate-pulse" />
+              <div className="h-4 bg-muted rounded w-full animate-pulse" />
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -101,6 +168,7 @@ export default function ExploreCourses() {
               value={topicFilter}
               onChange={(e) => setTopicFilter(e.target.value)}
               className="border rounded-md p-2"
+              disabled={isPending}
             >
               <option value="all">All Topics</option>
               {topics.map((topic) => (
@@ -117,6 +185,7 @@ export default function ExploreCourses() {
               value={teacherFilter}
               onChange={(e) => setTeacherFilter(e.target.value)}
               className="border rounded-md p-2"
+              disabled={isPending}
             >
               <option value="all">All Teachers</option>
               {teachers.map((teacher) => (
@@ -129,9 +198,22 @@ export default function ExploreCourses() {
         </div>
       </div>
 
+      {/* Loading overlay */}
+      {isPending && (
+        <div className="relative">
+          <div className="absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center">
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              <span className="text-sm text-muted-foreground">Loading courses...</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Course cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {loading ? (
+        {isPending && result.data.length === 0 ? (
+          // Initial loading skeletons
           Array.from({ length: 6 }).map((_, i) => (
             <Card key={i} className="p-4 space-y-4">
               <div className="h-4 bg-muted rounded w-3/4 animate-pulse" />
@@ -139,10 +221,10 @@ export default function ExploreCourses() {
               <div className="h-4 bg-muted rounded w-full animate-pulse" />
             </Card>
           ))
-        ) : courses.length > 0 ? (
-          courses.map((course) => (
+        ) : result.data.length > 0 ? (
+          result.data.map((course) => (
             <Link key={course.id} href={`/courses/${course.slug}`}>
-              <Card className="p-4 h-full hover:shadow-lg transition-shadow">
+              <Card className={`p-4 h-full hover:shadow-lg transition-shadow ${isPending ? 'opacity-50' : ''}`}>
                 <h2 className="text-xl font-semibold mb-2">{course.title}</h2>
                 <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
                   {course.description}
@@ -184,6 +266,16 @@ export default function ExploreCourses() {
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      <Pagination
+        currentPage={result.pagination.page}
+        totalPages={result.pagination.totalPages}
+        hasNext={result.pagination.hasNext}
+        hasPrev={result.pagination.hasPrev}
+        onPageChange={handlePageChange}
+        loading={isPending}
+      />
     </div>
   );
 } 
