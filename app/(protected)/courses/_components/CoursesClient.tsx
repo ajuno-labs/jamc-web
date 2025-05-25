@@ -42,9 +42,6 @@ export default function CoursesClient({ isTeacher }: CoursesClientProps) {
         <TabsContent value="my-courses" className="mt-6">
           <div className="mb-4">
             <h2 className="text-xl font-semibold mb-2">My Courses</h2>
-            <p className="text-muted-foreground">
-              Courses you've enrolled in or created
-            </p>
           </div>
           <MyCourses />
         </TabsContent>

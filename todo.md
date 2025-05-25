@@ -4,6 +4,8 @@
 
 - [ ] Question page
     - [ ] Question categorization (tags and topics)
+    - [ ] feat: Edit answer
+    - [ ] Comments for answers and questions, or the Reply button.
 - [ ] Notification System
     - [ ] New answer notifications
     - [ ] Content update notifications
@@ -18,6 +20,8 @@
         - [x] LaTeX support for lesson summary section
         - [x] Mark as read button for student
     - [ ] metadata handling: tags, reading time, etc.
+    - [ ] Discussion forum button: update this button for user quickly view questions of the lesson.
+    - [ ] Press ask a question button automatically fill the course and lesson name in the question form.
 - [ ] Course management
     - [x] Use new models for chapters and modules
         - [x] update seed data 
@@ -43,6 +47,11 @@
 - [ ] feat: new approach for sbert: precompute embeddings
     - Currently trying to compute each new question on the fly but that's gonna be too slow
 - [ ] feat: ux error handling in empty titles of nodes in course structure
+- [ ] Profile page
+    - [ ] Edit page
+        - [ ] Avatar upload
+- [ ] Seeding
+    - [ ] seed questions should use latex $$ notation instead of \[ \]
 
 ## Finished
 
