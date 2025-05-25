@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, BookOpen, Users } from "lucide-react";
 import Link from "next/link";
-import Pagination from "./Pagination";
+import { PaginationWrapper } from "@/components/ui/pagination-wrapper";
 import JoinCourseDialog from "./JoinCourseDialog";
 
 export default function MyCourses() {
@@ -149,7 +149,7 @@ export default function MyCourses() {
 
       {/* Pagination */}
       {!searchTerm && (
-        <Pagination
+        <PaginationWrapper
           currentPage={result.pagination.page}
           totalPages={result.pagination.totalPages}
           hasNext={result.pagination.hasNext}

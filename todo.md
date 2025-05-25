@@ -2,6 +2,10 @@
 
 ## Current
 
+- [ ] Notification System
+    - [ ] New answer notifications
+    - [ ] Content update notifications
+    - [ ] Following/subscription management
 - Course page
     - [ ] Pagination for courses
     - [ ] Layout update: switch navigation to sidebar and change header features
@@ -124,11 +128,6 @@
     - [ ] Filtering by topics, teachers, and tags
     - [ ] Search results page optimization
     - [ ] Enhance related questions similarity algorithm (full-text/TF-IDF)
-
-- [ ] Notification System
-    - [ ] New answer notifications
-    - [ ] Content update notifications
-    - [ ] Following/subscription management
 
 - [ ] Gamification
     - [ ] Reputation points system
