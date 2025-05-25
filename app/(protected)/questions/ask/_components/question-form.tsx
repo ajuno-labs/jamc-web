@@ -6,8 +6,6 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -25,7 +23,7 @@ import { QuestionContext } from "@/lib/types/question";
 import { toast } from "sonner";
 import PostingGuideline from "./posting-guideline";
 import SimilarQuestion from "./similar-question";
-import { MathContent } from "@/components/MathContent";
+import { QuestionFormFields } from "../../_components/QuestionFormFields";
 import { Tag, ExistingQuestion } from "../_actions/ask-data";
 
 // Define the form schema with zod
@@ -188,43 +186,14 @@ export function QuestionForm({
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div className="md:col-span-2">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="title">Question Title</Label>
-            <Input
-              id="title"
-              {...register("title")}
-              onChange={handleTitleChange}
-              placeholder="e.g., How do I solve quadratic equations?"
-              disabled={isSubmitting}
-            />
-            {errors.title && (
-              <p className="text-sm text-destructive">{errors.title.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="content">Description</Label>
-            <Textarea
-              id="content"
-              {...register("content")}
-              placeholder="Provide more details about your question..."
-              rows={8}
-              disabled={isSubmitting}
-            />
-            {errors.content && (
-              <p className="text-sm text-destructive">
-                {errors.content.message}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label>Preview</Label>
-            <MathContent
-              content={contentValue}
-              className="border p-4 rounded prose"
-            />
-          </div>
+          <QuestionFormFields
+            register={register}
+            errors={errors}
+            contentValue={contentValue}
+            isSubmitting={isSubmitting}
+            showPreviewToggle={false}
+            onTitleChange={handleTitleChange}
+          />
 
           <div className="space-y-2">
             <Label>Tags</Label>

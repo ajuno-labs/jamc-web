@@ -1,35 +1,48 @@
 "use client"
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
-import { MessageSquare, AlertTriangle } from "lucide-react"
+import { AlertTriangle } from "lucide-react"
 import { voteAnswer } from "../_actions/question-actions"
 import { VoteButtons } from "@/components/ui/vote-buttons"
-import { useSession } from "next-auth/react"
-import { MathContent } from '@/components/MathContent'
+import { EditableAnswer } from "./EditableAnswer"
 
 interface Answer {
   id: string
   content: string
   author: {
+    id: string
     name: string | null
     image: string | null
+    reputation?: number
   }
   createdAt: Date
   votes: Array<{ value: number, userId?: string }>
   isAccepted: boolean
+  comments: Array<{
+    id: string
+    content: string
+    createdAt: Date
+    author: {
+      id: string
+      name: string | null
+      image: string | null
+      reputation?: number
+    }
+    votes: Array<{
+      id: string
+      value: number
+      userId: string
+    }>
+  }>
 }
 
 interface AnswerListProps {
   answers: Answer[]
+  currentUserId?: string
   isEducator?: boolean
 }
 
-export function AnswerList({ answers, isEducator = false }: AnswerListProps) {
-  const { data: session } = useSession()
-  const user = session?.user
-
+export function AnswerList({ answers, currentUserId, isEducator = false }: AnswerListProps) {
   return (
     <div className="space-y-6">
       {answers.map((answer) => {
@@ -38,55 +51,37 @@ export function AnswerList({ answers, isEducator = false }: AnswerListProps) {
         
         // Determine the current user's vote on this answer
         let currentUserVote = null
-        if (user?.id) {
-          const userVote = answer.votes.find(vote => vote.userId === user.id)
+        if (currentUserId) {
+          const userVote = answer.votes.find(vote => vote.userId === currentUserId)
           if (userVote) {
             currentUserVote = userVote.value
           }
         }
 
         return (
-          <Card key={answer.id}>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Avatar>
-                    <AvatarImage src={answer.author.image || undefined} alt={answer.author.name || undefined} />
-                    <AvatarFallback>{answer.author.name?.[0]}</AvatarFallback>
-                  </Avatar>
-                  <span className="font-semibold">{answer.author.name}</span>
-                  <span className="text-sm text-muted-foreground">
-                    {new Date(answer.createdAt).toLocaleString()}
-                  </span>
-                </div>
-                {isEducator && (
-                  <Button variant="ghost" size="sm" className="text-yellow-600">
-                    <AlertTriangle className="mr-1 h-4 w-4" />
-                    Moderate
-                  </Button>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent>
-              <MathContent className="text-foreground" content={answer.content} />
-            </CardContent>
-            <CardFooter className="flex items-center justify-between pt-2 border-t">
-              <div className="flex items-center space-x-4">
-                <VoteButtons 
-                  itemId={answer.id}
-                  upvotes={upvotes}
-                  downvotes={downvotes}
-                  userVote={currentUserVote}
-                  onVote={voteAnswer}
-                  size="sm"
-                />
-              </div>
-              <Button variant="outline" size="sm">
-                <MessageSquare className="mr-1 h-4 w-4" />
-                Reply
-              </Button>
-            </CardFooter>
-          </Card>
+          <div key={answer.id} className="space-y-4">
+            <EditableAnswer 
+              answer={answer}
+              currentUserId={currentUserId}
+            />
+            
+            <div className="flex items-center justify-between pl-6">
+              <VoteButtons 
+                itemId={answer.id}
+                upvotes={upvotes}
+                downvotes={downvotes}
+                userVote={currentUserVote}
+                onVote={voteAnswer}
+                size="sm"
+              />
+              {isEducator && (
+                <Button variant="ghost" size="sm" className="text-yellow-600">
+                  <AlertTriangle className="mr-1 h-4 w-4" />
+                  Moderate
+                </Button>
+              )}
+            </div>
+          </div>
         )
       })}
     </div>

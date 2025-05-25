@@ -3,6 +3,7 @@
 import { auth } from "@/auth"
 import { prisma } from "@/lib/db/prisma"
 import { revalidatePath } from "next/cache"
+import { calculateUserReputation } from "@/lib/utils/reputation"
 
 export async function getQuestionDetails(id: string) {
   const question = await prisma.question.findUnique({
@@ -37,9 +38,35 @@ export async function getQuestionDetails(id: string) {
           slug: true,
         }
       },
+      comments: {
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            }
+          }
+        },
+        orderBy: {
+          createdAt: "asc"
+        }
+      }
     },
   })
-  return question
+
+  if (!question) return null
+
+  // Calculate author reputation
+  const authorReputation = await calculateUserReputation(question.author.id)
+
+  return {
+    ...question,
+    author: {
+      ...question.author,
+      reputation: authorReputation
+    }
+  }
 }
 
 export async function getQuestionAnswers(questionId: string) {
@@ -60,12 +87,41 @@ export async function getQuestionAnswers(questionId: string) {
           userId: true,
         }
       },
+      comments: {
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            }
+          }
+        },
+        orderBy: {
+          createdAt: "asc"
+        }
+      }
     },
     orderBy: {
       createdAt: "desc",
     },
   })
-  return answers
+
+  // Calculate reputation for each answer author
+  const answersWithReputation = await Promise.all(
+    answers.map(async (answer) => {
+      const authorReputation = await calculateUserReputation(answer.author.id)
+      return {
+        ...answer,
+        author: {
+          ...answer.author,
+          reputation: authorReputation
+        }
+      }
+    })
+  )
+
+  return answersWithReputation
 }
 
 export async function addAnswer(questionId: string, content: string) {
@@ -142,6 +198,110 @@ export async function voteQuestion(questionId: string, value: 1 | -1) {
     // Fix the revalidation path to match the actual route
     revalidatePath(`/questions/${questionId}/${question.slug}`)
   }
+}
+
+export async function updateQuestion(questionId: string, title: string, content: string) {
+  const session = await auth()
+  if (!session?.user?.id) {
+    throw new Error("You must be logged in to edit")
+  }
+
+  // Check if user owns the question
+  const question = await prisma.question.findUnique({
+    where: { id: questionId },
+    select: { authorId: true, slug: true }
+  })
+
+  if (!question || question.authorId !== session.user.id) {
+    throw new Error("You can only edit your own questions")
+  }
+
+  const updatedQuestion = await prisma.question.update({
+    where: { id: questionId },
+    data: { title, content }
+  })
+
+  revalidatePath(`/questions/${questionId}/${question.slug}`)
+  return updatedQuestion
+}
+
+export async function updateAnswer(answerId: string, content: string) {
+  const session = await auth()
+  if (!session?.user?.id) {
+    throw new Error("You must be logged in to edit")
+  }
+
+  // Check if user owns the answer
+  const answer = await prisma.answer.findUnique({
+    where: { id: answerId },
+    select: { 
+      authorId: true, 
+      questionId: true,
+      question: {
+        select: { slug: true }
+      }
+    }
+  })
+
+  if (!answer || answer.authorId !== session.user.id) {
+    throw new Error("You can only edit your own answers")
+  }
+
+  const updatedAnswer = await prisma.answer.update({
+    where: { id: answerId },
+    data: { content }
+  })
+
+  revalidatePath(`/questions/${answer.questionId}/${answer.question.slug}`)
+  return updatedAnswer
+}
+
+export async function addComment(content: string, questionId?: string, answerId?: string) {
+  const session = await auth()
+  if (!session?.user?.id) {
+    throw new Error("You must be logged in to comment")
+  }
+
+  if (!questionId && !answerId) {
+    throw new Error("Comment must be on either a question or answer")
+  }
+
+  if (questionId && answerId) {
+    throw new Error("Comment cannot be on both question and answer")
+  }
+
+  const comment = await prisma.comment.create({
+    data: {
+      content,
+      authorId: session.user.id,
+      questionId,
+      answerId
+    }
+  })
+
+  // Get the question slug for revalidation
+  let questionSlug: string
+  if (questionId) {
+    const question = await prisma.question.findUnique({
+      where: { id: questionId },
+      select: { slug: true }
+    })
+    questionSlug = question?.slug || ""
+    revalidatePath(`/questions/${questionId}/${questionSlug}`)
+  } else if (answerId) {
+    const answer = await prisma.answer.findUnique({
+      where: { id: answerId },
+      select: { 
+        questionId: true,
+        question: { select: { slug: true } }
+      }
+    })
+    if (answer) {
+      revalidatePath(`/questions/${answer.questionId}/${answer.question.slug}`)
+    }
+  }
+
+  return comment
 }
 
 export async function voteAnswer(answerId: string, value: 1 | -1) {

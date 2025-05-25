@@ -4,10 +4,12 @@ import { AnswerList } from "./_components/answer-list"
 import { AnswerForm } from "./_components/answer-form"
 import { RelatedQuestions } from "./_components/related-questions"
 import { 
-  getQuestionDetails, 
-  getQuestionAnswers, 
   getRelatedQuestions 
 } from "./_actions/question-actions"
+import {
+  getQuestionWithReputation,
+  getAnswersWithReputation
+} from "./_actions/question-edit-actions"
 import { notFound, redirect } from "next/navigation"
 import { hasPermission } from "@/lib/types/prisma"
 
@@ -31,8 +33,8 @@ export default async function QuestionPage({
   }
   
   const [question, answers, relatedQuestions, user] = await Promise.all([
-    getQuestionDetails(questionId),
-    getQuestionAnswers(questionId),
+    getQuestionWithReputation(questionId),
+    getAnswersWithReputation(questionId),
     getRelatedQuestions(questionId),
     getAuthUser(),
   ])
@@ -51,7 +53,7 @@ export default async function QuestionPage({
   // Determine the current user's vote on this question
   let currentUserVote = null
   if (user) {
-    const userVote = question.votes.find(vote => vote.userId === user.id)
+    const userVote = question.votes.find((vote: { userId?: string; value: number }) => vote.userId === user.id)
     if (userVote) {
       currentUserVote = userVote.value
     }
@@ -63,6 +65,7 @@ export default async function QuestionPage({
     currentUserVote,
     course: question.course ?? undefined,
     lesson: question.lesson ?? undefined,
+    slug: question.slug,
   }
 
   return (
@@ -70,8 +73,15 @@ export default async function QuestionPage({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main content area */}
         <div className="lg:col-span-2 space-y-8">
-          <QuestionHeader question={enhancedQuestion} />
-          <AnswerList answers={answers} isEducator={isEducator} />
+          <QuestionHeader 
+            question={enhancedQuestion} 
+            currentUserId={user?.id}
+          />
+          <AnswerList 
+            answers={answers} 
+            currentUserId={user?.id}
+            isEducator={isEducator} 
+          />
           <AnswerForm questionId={questionId} />
         </div>
 

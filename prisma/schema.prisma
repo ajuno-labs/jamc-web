@@ -64,6 +64,8 @@ model User {
   answers         Answer[]
   questionVotes   QuestionVote[]
   answerVotes     AnswerVote[]
+  comments        Comment[]
+  commentVotes    CommentVote[]
   createdCourses  Course[]           @relation("CourseCreator")
   enrolledCourses CourseEnrollment[]
   lessonViews     LessonView[]
@@ -148,6 +150,7 @@ model Question {
   answers     Answer[]
   tags        Tag[]
   votes       QuestionVote[]
+  comments    Comment[]
   courseId    String?
   course      Course?        @relation(fields: [courseId], references: [id])
   lessonId    String?
@@ -171,6 +174,7 @@ model Answer {
   questionId String
   question   Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
   votes      AnswerVote[]
+  comments   Comment[]
 }
 
 model Tag {
@@ -211,6 +215,31 @@ model AnswerVote {
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([answerId, userId])
+}
+
+model Comment {
+  id         String        @id() @default(cuid())
+  content    String
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt()
+  authorId   String
+  author     User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  questionId String?
+  question   Question?     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answerId   String?
+  answer     Answer?       @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  votes      CommentVote[]
+}
+
+model CommentVote {
+  id        String  @id() @default(cuid())
+  value     Int
+  commentId String
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
 }
 
 model Course {

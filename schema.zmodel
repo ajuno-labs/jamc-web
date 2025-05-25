@@ -40,6 +40,8 @@ model User {
   answers         Answer[]
   questionVotes   QuestionVote[]
   answerVotes     AnswerVote[]
+  comments        Comment[]
+  commentVotes    CommentVote[]
   
   // Course relations
   createdCourses  Course[]           @relation("CourseCreator")
@@ -197,6 +199,7 @@ model Question {
   answers     Answer[]
   tags        Tag[]
   votes       QuestionVote[]
+  comments    Comment[]
   
   // Course structure relations
   courseId    String?
@@ -236,6 +239,7 @@ model Answer {
   questionId String
   question   Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
   votes      AnswerVote[]
+  comments   Comment[]
   
   // Access control
   @@allow('create', auth() != null)
@@ -298,6 +302,46 @@ model AnswerVote {
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([answerId, userId])
+  @@allow('create,update', auth() == user)
+  @@allow('read', true)
+  @@allow('delete', auth() == user)
+}
+
+model Comment {
+  id         String   @id @default(cuid())
+  content    String   @length(min: 1, max: 1000)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  // Relations
+  authorId   String
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  // Polymorphic relation - can comment on either question or answer
+  questionId String?
+  question   Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answerId   String?
+  answer     Answer?   @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  
+  // Comment voting
+  votes      CommentVote[]
+  
+  // Access control
+  @@allow('create', auth() != null)
+  @@allow('read', true)
+  @@allow('update', auth() == author)
+  @@allow('delete', auth() == author || auth().roles?[permissions?[name == DELETE]])
+}
+
+model CommentVote {
+  id        String  @id @default(cuid())
+  value     Int     // 1 for useful, -1 for not useful (if we implement it)
+  commentId String
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
   @@allow('create,update', auth() == user)
   @@allow('read', true)
   @@allow('delete', auth() == user)

@@ -2,10 +2,6 @@
 
 ## Current
 
-- [ ] Question page
-    - [ ] Question categorization (tags and topics)
-    - [ ] feat: Edit answer
-    - [ ] Comments for answers and questions, or the Reply button.
 - [ ] Notification System
     - [ ] New answer notifications
     - [ ] Content update notifications
@@ -55,6 +51,13 @@
 
 ## Finished
 
+- [x] Question page
+    - [x] Question categorization (tags)
+    - [x] feat: Edit answer
+    - [x] Comments for answers and questions, or the Reply button.
+    - [x] Link user name to their profile page
+    - [x] display reputation points of the user in the question page.
+    - [x] Answer preview button
 - [x] Bug: MathJax can't display fraction
 - [x] Enrollment flow
 - [x] feat: Create new course button somewhere
