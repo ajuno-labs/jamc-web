@@ -15,6 +15,7 @@ import { EnrollmentChartCard } from "./EnrollmentChartCard"
 import { StudentsSection } from "./StudentsSection"
 import { ActivityNotificationCard } from "./ActivityNotificationCard"
 import type { CourseActivitySummary } from "@/lib/types/student-activity"
+import type { WeeklyActivityData, ModuleProgressData, EnrollmentTrendData } from "@/lib/types/dashboard"
 
 export interface DashboardPageProps {
   questions: {
@@ -30,6 +31,9 @@ export interface DashboardPageProps {
   currentCourseSlug: string
   joinCode: string | null
   activitySummary: CourseActivitySummary
+  weeklyActivityData: WeeklyActivityData[]
+  moduleCompletionData: ModuleProgressData[]
+  enrollmentTrendData: EnrollmentTrendData[]
 }
 
 export function DashboardPage({ 
@@ -37,7 +41,10 @@ export function DashboardPage({
   courses, 
   currentCourseSlug, 
   joinCode, 
-  activitySummary 
+  activitySummary,
+  weeklyActivityData,
+  moduleCompletionData,
+  enrollmentTrendData
 }: DashboardPageProps) {
   const selectedCourse = courses.find(c => c.slug === currentCourseSlug)?.title || ''
   const router = useRouter()
@@ -88,12 +95,12 @@ export function DashboardPage({
           inactiveStudentsCount={activitySummary.inactiveStudents}
         />
         <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-          <WeeklyActivityCard />
-          <ModuleCompletionCard />
+          <WeeklyActivityCard data={weeklyActivityData} />
+          <ModuleCompletionCard data={moduleCompletionData} />
         </div>
         <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-7">
           <RecentQuestionsSection questions={questions} currentCourseSlug={currentCourseSlug} />
-          <EnrollmentChartCard />
+          <EnrollmentChartCard data={enrollmentTrendData} />
         </div>
         <div className="mt-6 grid gap-6 lg:grid-cols-7">
           <ActivityNotificationCard 

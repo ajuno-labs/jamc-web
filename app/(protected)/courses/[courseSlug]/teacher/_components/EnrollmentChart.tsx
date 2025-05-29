@@ -10,46 +10,13 @@ import {
   XAxis,
   YAxis,
 } from "@/components/ui/chart"
+import type { EnrollmentTrendData } from '@/lib/types/dashboard'
 
-const data = [
-  {
-    name: "Week 1",
-    "Total Enrolled": 45,
-    "Active Students": 42,
-  },
-  {
-    name: "Week 2",
-    "Total Enrolled": 52,
-    "Active Students": 48,
-  },
-  {
-    name: "Week 3",
-    "Total Enrolled": 61,
-    "Active Students": 55,
-  },
-  {
-    name: "Week 4",
-    "Total Enrolled": 67,
-    "Active Students": 59,
-  },
-  {
-    name: "Week 5",
-    "Total Enrolled": 75,
-    "Active Students": 64,
-  },
-  {
-    name: "Week 6",
-    "Total Enrolled": 80,
-    "Active Students": 68,
-  },
-  {
-    name: "Week 7",
-    "Total Enrolled": 87,
-    "Active Students": 64,
-  },
-]
+interface EnrollmentChartProps {
+  data: EnrollmentTrendData[]
+}
 
-export function EnrollmentChart() {
+export function EnrollmentChart({ data }: EnrollmentChartProps) {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <AreaChart data={data}>

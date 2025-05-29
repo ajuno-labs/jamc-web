@@ -3,8 +3,13 @@
 import React from 'react'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { WeeklyActivityChart } from './WeeklyActivityChart'
+import type { WeeklyActivityData } from '@/lib/types/dashboard'
 
-export function WeeklyActivityCard() {
+interface WeeklyActivityCardProps {
+  data: WeeklyActivityData[]
+}
+
+export function WeeklyActivityCard({ data }: WeeklyActivityCardProps) {
   return (
     <Card className="lg:col-span-4">
       <CardHeader>
@@ -12,7 +17,7 @@ export function WeeklyActivityCard() {
         <CardDescription>Student logins and engagement over time</CardDescription>
       </CardHeader>
       <CardContent>
-        <WeeklyActivityChart />
+        <WeeklyActivityChart data={data} />
       </CardContent>
     </Card>
   )

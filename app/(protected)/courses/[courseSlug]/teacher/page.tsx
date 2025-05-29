@@ -6,6 +6,11 @@ import { DashboardPage } from "./_components/DashboardPage"
 import { randomBytes } from "crypto"
 import { getCourseStudentActivity } from './_actions/student-activity-actions'
 import { 
+  getWeeklyActivityData,
+  getModuleCompletionData,
+  getEnrollmentTrendData
+} from './_actions/dashboard-data-actions'
+import { 
   courseWithJoinCodeSelectArgs, 
   courseListSelectArgs,
   questionWithVotesIncludeArgs,
@@ -74,11 +79,21 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
     votes: q.votes
   }))
 
+  // Fetch dashboard data for charts
+  const [weeklyActivityData, moduleCompletionData, enrollmentTrendData] = await Promise.all([
+    getWeeklyActivityData(courseSlug),
+    getModuleCompletionData(courseSlug),
+    getEnrollmentTrendData(courseSlug)
+  ])
+
   return <DashboardPage
     questions={questions}
     courses={courses}
     currentCourseSlug={courseSlug}
     joinCode={course!.joinCode}
     activitySummary={activitySummary}
+    weeklyActivityData={weeklyActivityData}
+    moduleCompletionData={moduleCompletionData}
+    enrollmentTrendData={enrollmentTrendData}
   />
 } 

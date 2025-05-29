@@ -3,8 +3,13 @@
 import React from 'react'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { EnrollmentChart } from './EnrollmentChart'
+import type { EnrollmentTrendData } from '@/lib/types/dashboard'
 
-export function EnrollmentChartCard() {
+interface EnrollmentChartCardProps {
+  data: EnrollmentTrendData[]
+}
+
+export function EnrollmentChartCard({ data }: EnrollmentChartCardProps) {
   return (
     <Card className="lg:col-span-4">
       <CardHeader>
@@ -12,7 +17,7 @@ export function EnrollmentChartCard() {
         <CardDescription>New enrollments and student activity</CardDescription>
       </CardHeader>
       <CardContent>
-        <EnrollmentChart />
+        <EnrollmentChart data={data} />
       </CardContent>
     </Card>
   )
