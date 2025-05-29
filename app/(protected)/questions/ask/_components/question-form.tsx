@@ -280,9 +280,14 @@ export function QuestionForm({
             ) : (
               <Select
                 value={localContext.courseId || ""}
-                onValueChange={(value) =>
-                  setLocalContext({ courseId: value, lessonId: undefined })
-                }
+                onValueChange={(value) => {
+                  // Only reset lessonId if user is manually changing course (not on initial load)
+                  if (value !== context.courseId) {
+                    setLocalContext({ courseId: value, lessonId: undefined });
+                  } else {
+                    setLocalContext({ courseId: value, lessonId: localContext.lessonId });
+                  }
+                }}
                 disabled={isSubmitting}
               >
                 <SelectTrigger>

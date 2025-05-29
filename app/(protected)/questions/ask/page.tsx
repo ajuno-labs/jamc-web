@@ -4,18 +4,21 @@ import { QuestionContext } from "@/lib/types/question"
 import { getTags, getExistingQuestions} from "./_actions/ask-data"
 
 interface AskQuestionPageProps {
-  searchParams: Promise<{ courseId?: string }>
+  searchParams: Promise<{ courseId?: string; lessonId?: string }>
 }
 
 export default async function AskQuestionPage({ searchParams }: AskQuestionPageProps) {
   const tags = await getTags()
   const existingQuestions = await getExistingQuestions()
-  const { courseId } = await searchParams
+  const { courseId, lessonId } = await searchParams
 
-  // Create initial context with courseId if provided
+  // Create initial context with courseId and lessonId if provided
   const context: QuestionContext = {}
   if (courseId) {
     context.courseId = courseId
+  }
+  if (lessonId) {
+    context.lessonId = lessonId
   }
 
   return (

@@ -6,15 +6,19 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getEnhancedPrisma } from "@/lib/db/enhanced";
 import ViewToggle from "./_components/ViewToggle";
-
 import LessonSummaryHeader from "./_components/LessonSummaryHeader";
 import LessonSummary from "./_components/LessonSummary";
 import RelatedQuestions from "./_components/RelatedQuestions";
 import LessonResources from "./_components/LessonResources";
 import QuickActions from "./_components/QuickActions";
+import LessonNavigation from "./_components/LessonNavigation";
 
-export default async function LessonSummaryPage({ params }: { params: { courseSlug: string; lessonId: string; lessonSlug: string } }) {
-  const { courseSlug, lessonId, lessonSlug } = params;
+interface PageProps {
+  params: Promise<{ courseSlug: string; lessonId: string; lessonSlug: string }>;
+}
+
+export default async function LessonSummaryPage({ params }: PageProps) {
+  const { courseSlug, lessonId, lessonSlug } = await params;
 
   const lesson = await getLessonSummary(lessonId);
   if (!lesson) {
@@ -37,7 +41,7 @@ export default async function LessonSummaryPage({ params }: { params: { courseSl
   const hasAccess = Boolean(
     user &&
       (lesson.course.author.id === user.id ||
-        lesson.course.enrollments.some((e) => e.userId === user.id))
+        lesson.course.enrollments.some(e => e.userId === user.id))
   );
 
   if (!hasAccess) {
@@ -56,13 +60,21 @@ export default async function LessonSummaryPage({ params }: { params: { courseSl
     );
   }
 
-  const nextLesson = lesson.course.lessons.find((l) => l.order === lesson.order + 1);
+  const currentOrder = lesson.order;
+  const previousLesson = lesson.course.lessons.find(l => l.order === currentOrder - 1);
+  const nextLesson = lesson.course.lessons.find(l => l.order === currentOrder + 1);
+  
+  const previousUrl = previousLesson ? `/courses/${courseSlug}/lessons/${previousLesson.id}/${previousLesson.slug}` : undefined;
   const nextUrl = nextLesson ? `/courses/${courseSlug}/lessons/${nextLesson.id}/${nextLesson.slug}` : undefined;
 
   return (
     <div className="container mx-auto px-4 max-w-5xl py-8 space-y-8">
-      {/* Header */}
       <LessonSummaryHeader lesson={lesson} nextLessonUrl={nextUrl} />
+
+      <LessonNavigation 
+        previousLessonUrl={previousUrl}
+        nextLessonUrl={nextUrl}
+      />
 
       {/* Teacher or Student Action */}
       <div className="flex justify-end space-x-2 mb-4">
@@ -73,7 +85,13 @@ export default async function LessonSummaryPage({ params }: { params: { courseSl
             </Link>
           </Button>
         ) : (
-          <ViewToggle lessonId={lessonId} initiallyViewed={viewed} />
+          <ViewToggle 
+            lessonId={lessonId} 
+            lessonTitle={lesson.title}
+            courseId={lesson.course.id}
+            initiallyViewed={viewed} 
+            nextLessonUrl={nextUrl}
+          />
         )}
       </div>
 

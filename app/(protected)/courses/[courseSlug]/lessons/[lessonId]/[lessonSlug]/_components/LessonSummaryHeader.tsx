@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Clock, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import type { LessonSummary } from "../_actions/summary-actions";
@@ -17,9 +16,14 @@ const formatDate = (dateString: string) =>
     day: "numeric",
   });
 
-export default function LessonSummaryHeader({ lesson, nextLessonUrl }: LessonSummaryHeaderProps) {
+export default function LessonSummaryHeader({
+  lesson,
+}: LessonSummaryHeaderProps) {
   const author = lesson.course.author!;
-  const metadata = (lesson.metadata ?? {}) as { duration?: string; instructorRole?: string };
+  const metadata = (lesson.metadata ?? {}) as {
+    duration?: string;
+    instructorRole?: string;
+  };
   const duration = metadata.duration;
 
   return (
@@ -29,32 +33,33 @@ export default function LessonSummaryHeader({ lesson, nextLessonUrl }: LessonSum
           Courses
         </Link>
         <ChevronRight className="h-4 w-4" />
-        <Link href={`/courses/${lesson.course.slug}`} className="hover:underline">
+        <Link
+          href={`/courses/${lesson.course.slug}`}
+          className="hover:underline"
+        >
           {lesson.course.title}
         </Link>
         <ChevronRight className="h-4 w-4" />
         <span>Lesson {lesson.order}</span>
       </div>
 
-      <div className="flex justify-between items-start">
-        <h1 className="text-3xl font-bold">{lesson.title}</h1>
-        {nextLessonUrl && (
-          <Button asChild>
-            <Link href={nextLessonUrl}>Continue to Next Lesson</Link>
-          </Button>
-        )}
-      </div>
+      <h1 className="text-3xl font-bold">{lesson.title}</h1>
 
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={author.image ?? "/placeholder.svg"} alt={author.name!} />
+            <AvatarImage
+              src={author.image ?? "/placeholder.svg"}
+              alt={author.name!}
+            />
             <AvatarFallback>{author.name!.charAt(0)}</AvatarFallback>
           </Avatar>
           <div>
             <p className="text-sm font-medium">{author.name!}</p>
             {metadata.instructorRole && (
-              <p className="text-xs text-muted-foreground">{metadata.instructorRole}</p>
+              <p className="text-xs text-muted-foreground">
+                {metadata.instructorRole}
+              </p>
             )}
           </div>
         </div>
@@ -77,4 +82,4 @@ export default function LessonSummaryHeader({ lesson, nextLessonUrl }: LessonSum
       </div>
     </div>
   );
-} 
+}

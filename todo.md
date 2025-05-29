@@ -15,9 +15,13 @@
         - [x] Just refer to the uploaded files and students can download them.
         - [x] LaTeX support for lesson summary section
         - [x] Mark as read button for student
+        - [x] Previous and next lesson navigation
+        - [x] Lesson completion popup with actions
+        - [x] Quick Review feature for reflection questions
     - [ ] metadata handling: tags, reading time, etc.
     - [ ] Discussion forum button: update this button for user quickly view questions of the lesson.
     - [ ] Press ask a question button automatically fill the course and lesson name in the question form.
+    - [ ] AI-generated review questions: Generate practice questions automatically for each lesson when no questions exist, to help students reflect and deepen understanding
 - [ ] Course management
     - [x] Use new models for chapters and modules
         - [x] update seed data 
@@ -50,6 +54,7 @@
     - [ ] seed questions should use latex $$ notation instead of \[ \]
 - [ ] Multi-language support
     - [ ] Vietnamese
+- [ ] feat: view all questions shouldn't be displayed in the lesson page if there is no question.
 
 ## Finished
 
