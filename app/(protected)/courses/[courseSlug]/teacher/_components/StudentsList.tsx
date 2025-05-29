@@ -1,70 +1,91 @@
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
+'use client'
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Progress } from "@/components/ui/progress"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import React, { useEffect, useState } from 'react'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
+import type { CourseActivitySummary } from '@/lib/types/student-activity'
+import { getCourseStudentsList } from '../_actions/student-activity-actions'
 
-export function StudentsList() {
-  const students = [
-    {
-      id: 1,
-      name: "Alex Johnson",
-      email: "alex.j@example.com",
-      avatar: "/placeholder.svg?height=40&width=40",
-      initials: "AJ",
-      progress: 78,
-      questionsAsked: 5,
-      lastActive: "Today",
-      status: "active",
-    },
-    {
-      id: 2,
-      name: "Sarah Miller",
-      email: "sarah.m@example.com",
-      avatar: "/placeholder.svg?height=40&width=40",
-      initials: "SM",
-      progress: 92,
-      questionsAsked: 3,
-      lastActive: "Yesterday",
-      status: "active",
-    },
-    {
-      id: 3,
-      name: "David Chen",
-      email: "david.c@example.com",
-      avatar: "/placeholder.svg?height=40&width=40",
-      initials: "DC",
-      progress: 45,
-      questionsAsked: 8,
-      lastActive: "2 days ago",
-      status: "at-risk",
-    },
-    {
-      id: 4,
-      name: "Emily Wilson",
-      email: "emily.w@example.com",
-      avatar: "/placeholder.svg?height=40&width=40",
-      initials: "EW",
-      progress: 67,
-      questionsAsked: 2,
-      lastActive: "Today",
-      status: "active",
-    },
-    {
-      id: 5,
-      name: "Michael Brown",
-      email: "michael.b@example.com",
-      avatar: "/placeholder.svg?height=40&width=40",
-      initials: "MB",
-      progress: 23,
-      questionsAsked: 0,
-      lastActive: "1 week ago",
-      status: "inactive",
-    },
-  ]
+interface StudentsListProps {
+  currentCourseSlug: string
+  activitySummary: CourseActivitySummary
+}
+
+interface StudentData {
+  id: string
+  name: string
+  email: string
+  image: string | null
+  lastActivityAt: Date | null
+  activityState: 'active' | 'at-risk' | 'inactive'
+  questionsAsked: number
+  progress: number
+}
+
+export function StudentsList({ currentCourseSlug, activitySummary }: StudentsListProps) {
+  const [students, setStudents] = useState<StudentData[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchStudents() {
+      try {
+        const studentData = await getCourseStudentsList(currentCourseSlug)
+        setStudents(studentData)
+      } catch (error) {
+        console.error('Failed to fetch students:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchStudents()
+  }, [currentCourseSlug])
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
+  }
+
+  const formatLastActive = (lastActivityAt: Date | null) => {
+    if (!lastActivityAt) return 'Never'
+    
+    const now = new Date()
+    const diffInDays = Math.floor((now.getTime() - lastActivityAt.getTime()) / (1000 * 60 * 60 * 24))
+    
+    if (diffInDays === 0) return 'Today'
+    if (diffInDays === 1) return 'Yesterday'
+    if (diffInDays < 7) return `${diffInDays} days ago`
+    if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`
+    return `${Math.floor(diffInDays / 30)} months ago`
+  }
+
+  const getStatusBadge = (state: 'active' | 'at-risk' | 'inactive') => {
+    switch (state) {
+      case 'active':
+        return <Badge className="bg-green-500">Active</Badge>
+      case 'at-risk':
+        return <Badge variant="destructive">At Risk</Badge>
+      case 'inactive':
+        return <Badge variant="outline">Inactive</Badge>
+    }
+  }
+
+  if (loading) {
+    return <div className="text-center py-4">Loading students...</div>
+  }
+
+  if (students.length === 0) {
+    return <div className="text-center py-4 text-muted-foreground">No students enrolled yet.</div>
+  }
 
   return (
     <Table>
@@ -89,8 +110,8 @@ export function StudentsList() {
             <TableCell>
               <div className="flex items-center gap-3">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={student.avatar || "/placeholder.svg"} alt={student.name} />
-                  <AvatarFallback>{student.initials}</AvatarFallback>
+                  <AvatarImage src={student.image || "/placeholder.svg"} alt={student.name} />
+                  <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
                 </Avatar>
                 <div>
                   <div className="font-medium">{student.name}</div>
@@ -105,11 +126,9 @@ export function StudentsList() {
               </div>
             </TableCell>
             <TableCell>{student.questionsAsked}</TableCell>
-            <TableCell>{student.lastActive}</TableCell>
+            <TableCell>{formatLastActive(student.lastActivityAt)}</TableCell>
             <TableCell>
-              {student.status === "active" && <Badge className="bg-green-500">Active</Badge>}
-              {student.status === "at-risk" && <Badge variant="destructive">At Risk</Badge>}
-              {student.status === "inactive" && <Badge variant="outline">Inactive</Badge>}
+              {getStatusBadge(student.activityState)}
             </TableCell>
             <TableCell className="text-right">
               <DropdownMenu>

@@ -202,17 +202,19 @@ model QuestionVote {
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
   userId     String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
 
   @@unique([questionId, userId])
 }
 
 model AnswerVote {
-  id       String @id() @default(cuid())
-  value    Int
-  answerId String
-  answer   Answer @relation(fields: [answerId], references: [id], onDelete: Cascade)
-  userId   String
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id() @default(cuid())
+  value     Int
+  answerId  String
+  answer    Answer   @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 
   @@unique([answerId, userId])
 }

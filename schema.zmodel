@@ -286,6 +286,7 @@ model QuestionVote {
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
   userId     String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
 
   @@unique([questionId, userId])
   @@allow('create,update', auth() == user)
@@ -300,6 +301,7 @@ model AnswerVote {
   answer   Answer @relation(fields: [answerId], references: [id], onDelete: Cascade)
   userId   String
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 
   @@unique([answerId, userId])
   @@allow('create,update', auth() == user)

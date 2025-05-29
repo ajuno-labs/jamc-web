@@ -4,6 +4,7 @@ import { getAuthUser } from "@/lib/auth/get-user"
 import { getEnhancedPrisma } from "@/lib/db/enhanced"
 import { DashboardPage } from "./_components/DashboardPage"
 import { randomBytes } from "crypto"
+import { getCourseStudentActivity } from './_actions/student-activity-actions'
 
 interface TeacherDashboardPageProps {
   params: Promise<{ courseSlug: string }>
@@ -40,12 +41,8 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
     course = { ...course, joinCode: code }
   }
 
-  // Fetch enrolled students for dashboard stats
-  const enrollments = await db.courseEnrollment.findMany({
-    where: { courseId: course.id },
-    include: { user: { select: { id: true, name: true } } },
-  })
-  const students = enrollments.map(e => ({ id: e.user.id, name: e.user.name ?? 'Unknown' }))
+  // Get comprehensive student activity data
+  const activitySummary = await getCourseStudentActivity(courseSlug)
 
   // Fetch the instructor's courses for the sidebar
   const courses = await db.course.findMany({
@@ -74,10 +71,10 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
   }))
 
   return <DashboardPage
-    students={students}
     questions={questions}
     courses={courses}
     currentCourseSlug={courseSlug}
     joinCode={course!.joinCode}
+    activitySummary={activitySummary}
   />
 } 

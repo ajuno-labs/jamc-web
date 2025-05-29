@@ -13,9 +13,10 @@ import { ModuleCompletionCard } from "./ModuleCompletionCard"
 import { RecentQuestionsSection } from "./RecentQuestionsSection"
 import { EnrollmentChartCard } from "./EnrollmentChartCard"
 import { StudentsSection } from "./StudentsSection"
+import { ActivityNotificationCard } from "./ActivityNotificationCard"
+import type { CourseActivitySummary } from "@/lib/types/student-activity"
 
 export interface DashboardPageProps {
-  students: { id: string; name: string }[]
   questions: {
     id: string
     content: string
@@ -27,9 +28,16 @@ export interface DashboardPageProps {
   courses: { slug: string; title: string }[]
   currentCourseSlug: string
   joinCode: string | null
+  activitySummary: CourseActivitySummary
 }
 
-export function DashboardPage({ students, questions, courses, currentCourseSlug, joinCode }: DashboardPageProps) {
+export function DashboardPage({ 
+  questions, 
+  courses, 
+  currentCourseSlug, 
+  joinCode, 
+  activitySummary 
+}: DashboardPageProps) {
   const selectedCourse = courses.find(c => c.slug === currentCourseSlug)?.title || ''
   const router = useRouter()
 
@@ -65,13 +73,18 @@ export function DashboardPage({ students, questions, courses, currentCourseSlug,
       <main className="p-6">
         <EnrollmentCodeCard joinCode={joinCode} />
         <StatsOverview
-          studentsCount={students.length}
-          newThisWeekCount={4}
-          activeStudentsCount={64}
-          activeStudentsPercentage={73}
+          studentsCount={activitySummary.totalStudents}
+          newThisWeekCount={activitySummary.newStudentsThisWeek}
+          activeStudentsCount={activitySummary.activeStudents}
+          activeStudentsPercentage={activitySummary.totalStudents > 0 
+            ? Math.round((activitySummary.activeStudents / activitySummary.totalStudents) * 100)
+            : 0
+          }
           openQuestionsCount={questions.length}
           unansweredCount={questions.filter(q => q._count.answers === 0).length}
-          averageCompletion={68}
+          averageCompletion={activitySummary.averageProgressPercentage}
+          atRiskStudentsCount={activitySummary.atRiskStudents}
+          inactiveStudentsCount={activitySummary.inactiveStudents}
         />
         <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-7">
           <WeeklyActivityCard />
@@ -81,7 +94,15 @@ export function DashboardPage({ students, questions, courses, currentCourseSlug,
           <RecentQuestionsSection questions={questions} currentCourseSlug={currentCourseSlug} />
           <EnrollmentChartCard />
         </div>
-        <StudentsSection />
+        <div className="mt-6 grid gap-6 lg:grid-cols-7">
+          <ActivityNotificationCard 
+            courseSlug={currentCourseSlug} 
+            activitySummary={activitySummary} 
+          />
+          <div className="lg:col-span-4">
+            <StudentsSection currentCourseSlug={currentCourseSlug} activitySummary={activitySummary} />
+          </div>
+        </div>
       </main>
     </div>
   )

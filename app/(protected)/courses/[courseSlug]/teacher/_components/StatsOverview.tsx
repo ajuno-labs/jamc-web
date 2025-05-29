@@ -12,6 +12,8 @@ interface StatsOverviewProps {
   openQuestionsCount: number
   unansweredCount: number
   averageCompletion: number
+  atRiskStudentsCount: number
+  inactiveStudentsCount: number
 }
 
 export function StatsOverview({
@@ -22,6 +24,8 @@ export function StatsOverview({
   openQuestionsCount,
   unansweredCount,
   averageCompletion,
+  atRiskStudentsCount,
+  inactiveStudentsCount,
 }: StatsOverviewProps) {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -41,6 +45,9 @@ export function StatsOverview({
         <CardContent>
           <div className="text-2xl font-bold">{activeStudentsCount}</div>
           <p className="text-xs text-muted-foreground">{activeStudentsPercentage}% of total students</p>
+          <div className="mt-2 text-xs text-muted-foreground">
+            <span className="text-orange-600">{atRiskStudentsCount} at risk</span> • <span className="text-red-600">{inactiveStudentsCount} inactive</span>
+          </div>
         </CardContent>
       </Card>
       <Card>

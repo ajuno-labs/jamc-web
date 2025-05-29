@@ -48,6 +48,8 @@
         - [ ] Avatar upload
 - [ ] Seeding
     - [ ] seed questions should use latex $$ notation instead of \[ \]
+- [ ] Multi-language support
+    - [ ] Vietnamese
 
 ## Finished
 
