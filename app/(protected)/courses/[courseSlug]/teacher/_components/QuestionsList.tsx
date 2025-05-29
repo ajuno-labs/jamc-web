@@ -1,21 +1,22 @@
-"use client"
-import React from "react"
-import { Clock, MessageSquare } from "lucide-react"
-import { MathContent } from "@/components/MathContent"
+"use client";
+import React from "react";
+import { Clock, MessageSquare } from "lucide-react";
+import Link from "next/link";
+import { MathContent } from "@/components/MathContent";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export interface QuestionsListProps {
   questions: {
-    id: string
-    content: string
-    slug: string
-    createdAt: string
-    author: { id: string; name: string }
-    _count: { answers: number }
-  }[]
+    id: string;
+    content: string;
+    slug: string;
+    createdAt: string;
+    author: { id: string; name: string };
+    _count: { answers: number };
+  }[];
 }
 
 export const QuestionsList: React.FC<QuestionsListProps> = ({ questions }) => {
@@ -30,7 +31,9 @@ export const QuestionsList: React.FC<QuestionsListProps> = ({ questions }) => {
             <div className="flex-1 flex flex-col">
               <div className="flex items-center gap-2">
                 <span className="font-medium">{question.author.name}</span>
-                <span className="text-xs text-muted-foreground">• {new Date(question.createdAt).toLocaleDateString()}</span>
+                <span className="text-xs text-muted-foreground">
+                  • {new Date(question.createdAt).toLocaleDateString()}
+                </span>
                 {question._count.answers === 0 && (
                   <Badge variant="destructive" className="ml-2">
                     Unanswered
@@ -47,8 +50,16 @@ export const QuestionsList: React.FC<QuestionsListProps> = ({ questions }) => {
                 <span>{question._count.answers} replies</span>
               </div>
               <div className="mt-2">
-                <Button size="sm" variant={question._count.answers === 0 ? "default" : "outline"}>
-                  {question._count.answers === 0 ? "Answer" : "View"}
+                <Button
+                  asChild
+                  size="sm"
+                  variant={
+                    question._count.answers === 0 ? "default" : "outline"
+                  }
+                >
+                  <Link href={`/questions/${question.id}`}>
+                    {question._count.answers === 0 ? "Answer" : "View"}
+                  </Link>
                 </Button>
               </div>
             </div>
@@ -56,5 +67,5 @@ export const QuestionsList: React.FC<QuestionsListProps> = ({ questions }) => {
         </div>
       ))}
     </div>
-  )
-}
+  );
+};
