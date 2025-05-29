@@ -24,6 +24,7 @@ export interface DashboardPageProps {
     createdAt: string
     author: { id: string; name: string }
     _count: { answers: number }
+    votes?: { value: number }[]
   }[]
   courses: { slug: string; title: string }[]
   currentCourseSlug: string

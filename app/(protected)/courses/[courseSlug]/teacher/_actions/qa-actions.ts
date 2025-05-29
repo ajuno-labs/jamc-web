@@ -3,11 +3,23 @@
 import { notFound } from 'next/navigation'
 import { getAuthUser } from '@/lib/auth/get-user'
 import { getEnhancedPrisma } from '@/lib/db/enhanced'
+import { 
+  courseBasicSelectArgs,
+  questionBasicIncludeArgs,
+  type CourseBasic,
+  type QuestionWithAuthor
+} from '@/lib/db/query-args'
+
+// Return type for the function
+type TeacherCourseData = {
+  course: CourseBasic
+  rawQuestions: QuestionWithAuthor[]
+}
 
 /**
  * Server helper to ensure instructor access and load course questions
  */
-export async function getTeacherCourseData(courseSlug: string) {
+export async function getTeacherCourseData(courseSlug: string): Promise<TeacherCourseData> {
   // Authenticate user
   const user = await getAuthUser()
   if (!user) {
@@ -18,7 +30,7 @@ export async function getTeacherCourseData(courseSlug: string) {
   const db = await getEnhancedPrisma()
   const course = await db.course.findUnique({
     where: { slug: courseSlug },
-    select: { id: true, authorId: true, title: true }
+    select: courseBasicSelectArgs
   })
   if (!course || course.authorId !== user.id) {
     notFound()
@@ -27,10 +39,7 @@ export async function getTeacherCourseData(courseSlug: string) {
   // Load all questions for the course
   const rawQuestions = await db.question.findMany({
     where: { courseId: course.id },
-    include: {
-      author: { select: { id: true, name: true } },
-      _count: { select: { answers: true } }
-    },
+    include: questionBasicIncludeArgs,
     orderBy: { createdAt: 'desc' }
   })
 

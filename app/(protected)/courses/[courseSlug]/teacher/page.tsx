@@ -5,6 +5,12 @@ import { getEnhancedPrisma } from "@/lib/db/enhanced"
 import { DashboardPage } from "./_components/DashboardPage"
 import { randomBytes } from "crypto"
 import { getCourseStudentActivity } from './_actions/student-activity-actions'
+import { 
+  courseWithJoinCodeSelectArgs, 
+  courseListSelectArgs,
+  questionWithVotesIncludeArgs,
+  type QuestionWithVotes 
+} from '@/lib/db/query-args'
 
 interface TeacherDashboardPageProps {
   params: Promise<{ courseSlug: string }>
@@ -25,7 +31,7 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
   // Verify that the current user is the course instructor
   let course = await db.course.findUnique({
     where: { slug: courseSlug },
-    select: { id: true, authorId: true, title: true, joinCode: true }
+    select: courseWithJoinCodeSelectArgs
   })
   if (!course || course.authorId !== user.id) {
     notFound()
@@ -47,27 +53,25 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
   // Fetch the instructor's courses for the sidebar
   const courses = await db.course.findMany({
     where: { authorId: user.id },
-    select: { slug: true, title: true },
+    select: courseListSelectArgs,
   })
 
-  // Fetch questions for this course with author and answer counts
+  // Fetch questions for this course using the shared include args
   const rawQuestions = await db.question.findMany({
     where: { courseId: course.id },
-    include: {
-      author: { select: { id: true, name: true } },
-      _count: { select: { answers: true } }
-    },
+    include: questionWithVotesIncludeArgs,
     orderBy: { createdAt: 'desc' }
   })
 
   // Serialize dates for client component, defaulting null author names to 'Unknown'
-  const questions = rawQuestions.map(q => ({
+  const questions = rawQuestions.map((q: QuestionWithVotes) => ({
     id: q.id,
     content: q.content,
     slug: q.slug,
     createdAt: q.createdAt.toISOString(),
     author: { id: q.author.id, name: q.author.name ?? 'Unknown' },
-    _count: q._count
+    _count: q._count,
+    votes: q.votes
   }))
 
   return <DashboardPage
