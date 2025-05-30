@@ -1,14 +1,15 @@
 "use server"
 
 import { prisma } from "@/lib/db/prisma"
-import { auth } from "@/auth"
 import { getAuthUser } from "@/lib/auth/get-user"
 import { questionWithRelationsInclude } from "@/lib/types/prisma"
+import { calculateUserReputationWithBreakdown } from "@/lib/utils/reputation"
+import type { ProfileData, ProfileQuestion } from "@/lib/types/profile"
 
 /**
  * Get current user's profile data
  */
-export async function getUserProfile() {
+export async function getUserProfile(): Promise<ProfileData | null> {
   try {
     const user = await getAuthUser()
     
@@ -58,30 +59,8 @@ export async function getUserProfile() {
       })
     ])
     
-    // Calculate reputation as sum of all question and answer votes
-    const questionVotes = await prisma.questionVote.aggregate({
-      where: {
-        question: {
-          authorId: user.id
-        }
-      },
-      _sum: {
-        value: true
-      }
-    })
-    
-    const answerVotes = await prisma.answerVote.aggregate({
-      where: {
-        answer: {
-          authorId: user.id
-        }
-      },
-      _sum: {
-        value: true
-      }
-    })
-    
-    const reputation = (questionVotes._sum.value || 0) + (answerVotes._sum.value || 0)
+    // Calculate detailed reputation breakdown
+    const reputationData = await calculateUserReputationWithBreakdown(user.id)
     
     return {
       user: {
@@ -111,16 +90,99 @@ export async function getUserProfile() {
         questionTitle: a.question.title,
         questionSlug: a.question.slug,
         createdAt: a.createdAt.toISOString(),
-        isAccepted: a.isAccepted
+        isAccepted: a.isAcceptedByUser || a.isAcceptedByTeacher
       })),
       stats: {
         totalQuestions,
         totalAnswers,
-        reputation
+        reputation: reputationData.total,
+        reputationBreakdown: reputationData.breakdown
       }
     }
   } catch (error) {
     console.error("Error fetching user profile:", error)
+    return null
+  }
+}
+
+/**
+ * Get all user's questions with pagination
+ */
+export async function getAllUserQuestions(page = 1, limit = 10) {
+  try {
+    const user = await getAuthUser()
+    
+    if (!user) {
+      return null
+    }
+    
+    const skip = (page - 1) * limit
+    
+    const [questions, totalCount] = await Promise.all([
+      prisma.question.findMany({
+        where: {
+          authorId: user.id
+        },
+        include: {
+          ...questionWithRelationsInclude,
+          course: {
+            select: {
+              id: true,
+              title: true,
+              slug: true
+            }
+          },
+          lesson: {
+            select: {
+              id: true,
+              title: true,
+              slug: true
+            }
+          }
+        },
+        orderBy: {
+          createdAt: "desc"
+        },
+        skip,
+        take: limit
+      }),
+      prisma.question.count({
+        where: { authorId: user.id }
+      })
+    ])
+    
+    return {
+      questions: questions.map(q => ({
+        id: q.id,
+        slug: q.slug,
+        title: q.title,
+        type: q.type,
+        createdAt: q.createdAt.toISOString(),
+        answerCount: q._count.answers,
+        voteCount: q._count.votes,
+        status: q.status,
+        course: q.course ? {
+          id: q.course.id,
+          title: q.course.title,
+          slug: q.course.slug
+        } : null,
+        lesson: q.lesson ? {
+          id: q.lesson.id,
+          title: q.lesson.title,
+          slug: q.lesson.slug
+        } : null
+      })) as ProfileQuestion[],
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+        hasNext: page < Math.ceil(totalCount / limit),
+        hasPrev: page > 1
+      }
+    }
+  } catch (error) {
+    console.error("Error fetching user questions:", error)
     return null
   }
 } 

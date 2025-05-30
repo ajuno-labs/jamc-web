@@ -4,6 +4,7 @@ import { calculateUserReputation } from "@/lib/utils/reputation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
 
 interface ProfilePageProps {
   params: Promise<{ id: string }>
@@ -69,7 +70,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
       id: true,
       content: true,
       createdAt: true,
-      isAccepted: true,
+      isAcceptedByUser: true,
+      isAcceptedByTeacher: true,
       question: {
         select: {
           id: true,
@@ -150,9 +152,9 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                   {recentQuestions.map((question) => (
                     <div key={question.id} className="border-b pb-4 last:border-b-0">
                       <h4 className="font-medium hover:text-primary">
-                        <a href={`/questions/${question.id}/${question.slug}`}>
+                        <Link href={`/questions/${question.id}/${question.slug}`}>
                           {question.title}
-                        </a>
+                        </Link>
                       </h4>
                       <div className="flex items-center space-x-4 text-sm text-muted-foreground mt-2">
                         <span>{question._count.answers} answers</span>
@@ -181,9 +183,9 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <h4 className="font-medium hover:text-primary">
-                            <a href={`/questions/${answer.question.id}/${answer.question.slug}`}>
+                            <Link href={`/questions/${answer.question.id}/${answer.question.slug}`}>
                               {answer.question.title}
-                            </a>
+                            </Link>
                           </h4>
                           <p className="text-sm text-muted-foreground mt-1">
                             {answer.content.substring(0, 150)}
@@ -193,7 +195,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                             <span className="text-sm text-muted-foreground">
                               {new Date(answer.createdAt).toLocaleDateString()}
                             </span>
-                            {answer.isAccepted && (
+                            {(answer.isAcceptedByUser || answer.isAcceptedByTeacher) && (
                               <Badge variant="default" className="text-xs">
                                 Accepted
                               </Badge>

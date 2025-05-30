@@ -2,6 +2,14 @@
 
 ## Current
 
+- [x] Profile page
+    - [ ] feat: view all answers page.
+    - [x] Subscription to questions (placeholder UI created)
+    - [x] Notification (placeholder UI created)
+    - [x] Enhanced reputation calculation with detailed breakdown
+    - [x] View all questions that user's asked with pagination
+    - [x] Avatar upload to AWS S3 via edit profile page
+    - [x] Profile edit functionality
 - [ ] Notification System
     - [ ] New answer notifications
     - [ ] Content update notifications
@@ -91,6 +99,7 @@
     - [x] Generate random code
     - [x] Enroll button
     - [x] Enrolled course
+- [x] ux: Dark mode support
 
 ## Low prio
 
@@ -165,8 +174,6 @@
     - [ ] LaTeX rendering optimization
     - [ ] Responsive design for all pages
     - [ ] Accessibility improvements
-    - [ ] Dark mode support
-
 - [ ] Future Enhancements
     - [ ] AI-generated answer suggestions
     - [ ] Sentiment analysis for content moderation

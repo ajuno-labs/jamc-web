@@ -4,359 +4,359 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 datasource db {
-    provider = "postgresql"
-    url = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 enum PermissionType {
-    READ
-    CREATE
-    UPDATE
-    DELETE
-    MANAGE
+  READ
+  CREATE
+  UPDATE
+  DELETE
+  MANAGE
 }
 
 enum QuestionType {
-    YOLO
-    FORMAL
+  YOLO
+  FORMAL
 }
 
 enum Visibility {
-    PUBLIC
-    PRIVATE
+  PUBLIC
+  PRIVATE
 }
 
 enum Status {
-    OPEN
-    CLOSED
-    SOLVED
+  OPEN
+  CLOSED
+  SOLVED
 }
 
 enum ActivityType {
-    VIEW_LESSON
-    UNVIEW_LESSON
-    ASK_QUESTION
-    ANSWER_QUESTION
-    UPVOTE_QUESTION
-    DOWNVOTE_QUESTION
-    UPVOTE_ANSWER
-    DOWNVOTE_ANSWER
+  VIEW_LESSON
+  UNVIEW_LESSON
+  ASK_QUESTION
+  ANSWER_QUESTION
+  UPVOTE_QUESTION
+  DOWNVOTE_QUESTION
+  UPVOTE_ANSWER
+  DOWNVOTE_ANSWER
 }
 
 model User {
-    id String @id() @default(cuid())
-    name String?
-    email String @unique()
-    password String?
-    emailVerified DateTime?
-    image String?
-    accounts Account[]
-    sessions Session[]
-    Authenticator Authenticator[]
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt()
-    roles Role[]
-    questions Question[]
-    answers Answer[]
-    questionVotes QuestionVote[]
-    answerVotes AnswerVote[]
-    comments Comment[]
-    commentVotes CommentVote[]
-    createdCourses Course[] @relation("CourseCreator")
-    enrolledCourses CourseEnrollment[]
-    lessonViews LessonView[]
-    activityLogs ActivityLog[]
-    teacherAcceptedAnswers Answer[] @relation("TeacherAcceptedAnswers")
+  id                     String             @id() @default(cuid())
+  name                   String?
+  email                  String             @unique()
+  password               String?
+  emailVerified          DateTime?
+  image                  String?
+  accounts               Account[]
+  sessions               Session[]
+  Authenticator          Authenticator[]
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt()
+  roles                  Role[]
+  questions              Question[]
+  answers                Answer[]
+  questionVotes          QuestionVote[]
+  answerVotes            AnswerVote[]
+  comments               Comment[]
+  commentVotes           CommentVote[]
+  createdCourses         Course[]           @relation("CourseCreator")
+  enrolledCourses        CourseEnrollment[]
+  lessonViews            LessonView[]
+  activityLogs           ActivityLog[]
+  teacherAcceptedAnswers Answer[]           @relation("TeacherAcceptedAnswers")
 }
 
 model Role {
-    id Int @id() @default(autoincrement())
-    name String
-    users User[]
-    permissions Permission[]
+  id          Int          @id() @default(autoincrement())
+  name        String
+  users       User[]
+  permissions Permission[]
 }
 
 model Permission {
-    id Int @id() @default(autoincrement())
-    name PermissionType
-    roles Role[]
+  id    Int            @id() @default(autoincrement())
+  name  PermissionType
+  roles Role[]
 }
 
 model Account {
-    userId String
-    type String
-    provider String
-    providerAccountId String
-    refresh_token String?
-    access_token String?
-    expires_at Int?
-    token_type String?
-    scope String?
-    id_token String?
-    session_state String?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt()
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt()
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@id([provider, providerAccountId])
+  @@id([provider, providerAccountId])
 }
 
 model Session {
-    sessionToken String @unique()
-    userId String
-    expires DateTime
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt()
+  sessionToken String   @unique()
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt()
 }
 
 model VerificationToken {
-    identifier String
-    token String
-    expires DateTime
+  identifier String
+  token      String
+  expires    DateTime
 
-    @@id([identifier, token])
+  @@id([identifier, token])
 }
 
 model Authenticator {
-    credentialID String @unique()
-    userId String
-    providerAccountId String
-    credentialPublicKey String
-    counter Int
-    credentialDeviceType String
-    credentialBackedUp Boolean
-    transports String?
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credentialID         String  @unique()
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@id([userId, credentialID])
+  @@id([userId, credentialID])
 }
 
 model Question {
-    id String @id() @default(cuid())
-    title String
-    content String
-    type QuestionType
-    visibility Visibility @default(PUBLIC)
-    topic String?
-    attachments Attachment[]
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt()
-    authorId String
-    author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
-    answers Answer[]
-    tags Tag[]
-    votes QuestionVote[]
-    comments Comment[]
-    courseId String?
-    course Course? @relation(fields: [courseId], references: [id])
-    lessonId String?
-    lesson Lesson? @relation(fields: [lessonId], references: [id])
-    viewCount Int @default(0)
-    slug String @unique()
-    status Status @default(OPEN)
+  id          String         @id() @default(cuid())
+  title       String
+  content     String
+  type        QuestionType
+  visibility  Visibility     @default(PUBLIC)
+  topic       String?
+  attachments Attachment[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt()
+  authorId    String
+  author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  answers     Answer[]
+  tags        Tag[]
+  votes       QuestionVote[]
+  comments    Comment[]
+  courseId    String?
+  course      Course?        @relation(fields: [courseId], references: [id])
+  lessonId    String?
+  lesson      Lesson?        @relation(fields: [lessonId], references: [id])
+  viewCount   Int            @default(0)
+  slug        String         @unique()
+  status      Status         @default(OPEN)
 
-    @@index([courseId])
-    @@index([lessonId])
+  @@index([courseId])
+  @@index([lessonId])
 }
 
 model Answer {
-    id String @id() @default(cuid())
-    content String
-    isAcceptedByUser Boolean @default(false)
-    isAcceptedByTeacher Boolean @default(false)
-    acceptedByUserAt DateTime?
-    acceptedByTeacherId String?
-    acceptedByTeacher User? @relation("TeacherAcceptedAnswers", fields: [acceptedByTeacherId], references: [id])
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt()
-    authorId String
-    author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
-    questionId String
-    question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-    votes AnswerVote[]
-    comments Comment[]
+  id                  String       @id() @default(cuid())
+  content             String
+  isAcceptedByUser    Boolean      @default(false)
+  isAcceptedByTeacher Boolean      @default(false)
+  acceptedByUserAt    DateTime?
+  acceptedByTeacherId String?
+  acceptedByTeacher   User?        @relation("TeacherAcceptedAnswers", fields: [acceptedByTeacherId], references: [id])
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt()
+  authorId            String
+  author              User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  questionId          String
+  question            Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  votes               AnswerVote[]
+  comments            Comment[]
 }
 
 model Tag {
-    id String @id() @default(cuid())
-    name String @unique()
-    description String?
-    questions Question[]
-    aiGenerated Boolean @default(false)
-    verified Boolean @default(false)
-    courses Course[]
+  id          String     @id() @default(cuid())
+  name        String     @unique()
+  description String?
+  questions   Question[]
+  aiGenerated Boolean    @default(false)
+  verified    Boolean    @default(false)
+  courses     Course[]
 }
 
 model Attachment {
-    id String @id() @default(cuid())
-    url String
-    type String
-    questionId String
-    question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  id         String   @id() @default(cuid())
+  url        String
+  type       String
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 }
 
 model QuestionVote {
-    id String @id() @default(cuid())
-    value Int
-    questionId String
-    question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-    userId String
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-    createdAt DateTime @default(now())
+  id         String   @id() @default(cuid())
+  value      Int
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
 
-    @@unique([questionId, userId])
+  @@unique([questionId, userId])
 }
 
 model AnswerVote {
-    id String @id() @default(cuid())
-    value Int
-    answerId String
-    answer Answer @relation(fields: [answerId], references: [id], onDelete: Cascade)
-    userId String
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-    createdAt DateTime @default(now())
+  id        String   @id() @default(cuid())
+  value     Int
+  answerId  String
+  answer    Answer   @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 
-    @@unique([answerId, userId])
+  @@unique([answerId, userId])
 }
 
 model Comment {
-    id String @id() @default(cuid())
-    content String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt()
-    authorId String
-    author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
-    questionId String?
-    question Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
-    answerId String?
-    answer Answer? @relation(fields: [answerId], references: [id], onDelete: Cascade)
-    votes CommentVote[]
+  id         String        @id() @default(cuid())
+  content    String
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt()
+  authorId   String
+  author     User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  questionId String?
+  question   Question?     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answerId   String?
+  answer     Answer?       @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  votes      CommentVote[]
 }
 
 model CommentVote {
-    id String @id() @default(cuid())
-    value Int
-    commentId String
-    comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
-    userId String
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String  @id() @default(cuid())
+  value     Int
+  commentId String
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@unique([commentId, userId])
+  @@unique([commentId, userId])
 }
 
 model Course {
-    id String @id() @default(cuid())
-    title String
-    description String
-    slug String @unique()
-    joinCode String? @unique()
-    modules CourseModule[]
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt()
-    authorId String
-    author User @relation("CourseCreator", fields: [authorId], references: [id])
-    lessons Lesson[]
-    tags Tag[]
-    questions Question[]
-    enrollments CourseEnrollment[]
+  id          String             @id() @default(cuid())
+  title       String
+  description String
+  slug        String             @unique()
+  joinCode    String?            @unique()
+  modules     CourseModule[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt()
+  authorId    String
+  author      User               @relation("CourseCreator", fields: [authorId], references: [id])
+  lessons     Lesson[]
+  tags        Tag[]
+  questions   Question[]
+  enrollments CourseEnrollment[]
 
-    @@index([authorId])
+  @@index([authorId])
 }
 
 model CourseEnrollment {
-    id String @id() @default(cuid())
-    userId String
-    courseId String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt()
-    course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id() @default(cuid())
+  userId    String
+  courseId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@unique([userId, courseId])
+  @@unique([userId, courseId])
 }
 
 model Lesson {
-    id String @id() @default(cuid())
-    title String
-    slug String
-    summary String?
-    order Int
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt()
-    chapterId String?
-    chapter CourseChapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-    courseId String
-    course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-    questions Question[]
-    views LessonView[]
-    files LessonFile[]
-    metadata Json? @default("{}")
+  id        String         @id() @default(cuid())
+  title     String
+  slug      String
+  summary   String?
+  order     Int
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt()
+  chapterId String?
+  chapter   CourseChapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  courseId  String
+  course    Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  questions Question[]
+  views     LessonView[]
+  files     LessonFile[]
+  metadata  Json?          @default("{}")
 
-    @@unique([courseId, slug])
+  @@unique([courseId, slug])
 }
 
 model LessonFile {
-    id String @id() @default(cuid())
-    url String
-    type String
-    lessonId String
-    lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-    createdAt DateTime @default(now())
+  id        String   @id() @default(cuid())
+  url       String
+  type      String
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
 
 model LessonView {
-    userId String
-    lessonId String
-    viewedAt DateTime @updatedAt()
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-    lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  userId   String
+  lessonId String
+  viewedAt DateTime @updatedAt()
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson   Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
-    @@id([userId, lessonId])
+  @@id([userId, lessonId])
 }
 
 model ActivityLog {
-    id String @id() @default(cuid())
-    userId String
-    type ActivityType
-    entityType String?
-    entityId String?
-    metadata Json? @default("{}")
-    createdAt DateTime @default(now())
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String       @id() @default(cuid())
+  userId     String
+  type       ActivityType
+  entityType String?
+  entityId   String?
+  metadata   Json?        @default("{}")
+  createdAt  DateTime     @default(now())
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@index([userId, type])
-    @@index([entityType, entityId])
+  @@index([userId, type])
+  @@index([entityType, entityId])
 }
 
 model CourseModule {
-    id String @id() @default(cuid())
-    title String
-    slug String
-    order Int
-    courseId String
-    course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-    chapters CourseChapter[]
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now())
+  id        String          @id() @default(cuid())
+  title     String
+  slug      String
+  order     Int
+  courseId  String
+  course    Course          @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  chapters  CourseChapter[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @default(now())
 
-    @@unique([courseId, slug])
+  @@unique([courseId, slug])
 }
 
 model CourseChapter {
-    id String @id() @default(cuid())
-    title String
-    slug String
-    order Int
-    moduleId String
-    module CourseModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-    lessons Lesson[]
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now())
+  id        String       @id() @default(cuid())
+  title     String
+  slug      String
+  order     Int
+  moduleId  String
+  module    CourseModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  lessons   Lesson[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @default(now())
 
-    @@unique([moduleId, slug])
+  @@unique([moduleId, slug])
 }
