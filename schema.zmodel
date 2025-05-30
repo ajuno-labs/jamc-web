@@ -48,6 +48,9 @@ model User {
   enrolledCourses CourseEnrollment[]
   lessonViews     LessonView[]
   activityLogs    ActivityLog[]
+  
+  // Teacher accepted answers relation
+  teacherAcceptedAnswers Answer[]    @relation("TeacherAcceptedAnswers")
 }
 
 model Role {
@@ -227,7 +230,12 @@ model Question {
 model Answer {
   id         String       @id @default(cuid())
   content    String       @length(min: 10)
-  isAccepted Boolean      @default(false)
+  
+  isAcceptedByUser    Boolean @default(false) @allow('update', auth() == question.author)
+  isAcceptedByTeacher Boolean @default(false) @allow('update', auth() == question.course.author && question.courseId != null)
+  acceptedByUserAt    DateTime? @allow('update', auth() == question.author)
+  acceptedByTeacherId String? @allow('update', auth() == question.course.author && question.courseId != null)
+  acceptedByTeacher   User?    @relation("TeacherAcceptedAnswers", fields: [acceptedByTeacherId], references: [id])
   
   // Metadata
   createdAt  DateTime     @default(now())
@@ -244,7 +252,13 @@ model Answer {
   // Access control
   @@allow('create', auth() != null)
   @@allow('read', question.visibility == PUBLIC || auth() == author || auth() == question.author || auth().roles?[name == "TEACHER"])
-  @@allow('update', auth() == author)
+  
+  // Allow updates by:
+  // 1. Answer author (can update content and all fields)
+  // 2. Question author (can update acceptance fields)
+  // 3. Course teacher (can update teacher acceptance fields)
+  @@allow('update', auth() == author || auth() == question.author || (auth() == question.course.author && question.courseId != null))
+  
   @@allow('delete', auth() == author || auth().roles?[permissions?[name == DELETE]])
 }
 

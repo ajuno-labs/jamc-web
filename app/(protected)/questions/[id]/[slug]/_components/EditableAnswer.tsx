@@ -8,6 +8,7 @@ import { UserLink } from "./UserLink"
 import { EditButton } from "./EditButton"
 import { PreviewToggle } from "./PreviewToggle"
 import { CommentSection } from "./CommentSection"
+import { AcceptAnswerButtons } from "./AcceptAnswerButtons"
 import { updateAnswer } from "../_actions/question-edit-actions"
 import { MathContent } from "@/components/MathContent"
 import { formatDateTime } from "@/lib/utils/date"
@@ -15,7 +16,11 @@ import { formatDateTime } from "@/lib/utils/date"
 interface Answer {
   id: string
   content: string
-  isAccepted: boolean
+  isAcceptedByUser: boolean
+  isAcceptedByTeacher: boolean
+  questionOwnerId: string
+  courseTeacherId?: string
+  isLinkedToCourse: boolean
   createdAt: Date
   author: {
     id: string
@@ -132,6 +137,19 @@ export function EditableAnswer({ answer, currentUserId, className = "" }: Editab
           <div className="prose max-w-none">
             <MathContent content={answer.content} />
           </div>
+        )}
+
+        {/* Accept Answer Buttons */}
+        {!isEditing && (
+          <AcceptAnswerButtons
+            answerId={answer.id}
+            isAcceptedByUser={answer.isAcceptedByUser}
+            isAcceptedByTeacher={answer.isAcceptedByTeacher}
+            currentUserId={currentUserId}
+            questionOwnerId={answer.questionOwnerId}
+            courseTeacherId={answer.courseTeacherId}
+            isLinkedToCourse={answer.isLinkedToCourse}
+          />
         )}
 
         {/* Comments Section */}

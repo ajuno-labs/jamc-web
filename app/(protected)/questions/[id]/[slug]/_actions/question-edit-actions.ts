@@ -233,11 +233,25 @@ export async function getAnswersWithReputation(questionId: string) {
         orderBy: {
           createdAt: "asc"
         }
+      },
+      question: {
+        select: {
+          id: true,
+          authorId: true,
+          courseId: true,
+          course: {
+            select: {
+              authorId: true,
+            }
+          }
+        }
       }
     },
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: [
+      { isAcceptedByUser: 'desc' },
+      { isAcceptedByTeacher: 'desc' },
+      { createdAt: 'desc' }
+    ],
   })
 
   // Calculate reputation for each answer author and comment authors
@@ -264,7 +278,10 @@ export async function getAnswersWithReputation(questionId: string) {
           ...answer.author,
           reputation: authorReputation
         },
-        comments: commentsWithReputation
+        comments: commentsWithReputation,
+        questionOwnerId: answer.question.authorId,
+        courseTeacherId: answer.question.course?.authorId,
+        isLinkedToCourse: !!answer.question.courseId,
       }
     })
   )

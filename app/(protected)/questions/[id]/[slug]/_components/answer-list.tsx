@@ -17,7 +17,11 @@ interface Answer {
   }
   createdAt: Date
   votes: Array<{ value: number, userId?: string }>
-  isAccepted: boolean
+  isAcceptedByUser: boolean
+  isAcceptedByTeacher: boolean
+  questionOwnerId: string
+  courseTeacherId?: string
+  isLinkedToCourse: boolean
   comments: Array<{
     id: string
     content: string

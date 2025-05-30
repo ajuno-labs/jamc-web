@@ -59,6 +59,7 @@
 ## Finished
 
 - [x] Question page
+    - [x] feat: accept answer
     - [x] Question categorization (tags)
     - [x] feat: Edit answer
     - [x] Comments for answers and questions, or the Reply button.
