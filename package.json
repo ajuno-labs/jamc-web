@@ -9,7 +9,7 @@
     "prebuild": "pnpm db:migrate",
     "build": "next build",
     "start": "next start",
-    "postinstall": "pnpm db:generate",
+    "postinstall": "pnpm prisma generate",
     "lint": "next lint",
     "test:e2e": "pnpm exec playwright test",
     "test:e2e:ui": "pnpm exec playwright test --ui",
