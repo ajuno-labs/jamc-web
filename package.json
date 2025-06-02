@@ -5,7 +5,8 @@
   "scripts": {
     "predev": "pnpm db:migrate",
     "dev": "next dev --turbopack",
-    "prestart": "pnpm db:migrate && pnpm db:generate",
+    "prestart": "pnpm db:migrate",
+    "prebuild": "pnpm db:migrate",
     "build": "next build",
     "start": "next start",
     "postinstall": "pnpm db:generate",
@@ -15,8 +16,7 @@
     "test:e2e:debug": "pnpm exec playwright test --debug",
     "db:migrate": "zenstack generate && prisma migrate dev",
     "db:reset": "prisma migrate reset --force && zenstack generate && prisma migrate dev",
-    "db:generate": "zenstack generate && prisma generate",
-    "db:seed": "zenstack generate && prisma db seed"
+    "db:seed": "prisma db seed"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
