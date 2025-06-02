@@ -2,19 +2,104 @@
 
 ## Current
 
-- [ ] Question categorization (tags and topics)
-- [ ] Duplicate question filtering
-- [ ] Bug: MathJax can't display fractions
+- [x] Profile page
+    - [ ] feat: view all answers page.
+    - [x] Subscription to questions (placeholder UI created)
+    - [x] Notification (placeholder UI created)
+    - [x] Enhanced reputation calculation with detailed breakdown
+    - [x] View all questions that user's asked with pagination
+    - [x] Avatar upload to AWS S3 via edit profile page
+    - [x] Profile edit functionality
+- [ ] Notification System
+    - [ ] New answer notifications
+    - [ ] Content update notifications
+    - [ ] Following/subscription management
+- [ ] Lesson page
+    - [x] Create lesson
+        - [ ] allow teacher permission only accessing the page
+        - [ ] feat: save draft
+        - [x] feat: file limit 1MB handling
+    - [ ] feat: enhance lesson content display
+        - [x] Just refer to the uploaded files and students can download them.
+        - [x] LaTeX support for lesson summary section
+        - [x] Mark as read button for student
+        - [x] Previous and next lesson navigation
+        - [x] Lesson completion popup with actions
+        - [x] Quick Review feature for reflection questions
+    - [ ] metadata handling: tags, reading time, etc.
+    - [ ] Discussion forum button: update this button for user quickly view questions of the lesson.
+    - [ ] Press ask a question button automatically fill the course and lesson name in the question form.
+    - [ ] AI-generated review questions: Generate practice questions automatically for each lesson when no questions exist, to help students reflect and deepen understanding
+- [ ] Course management
+    - [x] Use new models for chapters and modules
+        - [x] update seed data 
+        - [x] update the whole course page structure
+            - [x] remove lib/course-structure.ts
+    - [x] Add a button to edit lessons
+    - [ ] Edit course page
+    - [ ] Dashboard page
 - [ ] Fix: landing page doesn't display logged in user without refreshing
-- [ ] Refactor code
-    - [ ] Duplicate lib folder
+- [ ] Course Management
+    - [ ] Course/lesson progress bar in dashboard (Paused - awaiting LMS tracking support)
+    - [ ] Define requirements and content for course-specific questions page
+    - [ ] Define requirements and content for teacher-specific students page (student stats)
+    - [ ] Active student
+- [ ] Student activity log
+    - [ ] Active student
+        - Within a week: viewed lessons, asked/answered questions
+    - [ ] Test lesson viewed toggle
+- [ ] progress bar (server handling?) in course content
+- [ ] Testing: Duplicate question filtering
+- [ ] Update course content accordingly to the new lesson schema
+- [ ] refactor: reduce size and duplicate code of create course form
+- [ ] feat: new approach for sbert: precompute embeddings
+    - Currently trying to compute each new question on the fly but that's gonna be too slow
+- [ ] feat: ux error handling in empty titles of nodes in course structure
+- [ ] Profile page
+    - [ ] Edit page
+        - [ ] Avatar upload
+- [ ] Seeding
+    - [ ] seed questions should use latex $$ notation instead of \[ \]
+- [ ] Multi-language support
+    - [ ] Vietnamese
+- [ ] feat: view all questions shouldn't be displayed in the lesson page if there is no question.
 
 ## Finished
 
+- [x] Question page
+    - [x] feat: accept answer
+    - [x] Question categorization (tags)
+    - [x] feat: Edit answer
+    - [x] Comments for answers and questions, or the Reply button.
+    - [x] Link user name to their profile page
+    - [x] display reputation points of the user in the question page.
+    - [x] Answer preview button
+- [x] Bug: MathJax can't display fraction
+- [x] Enrollment flow
+- [x] feat: Create new course button somewhere
+- [x] Redirect to new course after creation.
+- [x] Hide 'add' button inside the lesson node in course structure
+- [x] style: update create course form button position and spacing
+- [x] Fix: flow of sign in should be directly to the qa page, not landing page.
+    - Now handled gracefully by middleware with callback url
+- [x] ux: wrong email or password alert
+- [x] Implement callback url handling in middleware
+- [x] Duplicate question filtering
+- [x] Link between teacher and their courses aren't clear
+    - [x] In course page, the teacher account still displays the enroll button
+- [x] Refactor code: Duplicate lib folder
 - [x] LaTeX support for questions and answers
 - [x] Related questions feature
 - [x] Add course linkage in questions
 - [x] Upvote/downvote functionality
+- [x] Course page
+    - [x] Pagination for courses
+    - [x] Layout update: switch navigation to sidebar and change header features
+- [x] Enrollment
+    - [x] Generate random code
+    - [x] Enroll button
+    - [x] Enrolled course
+- [x] ux: Dark mode support
 
 ## Low prio
 
@@ -54,7 +139,6 @@
     - [ ] Teacher encouragement: Starter questions to normalize asking
 
 - [ ] Q&A System
-    - [ ] Question creation with LaTeX support
     - [ ] Answer submission with LaTeX support
     - [ ] Official answer marking by teachers
     - [ ] Question categorization (tags and topics)
@@ -75,11 +159,6 @@
     - [ ] Search results page optimization
     - [ ] Enhance related questions similarity algorithm (full-text/TF-IDF)
 
-- [ ] Notification System
-    - [ ] New answer notifications
-    - [ ] Content update notifications
-    - [ ] Following/subscription management
-
 - [ ] Gamification
     - [ ] Reputation points system
     - [ ] Badges implementation
@@ -95,10 +174,7 @@
     - [ ] LaTeX rendering optimization
     - [ ] Responsive design for all pages
     - [ ] Accessibility improvements
-    - [ ] Dark mode support
-
 - [ ] Future Enhancements
-    - [ ] AI-suggested similar questions
     - [ ] AI-generated answer suggestions
     - [ ] Sentiment analysis for content moderation
     - [ ] RAG model suggested by lecturer

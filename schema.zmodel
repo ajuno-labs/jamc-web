@@ -14,35 +14,43 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(cuid())
-  name          String?
-  email         String          @unique @email
-  password      String?         @password @omit @length(min: 8, max: 32)
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id              String             @id @default(cuid())
+  name            String?
+  email           String             @unique @email
+  password        String?            @password @omit @length(min: 8, max: 32)
+  emailVerified   DateTime?
+  image           String?
+  accounts        Account[]
+  sessions        Session[]
   // Optional for WebAuthn support
-  Authenticator Authenticator[]
+  Authenticator   Authenticator[]
 
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
 
-  roles         Role[]
+  roles           Role[]
   
   // Add access policies
   @@allow('create', true) // Allow signups
-  @@allow('read,update', auth() == this) // Users can read/update their own profile
+  @@allow('read', true)
+  @@allow('update', auth() == this) // Users can update their own profile
   @@deny('delete', true) // Prevent direct deletions
 
-  questions     Question[]
-  answers       Answer[]
-  questionVotes QuestionVote[]
-  answerVotes   AnswerVote[]
+  questions       Question[]
+  answers         Answer[]
+  questionVotes   QuestionVote[]
+  answerVotes     AnswerVote[]
+  comments        Comment[]
+  commentVotes    CommentVote[]
   
   // Course relations
-  createdCourses Course[]       @relation("CourseCreator")
+  createdCourses  Course[]           @relation("CourseCreator")
   enrolledCourses CourseEnrollment[]
+  lessonViews     LessonView[]
+  activityLogs    ActivityLog[]
+  
+  // Teacher accepted answers relation
+  teacherAcceptedAnswers Answer[]    @relation("TeacherAcceptedAnswers")
 }
 
 model Role {
@@ -174,35 +182,36 @@ enum Status {
 }
 
 model Question {
-  id          String      @id @default(cuid())
-  title       String      @length(min: 3, max: 300)
-  content     String      @length(min: 10)
+  id          String         @id @default(cuid())
+  title       String         @length(min: 3, max: 300)
+  content     String         @length(min: 10)
   type        QuestionType
-  visibility  Visibility  @default(PUBLIC)
+  visibility  Visibility     @default(PUBLIC)
   
   // For formal questions
   topic       String?
   attachments Attachment[]
   
   // Metadata
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
   
   // Relations
   authorId    String
-  author      User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
   answers     Answer[]
   tags        Tag[]
   votes       QuestionVote[]
+  comments    Comment[]
   
   // Course structure relations
   courseId    String?
-  course      Course?     @relation(fields: [courseId], references: [id])
+  course      Course?        @relation(fields: [courseId], references: [id])
   lessonId    String?
-  lesson      Lesson?     @relation(fields: [lessonId], references: [id])
+  lesson      Lesson?        @relation(fields: [lessonId], references: [id])
   
   // Engagement metrics
-  viewCount   Int         @default(0)
+  viewCount   Int            @default(0)
   
   // Access control
   @@allow('create', auth() != null)
@@ -210,8 +219,8 @@ model Question {
   @@allow('update', auth() == author)
   @@allow('delete', auth() == author || auth().roles?[permissions?[name == DELETE]])
 
-  slug        String      @unique
-  status      Status      @default(OPEN)
+  slug        String         @unique
+  status      Status         @default(OPEN)
   
   // Add reverse relations for easy querying
   @@index([courseId])
@@ -219,41 +228,53 @@ model Question {
 }
 
 model Answer {
-  id          String      @id @default(cuid())
-  content     String      @length(min: 10)
-  isAccepted  Boolean     @default(false)
+  id         String       @id @default(cuid())
+  content    String       @length(min: 10)
+  
+  isAcceptedByUser    Boolean @default(false) @allow('update', auth() == question.author)
+  isAcceptedByTeacher Boolean @default(false) @allow('update', auth() == question.course.author && question.courseId != null)
+  acceptedByUserAt    DateTime? @allow('update', auth() == question.author)
+  acceptedByTeacherId String? @allow('update', auth() == question.course.author && question.courseId != null)
+  acceptedByTeacher   User?    @relation("TeacherAcceptedAnswers", fields: [acceptedByTeacherId], references: [id])
   
   // Metadata
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
   
   // Relations
-  authorId    String
-  author      User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  questionId  String
-  question    Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  votes       AnswerVote[]
+  authorId   String
+  author     User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  votes      AnswerVote[]
+  comments   Comment[]
   
   // Access control
   @@allow('create', auth() != null)
-  @@allow('read', question.visibility == PUBLIC || auth() == author || auth() == question.author)
-  @@allow('update', auth() == author)
+  @@allow('read', question.visibility == PUBLIC || auth() == author || auth() == question.author || auth().roles?[name == "TEACHER"])
+  
+  // Allow updates by:
+  // 1. Answer author (can update content and all fields)
+  // 2. Question author (can update acceptance fields)
+  // 3. Course teacher (can update teacher acceptance fields)
+  @@allow('update', auth() == author || auth() == question.author || (auth() == question.course.author && question.courseId != null))
+  
   @@allow('delete', auth() == author || auth().roles?[permissions?[name == DELETE]])
 }
 
 model Tag {
-  id          String      @id @default(cuid())
-  name        String      @unique
+  id          String     @id @default(cuid())
+  name        String     @unique
   description String?
   questions   Question[]
   
   // For AI-suggested tags
-  aiGenerated Boolean     @default(false)
-  verified    Boolean     @default(false)
+  aiGenerated Boolean    @default(false)
+  verified    Boolean    @default(false)
   
   // Course relation
   courses     Course[]
-  
+
   @@allow('create', auth() != null)
   @@allow('read', true)
   @@allow('update', auth() != null)
@@ -261,25 +282,26 @@ model Tag {
 }
 
 model Attachment {
-  id          String      @id @default(cuid())
-  url         String
-  type        String      // e.g., "image", "document", etc.
-  questionId  String
-  question    Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  
+  id         String   @id @default(cuid())
+  url        String
+  type       String      // e.g., "image", "document", etc.
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
   @@allow('create', auth() != null)
   @@allow('read', question.visibility == PUBLIC || auth() == question.author)
   @@allow('delete', auth() == question.author || auth().roles?[permissions?[name == DELETE]])
 }
 
 model QuestionVote {
-  id          String      @id @default(cuid())
-  value       Int         // 1 for upvote, -1 for downvote
-  questionId  String
-  question    Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  userId      String
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id         String   @id @default(cuid())
+  value      Int         // 1 for upvote, -1 for downvote
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
   @@unique([questionId, userId])
   @@allow('create,update', auth() == user)
   @@allow('read', true)
@@ -287,14 +309,55 @@ model QuestionVote {
 }
 
 model AnswerVote {
-  id          String      @id @default(cuid())
-  value       Int         // 1 for upvote, -1 for downvote
-  answerId    String
-  answer      Answer      @relation(fields: [answerId], references: [id], onDelete: Cascade)
-  userId      String
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id       String @id @default(cuid())
+  value    Int         // 1 for upvote, -1 for downvote
+  answerId String
+  answer   Answer @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
   @@unique([answerId, userId])
+  @@allow('create,update', auth() == user)
+  @@allow('read', true)
+  @@allow('delete', auth() == user)
+}
+
+model Comment {
+  id         String   @id @default(cuid())
+  content    String   @length(min: 1, max: 1000)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  // Relations
+  authorId   String
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  // Polymorphic relation - can comment on either question or answer
+  questionId String?
+  question   Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answerId   String?
+  answer     Answer?   @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  
+  // Comment voting
+  votes      CommentVote[]
+  
+  // Access control
+  @@allow('create', auth() != null)
+  @@allow('read', true)
+  @@allow('update', auth() == author)
+  @@allow('delete', auth() == author || auth().roles?[permissions?[name == DELETE]])
+}
+
+model CommentVote {
+  id        String  @id @default(cuid())
+  value     Int     // 1 for useful, -1 for not useful (if we implement it)
+  commentId String
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
   @@allow('create,update', auth() == user)
   @@allow('read', true)
   @@allow('delete', auth() == user)
@@ -302,22 +365,24 @@ model AnswerVote {
 
 // Course models
 model Course {
-  id          String      @id @default(cuid())
-  title       String      @length(min: 3, max: 100)
-  description String      @length(min: 10, max: 1000)
-  slug        String      @unique
+  id          String             @id @default(cuid())
+  title       String             @length(min: 3, max: 100)
+  description String             @length(min: 10, max: 1000)
+  slug        String             @unique
+  joinCode    String?            @unique  // Unique code for students to join the course
   
   // New field for course structure/hierarchy
-  structure   Json?       // Stores the visual hierarchy (volumes, modules, etc)
+  // structure   Json?       // (Deprecated – use modules/chapters instead)
+  modules     CourseModule[]
   
   // Metadata
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
   
   // Relations
   authorId    String
-  author      User        @relation("CourseCreator", fields: [authorId], references: [id])
-  lessons     Lesson[]    // Direct relation to lessons
+  author      User               @relation("CourseCreator", fields: [authorId], references: [id])
+  lessons     Lesson[]           // Direct relation to lessons
   tags        Tag[]
   questions   Question[]
   enrollments CourseEnrollment[]
@@ -327,7 +392,7 @@ model Course {
   @@allow('read', true)
   @@allow('update', auth() == author || auth().roles?[permissions?[name == UPDATE]])
   @@allow('delete', auth() == author || auth().roles?[permissions?[name == DELETE]])
-  
+
   @@index([authorId])
 }
 
@@ -353,30 +418,129 @@ model CourseEnrollment {
 
 // New model for Lesson
 model Lesson {
-  id          String      @id @default(cuid())
-  title       String      @length(min: 1, max: 100)
-  slug        String      
-  theory      String      @length(min: 10)
-  examples    String?     @length(min: 10)
-  order       Int         // For ordering lessons
-  
-  // Optional fields for hierarchy info
-  parentType  String?     // e.g. "volume", "module", "chapter"
-  parentId    String?     // ID of the parent in the course structure
+  id        String       @id @default(cuid())
+  title     String       @length(min: 1, max: 100)
+  slug      String
+  summary   String?      // Optional summary or resource link
+  order     Int
   
   // Metadata
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
   
-  // Relations
-  courseId    String
-  course      Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  questions   Question[]  // Questions linked to this lesson
+  // New relations for module/chapter
+  chapterId String?
+  chapter   CourseChapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   
+  // Existing course relation retained
+  courseId  String
+  course    Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  questions Question[]  // Questions linked to this lesson
+  views     LessonView[]
+  files     LessonFile[]
+  
+  // Arbitrary metadata storage for lessons
+  metadata   Json?       @default("{}")
+
   // Unique constraint for slug within a course
   @@unique([courseId, slug])
   
   // Access control
+  @@allow('create', auth() != null)
+  @@allow('read', true)
+  @@allow('update', auth() != null && auth().roles?[permissions?[name == UPDATE]])
+  @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
+}
+
+// New model for LessonFile
+model LessonFile {
+  id        String   @id @default(cuid())
+  url       String
+  type      String
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@allow('create', auth() != null)
+  @@allow('read', true)
+  @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
+}
+
+// Activity logging schema
+enum ActivityType {
+  VIEW_LESSON
+  UNVIEW_LESSON
+  ASK_QUESTION
+  ANSWER_QUESTION
+  UPVOTE_QUESTION
+  DOWNVOTE_QUESTION
+  UPVOTE_ANSWER
+  DOWNVOTE_ANSWER
+}
+
+model LessonView {
+  userId   String
+  lessonId String
+  viewedAt DateTime @updatedAt
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson   Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@allow('create', auth() != null)
+  @@allow('read', true)
+  @@allow('update', auth() == user)
+  @@allow('delete', auth() == user)
+
+  @@id([userId, lessonId])
+}
+
+model ActivityLog {
+  id         String       @id @default(cuid())
+  userId     String
+  type       ActivityType
+  entityType String?
+  entityId   String?
+  metadata   Json?        @default("{}")
+  createdAt  DateTime     @default(now())
+
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+  @@index([entityType, entityId])
+}
+
+// New model for course modules
+model CourseModule {
+  id         String        @id @default(cuid())
+  title      String        @length(min: 1, max: 100)
+  slug       String
+  order      Int
+  courseId   String
+  course     Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  chapters   CourseChapter[]
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @default(now())
+
+  @@unique([courseId, slug])
+  @@allow('create', auth() != null)
+  @@allow('read', true)
+  @@allow('update', auth() != null && auth().roles?[permissions?[name == UPDATE]])
+  @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
+}
+
+// New model for course chapters
+model CourseChapter {
+  id         String        @id @default(cuid())
+  title      String        @length(min: 1, max: 100)
+  slug       String
+  order      Int
+  moduleId   String
+  module     CourseModule  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  lessons    Lesson[]
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @default(now())
+
+  @@unique([moduleId, slug])
   @@allow('create', auth() != null)
   @@allow('read', true)
   @@allow('update', auth() != null && auth().roles?[permissions?[name == UPDATE]])

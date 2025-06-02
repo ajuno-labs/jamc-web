@@ -1,28 +1,26 @@
-import { auth } from "@/auth"
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
+import { auth } from "@/auth";
+import { NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  const session = await auth()
-  const { pathname } = request.nextUrl;
-
-  // Public routes (no auth required)
-  const publicPaths = ["/", "/signin", "/signup"];
-  if (publicPaths.includes(pathname)) {
-    // Redirect signed-in users away from signin/signup pages
-    if (session && (pathname === "/signin" || pathname === "/signup")) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
+export default auth((req) => {
+  if (req.nextUrl.pathname === "/") {
     return NextResponse.next();
   }
 
-  // All other paths require authentication
-  if (!session) {
-    return NextResponse.redirect(new URL("/signin", request.url));
+  if (req.nextUrl.pathname.startsWith("/signin") || req.nextUrl.pathname.startsWith("/signup")) {
+    if (req.auth) {
+      return NextResponse.redirect(new URL("/", req.url));
+    } else {
+      return NextResponse.next();
+    }
   }
 
+  if (!req.auth) {
+    const signInUrl = new URL("/signin", req.url);
+    signInUrl.searchParams.set("callbackUrl", req.nextUrl.pathname + req.nextUrl.search);
+    return NextResponse.redirect(signInUrl);
+  }
   return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: [
@@ -33,6 +31,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
-}
+};

@@ -8,11 +8,15 @@ export async function typeset(latex: string, display: boolean = true): Promise<s
   const { SVG } = await import('mathjax-full/js/output/svg.js');
   const { browserAdaptor } = await import('mathjax-full/js/adaptors/browserAdaptor.js');
   const { RegisterHTMLHandler } = await import('mathjax-full/js/handlers/html.js');
+  const { AllPackages } = await import('mathjax-full/js/input/tex/AllPackages.js');
 
   // Initialize MathJax for this call
   const adaptor = browserAdaptor();
   RegisterHTMLHandler(adaptor);
-  const tex = new TeX({ inlineMath: [['$', '$'], ['\\(', '\\)']] });
+  const tex = new TeX({
+    packages: AllPackages,
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+  });
   const svgOutput = new SVG({ fontCache: 'none' });
   const doc = mathjax.document(document, { InputJax: tex, OutputJax: svgOutput });
 

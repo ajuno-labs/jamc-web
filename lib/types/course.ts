@@ -9,6 +9,28 @@ export type CourseLesson = {
   createdAt: Date
 }
 
+export type CourseModule = Prisma.CourseModuleGetPayload<{
+  include: {
+    chapters: {
+      include: {
+        lessons: true
+      }
+    }
+  }
+}>
+
+// Module include object for consistent querying
+export const moduleWithRelationsInclude = {
+  chapters: {
+    include: {
+      lessons: true
+    }
+  }
+} satisfies Prisma.CourseModuleInclude
+
+// Type alias for backwards compatibility
+export type ModuleWithRelations = CourseModule
+
 // Common course include object for consistent querying
 export const courseWithRelationsInclude = {
   author: {
@@ -144,4 +166,37 @@ export function transformCourseToCardProps(course: CourseWithRelations): CourseC
     },
     createdAt: course.createdAt
   }
+}
+
+// Course structure types
+export interface Lesson {
+  id: string
+  title: string
+  description?: string
+}
+
+export interface Module {
+  id: string
+  title: string
+  description?: string
+  lessons: Lesson[]
+}
+
+export interface Volume {
+  id: string
+  title: string
+  description?: string
+  modules: Module[]
+}
+
+export interface CourseStructure {
+  volumes: Volume[]
+}
+
+// Tag type for courses
+export interface CourseTag {
+  id: string
+  name: string
+  description: string | null
+  count: number
 } 

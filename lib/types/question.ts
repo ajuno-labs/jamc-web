@@ -58,7 +58,8 @@ export const questionWithRelationsInclude = {
       id: true,
       content: true,
       createdAt: true,
-      isAccepted: true,
+      isAcceptedByUser: true,
+      isAcceptedByTeacher: true,
       author: {
         select: {
           name: true,
