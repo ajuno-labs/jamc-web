@@ -6,11 +6,11 @@ import { updateLesson } from './_actions/lesson-actions'
 import type { LessonFormValues } from '../../../_components/LessonForm.types'
 
 interface EditPageProps {
-  params: {
+  params: Promise<{
     courseSlug: string
     lessonId: string
     lessonSlug: string
-  }
+  }>
 }
 
 interface LessonMetadata {
@@ -19,7 +19,7 @@ interface LessonMetadata {
 }
 
 export default async function EditPage({ params }: EditPageProps) {
-  const { courseSlug, lessonId, lessonSlug } = params
+  const { courseSlug, lessonId, lessonSlug } = await params
   const user = await getAuthUser()
   if (!user) {
     notFound()

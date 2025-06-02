@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { addAnswer } from "../_actions/question-actions"
 import { toast } from "sonner"
 
@@ -36,7 +36,7 @@ export function AnswerForm({ questionId }: AnswerFormProps) {
         await addAnswer(questionId, data.content)
         form.reset()
         toast.success("Answer posted successfully!")
-      } catch (error) {
+      } catch {
         toast.error("You must be logged in to answer")
       }
     })

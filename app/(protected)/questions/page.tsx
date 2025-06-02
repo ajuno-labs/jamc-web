@@ -67,19 +67,19 @@ export default function QuestionsPage() {
   // Load initial questions
   React.useEffect(() => {
     performSearch()
-  }, [])
+  }, [performSearch])
 
   // Perform search when query, type, or tags change
   React.useEffect(() => {
     performSearch(true) // Reset to first page when filters change
-  }, [debouncedQuery, selectedType, selectedTags])
+  }, [debouncedQuery, selectedType, selectedTags, performSearch])
 
   // Load more questions when page changes
   React.useEffect(() => {
     if (currentPage > 1) {
       performSearch()
     }
-  }, [currentPage])
+  }, [currentPage, performSearch])
 
   // Handle tag click from question items
   const handleTagClick = (tagName: string) => {

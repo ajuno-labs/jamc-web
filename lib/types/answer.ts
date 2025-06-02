@@ -56,7 +56,7 @@ export type AnswerWithRelations = Prisma.AnswerGetPayload<{
 }>
 
 // Extended answer type with computed fields for the UI
-export interface AnswerWithAcceptance extends AnswerWithRelations {
+export type AnswerWithAcceptance = Omit<AnswerWithRelations, 'author' | 'comments'> & {
   isAcceptedByUser: boolean
   isAcceptedByTeacher: boolean
   acceptedByUserAt?: Date | null

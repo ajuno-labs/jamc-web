@@ -9,6 +9,28 @@ export type CourseLesson = {
   createdAt: Date
 }
 
+export type CourseModule = Prisma.CourseModuleGetPayload<{
+  include: {
+    chapters: {
+      include: {
+        lessons: true
+      }
+    }
+  }
+}>
+
+// Module include object for consistent querying
+export const moduleWithRelationsInclude = {
+  chapters: {
+    include: {
+      lessons: true
+    }
+  }
+} satisfies Prisma.CourseModuleInclude
+
+// Type alias for backwards compatibility
+export type ModuleWithRelations = CourseModule
+
 // Common course include object for consistent querying
 export const courseWithRelationsInclude = {
   author: {

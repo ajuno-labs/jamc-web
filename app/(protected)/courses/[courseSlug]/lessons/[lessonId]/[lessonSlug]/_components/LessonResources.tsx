@@ -38,7 +38,7 @@ export default function LessonResources({ files }: LessonResourcesProps) {
         <CardDescription>Files uploaded by your instructor</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        {files.map((file) => {
+        {files.map((file: { id: string; url: string; type: string }) => {
           const fileName = file.url.split("/").pop();
           return (
             <div

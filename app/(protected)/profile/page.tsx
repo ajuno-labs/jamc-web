@@ -15,6 +15,9 @@ import { Separator } from "@/components/ui/separator";
 import { formatDistanceToNow } from "date-fns";
 import type { ProfileQuestion, ProfileAnswer } from "@/lib/types/profile";
 
+// Force this page to be dynamic since it uses authentication
+export const dynamic = 'force-dynamic'
+
 export default async function ProfilePage() {
   const profileData = await getUserProfile();
 

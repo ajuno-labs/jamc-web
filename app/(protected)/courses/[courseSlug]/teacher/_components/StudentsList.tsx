@@ -8,12 +8,10 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
-import type { CourseActivitySummary } from '@/lib/types/student-activity'
 import { getCourseStudentsList } from '../_actions/student-activity-actions'
 
 interface StudentsListProps {
   currentCourseSlug: string
-  activitySummary: CourseActivitySummary
 }
 
 interface StudentData {
@@ -27,7 +25,7 @@ interface StudentData {
   progress: number
 }
 
-export function StudentsList({ currentCourseSlug, activitySummary }: StudentsListProps) {
+export function StudentsList({ currentCourseSlug }: StudentsListProps) {
   const [students, setStudents] = useState<StudentData[]>([])
   const [loading, setLoading] = useState(true)
 
