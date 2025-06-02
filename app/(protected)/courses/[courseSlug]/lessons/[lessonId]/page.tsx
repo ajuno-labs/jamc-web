@@ -4,15 +4,16 @@ import { getLessonAndRedirect } from "@/app/(protected)/courses/[courseSlug]/_co
 export default async function LessonRedirectPage({
   params,
 }: {
-  params: { courseSlug: string; lessonId: string };
+  params: Promise<{ courseSlug: string; lessonId: string }>;
 }) {
-  const result = await getLessonAndRedirect(params.lessonId);
+  const { courseSlug, lessonId } = await params;
+  const result = await getLessonAndRedirect(lessonId);
 
   if (!result) {
-    redirect(`/courses/${params.courseSlug}`);
+    redirect(`/courses/${courseSlug}`);
   }
 
   redirect(
-    `/courses/${result.courseSlug}/lessons/${params.lessonId}/${result.lessonSlug}`
+    `/courses/${result.courseSlug}/lessons/${lessonId}/${result.lessonSlug}`
   );
 }

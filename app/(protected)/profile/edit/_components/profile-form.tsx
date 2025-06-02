@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,7 +14,6 @@ import { Loader2 } from "lucide-react"
 import { updateUserProfile, ProfileUpdateData } from "../../_actions/update-profile"
 import { toast } from "sonner"
 
-// Define the validation schema for the form
 const profileSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }).optional().nullable(),
   email: z.string().email({ message: "Please enter a valid email" }),
@@ -67,7 +67,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
         if (result.fieldErrors) {
           Object.entries(result.fieldErrors).forEach(([field, errors]) => {
             if (errors && errors.length > 0) {
-              form.setError(field as any, { 
+              form.setError(field as keyof ProfileFormValues, { 
                 type: "manual", 
                 message: errors[0] 
               })
@@ -139,7 +139,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
       {/* Password Change Link */}
       <div className="pt-2">
         <Button type="button" variant="outline" asChild>
-          <a href="/profile/change-password">Change Password</a>
+          <Link href="/profile/change-password">Change Password</Link>
         </Button>
       </div>
       

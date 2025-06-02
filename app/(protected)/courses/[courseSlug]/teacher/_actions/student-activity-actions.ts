@@ -64,7 +64,7 @@ export async function getCourseStudentActivity(
     notFound()
   }
 
-  const { activeDays = 7, atRiskDays = 14 } = options
+  const { activeDays = 7 } = options
   const sevenDaysAgo = new Date(Date.now() - activeDays * 24 * 60 * 60 * 1000)
   const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
   

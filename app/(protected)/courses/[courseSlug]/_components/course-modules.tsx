@@ -34,7 +34,12 @@ export default function CourseModules({ modules = [], courseId, courseSlug, isEn
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">{module.content.substring(0, 150)}...</p>
+            <p className="text-muted-foreground">
+              {module.chapters?.length 
+                ? `${module.chapters.length} chapter${module.chapters.length !== 1 ? 's' : ''}`
+                : 'No chapters yet'
+              }
+            </p>
             {!isEnrolled && index === 0 && (
               <p className="text-sm mt-2 italic">Enroll in this course to access all modules</p>
             )}

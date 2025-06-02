@@ -5,6 +5,27 @@ import { Separator } from "@/components/ui/separator"
 import { SignInWithGoogle } from "./_components/signin-with-google"
 import { Card, CardContent, CardHeader, CardFooter, CardDescription, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Suspense } from "react"
+
+function SignInFormFallback() {
+  return (
+    <div className="space-y-6">
+      <div className="animate-pulse space-y-4">
+        <div className="h-11 bg-gray-200 rounded-md"></div>
+        <div className="h-11 bg-gray-200 rounded-md"></div>
+        <div className="h-10 bg-gray-200 rounded-md"></div>
+      </div>
+    </div>
+  )
+}
+
+function GoogleSignInFallback() {
+  return (
+    <div className="animate-pulse">
+      <div className="h-10 bg-gray-200 rounded-md w-full"></div>
+    </div>
+  )
+}
 
 export default function SignInPage() {
   return (
@@ -18,7 +39,9 @@ export default function SignInPage() {
             <CardDescription>Work hard, play hard</CardDescription>
           </CardHeader>
           <CardContent>
-            <SignInWithGoogle />
+            <Suspense fallback={<GoogleSignInFallback />}>
+              <SignInWithGoogle />
+            </Suspense>
           </CardContent>
         </Card>
       </div>
@@ -33,7 +56,9 @@ export default function SignInPage() {
       <div className="lg:flex-1 flex flex-col justify-center items-center p-8 lg:p-12">
         <Card className="w-full max-w-md">
           <CardContent className="pt-6">
-            <SignInForm />
+            <Suspense fallback={<SignInFormFallback />}>
+              <SignInForm />
+            </Suspense>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <p className="text-xs text-muted-foreground">

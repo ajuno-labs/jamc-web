@@ -43,10 +43,9 @@ interface CourseInfoProps {
       }
     }[]
   }
-  isEnrolled: boolean
 }
 
-export default function CourseInfo({ course, isEnrolled }: CourseInfoProps) {
+export default function CourseInfo({ course }: CourseInfoProps) {
   return (
     <div className="lg:col-span-2">
       <h1 className="text-3xl font-bold mb-4">{course.title}</h1>

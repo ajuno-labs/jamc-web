@@ -108,7 +108,7 @@ export function DashboardPage({
             activitySummary={activitySummary} 
           />
           <div className="lg:col-span-4">
-            <StudentsSection currentCourseSlug={currentCourseSlug} activitySummary={activitySummary} />
+            <StudentsSection currentCourseSlug={currentCourseSlug} />
           </div>
         </div>
       </main>

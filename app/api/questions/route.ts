@@ -7,12 +7,12 @@ export async function POST(req: NextRequest) {
   try {
     const session = await auth()
 
-    if (!session?.user) {
+    if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
     }
 
     const body = await req.json()
-    const { title, content, tags, courseId, volumeId, chapterId, moduleId, lessonId, activityId } = body
+    const { title, content, tags, courseId, lessonId, type = "FORMAL", visibility = "PUBLIC", topic } = body
 
     // Create a unique slug from the title
     const baseSlug = slugify(title)
@@ -31,13 +31,12 @@ export async function POST(req: NextRequest) {
         title,
         content,
         slug,
+        type,
+        visibility,
+        topic,
         authorId: session.user.id,
         courseId,
-        volumeId,
-        chapterId,
-        moduleId,
         lessonId,
-        activityId,
         tags: {
           connect: tags?.map((tag: string) => ({ id: tag })) || [],
         },

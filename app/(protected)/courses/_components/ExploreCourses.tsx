@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useTransition } from "react";
+import React, { useState, useEffect, useTransition, useCallback } from "react";
 import {
   getCourses,
   getTopics,
@@ -67,17 +67,15 @@ export default function ExploreCourses() {
     fetchInitialData();
   }, []);
 
-  // Fetch courses with filters and pagination
-  const fetchCourses = (page: number, resetPage = false) => {
+  const fetchCourses = useCallback((page: number, resetPage = false) => {
     if (resetPage) {
       setCurrentPage(1);
-      page = 1;
     }
     
     startTransition(async () => {
       try {
         const data = await getCourses({
-          searchTerm: searchTerm || undefined,
+          searchTerm: searchTerm,
           topic: topicFilter !== "all" ? topicFilter : undefined,
           teacherId: teacherFilter !== "all" ? teacherFilter : undefined,
           page,
@@ -88,14 +86,14 @@ export default function ExploreCourses() {
         console.error("Error fetching courses:", error);
       }
     });
-  };
+  }, [searchTerm, topicFilter, teacherFilter]);
 
   // Initial load
   useEffect(() => {
     if (!initialLoading) {
       fetchCourses(1);
     }
-  }, [initialLoading]);
+  }, [initialLoading, fetchCourses]);
 
   // Fetch when filters change (with debounce for search)
   useEffect(() => {
@@ -106,14 +104,14 @@ export default function ExploreCourses() {
     }, searchTerm ? 300 : 0);
     
     return () => clearTimeout(handler);
-  }, [searchTerm, topicFilter, teacherFilter, initialLoading]);
+  }, [searchTerm, topicFilter, teacherFilter, initialLoading, fetchCourses]);
 
   // Fetch when page changes
   useEffect(() => {
     if (!initialLoading && currentPage > 1) {
       fetchCourses(currentPage);
     }
-  }, [currentPage, initialLoading]);
+  }, [currentPage, initialLoading, fetchCourses]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

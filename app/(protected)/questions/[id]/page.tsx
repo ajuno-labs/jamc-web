@@ -2,12 +2,13 @@ import { prisma } from "@/lib/db/prisma";
 import { redirect, notFound } from "next/navigation";
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function QuestionRedirectPage({ params }: Props) {
+  const { id } = await params;
   const question = await prisma.question.findUnique({
-    where: { id: params.id },
+    where: { id },
     select: { id: true, slug: true },
   });
 

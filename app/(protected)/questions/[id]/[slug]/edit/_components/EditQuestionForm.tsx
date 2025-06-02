@@ -7,7 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { QuestionFormFields } from "../../../../_components/QuestionFormFields"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { MathContent } from "@/components/MathContent"
+import { PreviewToggle } from "../../_components/PreviewToggle"
 import { updateQuestion } from "../../_actions/question-edit-actions"
 import { toast } from "sonner"
 
@@ -37,6 +41,7 @@ interface EditQuestionFormProps {
 
 export function EditQuestionForm({ question, questionId, questionSlug }: EditQuestionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isPreview, setIsPreview] = useState(false)
   const router = useRouter()
 
   const {
@@ -76,14 +81,47 @@ export function EditQuestionForm({ question, questionId, questionSlug }: EditQue
   return (
     <Card className="p-6">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <QuestionFormFields
-          register={register}
-          errors={errors}
-          contentValue={contentValue}
-          isSubmitting={isSubmitting}
-          showPreviewToggle={true}
-          contentRows={12}
-        />
+        <div className="space-y-2">
+          <Label htmlFor="title">Question Title</Label>
+          <Input
+            id="title"
+            {...register("title")}
+            placeholder="e.g., How do I solve quadratic equations?"
+            disabled={isSubmitting}
+          />
+          {errors.title && (
+            <p className="text-sm text-destructive">{errors.title.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="content">Description</Label>
+            <PreviewToggle
+              isPreview={isPreview}
+              onToggle={() => setIsPreview(!isPreview)}
+            />
+          </div>
+          
+          {isPreview ? (
+            <Card className="p-4 bg-muted/50 min-h-[200px]">
+              <MathContent content={contentValue || ""} />
+            </Card>
+          ) : (
+            <Textarea
+              id="content"
+              {...register("content")}
+              placeholder="Provide more details about your question..."
+              rows={12}
+              disabled={isSubmitting}
+            />
+          )}
+          {errors.content && (
+            <p className="text-sm text-destructive">
+              {errors.content.message}
+            </p>
+          )}
+        </div>
 
         <div className="flex space-x-4">
           <Button
