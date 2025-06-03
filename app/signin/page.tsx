@@ -6,6 +6,7 @@ import { SignInWithGoogle } from "./_components/signin-with-google"
 import { Card, CardContent, CardHeader, CardFooter, CardDescription, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Suspense } from "react"
+import { SignupSuccessMessage } from "./_components/signup-success-message"
 
 function SignInFormFallback() {
   return (
@@ -56,6 +57,9 @@ export default function SignInPage() {
       <div className="lg:flex-1 flex flex-col justify-center items-center p-8 lg:p-12">
         <Card className="w-full max-w-md">
           <CardContent className="pt-6">
+            <Suspense fallback={<div />}>
+              <SignupSuccessMessage />
+            </Suspense>
             <Suspense fallback={<SignInFormFallback />}>
               <SignInForm />
             </Suspense>
