@@ -41,7 +41,7 @@ export function Features() {
   ]
 
   return (
-    <section id="features" className="py-24 md:py-32 flex justify-center">
+    <section id="features" className="py-24 md:py-32 flex justify-center bg-muted/40">
       <div className="container flex flex-col items-center">
         <div className="flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center mb-16">
           <h2 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">Key Features</h2>

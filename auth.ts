@@ -46,6 +46,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
     strategy: "jwt",
     maxAge: 60 * 60, // 1 hour
+    updateAge: 24 * 60 * 60, // 24 hours
   },
   callbacks: {
     async session({ session, token }) {
@@ -59,6 +60,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.id = user.id
       }
       return token
+    }
+  },
+  events: {
+    async signIn(message) {
+      // This helps with browser tab synchronization
+      console.log("User signed in:", message.user?.email)
+    },
+    async signOut(message) {
+      console.log("User signed out")
     }
   },
   pages: {

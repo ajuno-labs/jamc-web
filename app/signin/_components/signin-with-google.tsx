@@ -8,11 +8,16 @@ import { useSearchParams } from "next/navigation";
 export function SignInWithGoogle() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+  
+  const handleGoogleSignIn = () => {
+    signIn("google", { callbackUrl, redirect: true });
+  };
+  
   return (
     <Button
       variant="outline"
       className="w-full"
-      onClick={() => signIn("google", { callbackUrl })}
+      onClick={handleGoogleSignIn}
     >
       <GoogleIcon />
       Sign in with Google
