@@ -11,6 +11,7 @@ import { Loader2, User } from "lucide-react"
 import { EmailField, PasswordField } from "@/components/auth-fields"
 import { signUpSchema, type SignUpInput } from "@/lib/types/auth"
 import { signUpUser } from "../_actions/signup-actions"
+import { markJustAuthenticated } from "@/hooks/use-session-refresh"
 
 export function SignUpForm() {
   const router = useRouter()
@@ -38,9 +39,13 @@ export function SignUpForm() {
         return
       }
       
-      // If user was automatically signed in, redirect to onboarding
+      // If user was automatically signed in, redirect to onboarding with full page refresh
       if (result.autoSignedIn) {
-        router.push("/onboarding")
+        // Mark that authentication just happened
+        markJustAuthenticated()
+        
+        // Use window.location.href for a full page refresh to ensure auth state is properly loaded
+        window.location.href = "/onboarding"
         return
       }
       

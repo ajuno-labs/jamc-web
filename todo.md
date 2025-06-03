@@ -2,6 +2,8 @@
 
 ## Current
 
+- [ ] Landing page
+    - [ ] Update info and UI
 - [x] Profile page
     - [ ] feat: view all answers page.
     - [x] Subscription to questions (placeholder UI created)

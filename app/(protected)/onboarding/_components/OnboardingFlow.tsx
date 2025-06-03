@@ -33,21 +33,21 @@ export function OnboardingFlow({ user }: OnboardingFlowProps) {
 
   const handleSkipOnboarding = async () => {
     setIsSkipping(true)
-    
     try {
       // Assign student role when user skips onboarding
       await assignUserRole("student")
     } catch (error) {
       console.error("Error assigning student role during skip:", error)
-    } finally {
-      // Redirect to main app regardless of success/failure
-      router.push("/")
     }
+    // Redirect to main app and refresh to update user state
+    await router.push("/")
+    router.refresh()
   }
 
-  const handleCompleteOnboarding = () => {
-    // Redirect to main app after completing onboarding
-    router.push("/")
+  const handleCompleteOnboarding = async () => {
+    // Redirect to main app and refresh to update user state
+    await router.push("/")
+    router.refresh()
   }
 
   return (
@@ -88,4 +88,4 @@ export function OnboardingFlow({ user }: OnboardingFlowProps) {
       </div>
     </div>
   )
-} 
+}

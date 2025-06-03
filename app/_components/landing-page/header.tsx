@@ -5,12 +5,13 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { GraduationCap, Menu, X } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useSession, signOut } from "next-auth/react"
+import { signOut } from "next-auth/react"
 import { UserNav } from "@/components/layout/user-nav"
+import { useSessionRefresh } from "@/hooks/use-session-refresh"
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
-  const { data: session } = useSession()
+  const { session } = useSessionRefresh()
 
   return (
     <header className="sticky flex justify-center top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

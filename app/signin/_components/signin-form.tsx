@@ -5,11 +5,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { signInSchema } from "@/lib/types/auth";
 import { z } from "zod";
 import { EmailField, PasswordField } from "@/components/auth-fields";
+import { markJustAuthenticated } from "@/hooks/use-session-refresh";
 
 export type SignInInput = z.infer<typeof signInSchema>;
 
@@ -17,7 +18,7 @@ export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
-  const router = useRouter();
+  const { update } = useSession();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
   const {
     register,
@@ -51,8 +52,11 @@ export function SignInForm() {
         }
         setError(message);
       } else if (result?.url) {
-        router.push(result.url);
-        router.refresh();
+        markJustAuthenticated();
+        
+        await update();
+        
+        window.location.href = result.url;
       }
     } catch (error) {
       console.error(error);

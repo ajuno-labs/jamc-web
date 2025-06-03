@@ -12,7 +12,7 @@ export function SignUpWithGoogle() {
   const handleSignIn = async () => {
     try {
       setIsLoading(true)
-      await signIn("google", { callbackUrl: "/" })
+      await signIn("google", { callbackUrl: "/", redirect: true })
     } catch (error) {
       console.error("Error signing in with Google:", error)
     } finally {
