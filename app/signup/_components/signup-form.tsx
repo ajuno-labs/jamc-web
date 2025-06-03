@@ -38,7 +38,13 @@ export function SignUpForm() {
         return
       }
       
-      // Success - redirect to sign-in page with success message
+      // If user was automatically signed in, redirect to onboarding
+      if (result.autoSignedIn) {
+        router.push("/onboarding")
+        return
+      }
+      
+      // If auto sign-in failed but account was created, redirect to sign-in
       router.push("/signin?message=Account created successfully. Please sign in.")
     } catch (error) {
       console.error("Failed to sign up:", error)

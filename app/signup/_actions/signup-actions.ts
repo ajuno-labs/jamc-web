@@ -2,6 +2,7 @@
 
 import { getPublicEnhancedPrisma } from "@/lib/db/enhanced"
 import { signUpSchema, type SignUpInput } from "@/lib/types/auth"
+import { signIn } from "@/auth"
 import { z } from "zod"
 
 export async function signUpUser(data: SignUpInput) {
@@ -31,6 +32,27 @@ export async function signUpUser(data: SignUpInput) {
         password: validatedData.password
       }
     })
+
+    // Automatically sign in the user after successful signup
+    try {
+      await signIn("credentials", {
+        email: validatedData.email,
+        password: validatedData.password,
+        redirect: false,
+      })
+    } catch (signInError) {
+      console.error("Error signing in after signup:", signInError)
+      // Even if sign-in fails, the account was created successfully
+      return {
+        success: true,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email
+        },
+        message: "Account created successfully. Please sign in."
+      }
+    }
     
     return {
       success: true,
@@ -38,7 +60,8 @@ export async function signUpUser(data: SignUpInput) {
         id: user.id,
         name: user.name,
         email: user.email
-      }
+      },
+      autoSignedIn: true
     }
   } catch (error) {
     console.error("Error during signup:", error)
