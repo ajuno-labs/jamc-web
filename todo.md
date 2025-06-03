@@ -14,9 +14,38 @@
     - [x] Avatar upload to AWS S3 via edit profile page
     - [x] Profile edit functionality
 - [ ] Notification System
-    - [ ] New answer notifications
-    - [ ] Content update notifications
-    - [ ] Following/subscription management
+    - [x] Database schema and models
+    - [x] Core notification service and triggers
+    - [x] TypeScript types and interfaces
+    - [x] Implementation documentation
+    - [ ] Basic UI integration
+        - [ ] Notification bell component in header
+        - [ ] Notification list/dropdown
+        - [ ] Notification preferences page
+        - [ ] Mark as read functionality
+    - [ ] Server action integration
+        - [ ] Integrate with answer creation (NEW_ANSWER)
+        - [ ] Integrate with answer acceptance (ANSWER_ACCEPTED)
+        - [ ] Integrate with voting (UPVOTE/DOWNVOTE)
+        - [ ] Integrate with comments (COMMENT notifications)
+        - [ ] Integrate with new lesson creation (NEW_LESSON)
+        - [ ] Integrate with new course questions (NEW_COURSE_QUESTION)
+        - [ ] Welcome notification for new users
+        - [ ] Reputation milestone notifications
+    - [ ] Email service integration
+        - [ ] Choose email provider (SendGrid/AWS SES/Resend)
+        - [ ] Email template system
+        - [ ] Queue system for bulk emails
+        - [ ] Email preferences and unsubscribe handling
+    - [ ] Real-time features
+        - [ ] WebSocket/SSE for live notifications
+        - [ ] Real-time notification count updates
+        - [ ] Sound/browser notifications
+    - [ ] Advanced features
+        - [ ] Notification subscription system (follow questions/users)
+        - [ ] Digest emails (daily/weekly summaries)
+        - [ ] Mobile push notifications
+        - [ ] Analytics and tracking
 - [ ] Lesson page
     - [x] Create lesson
         - [ ] allow teacher permission only accessing the page
