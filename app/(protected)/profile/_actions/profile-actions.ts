@@ -106,6 +106,59 @@ export async function getUserProfile(): Promise<ProfileData | null> {
 }
 
 /**
+ * Update user role from student to teacher or vice versa
+ */
+export async function updateUserRole(newRole: "teacher" | "student") {
+  try {
+    const user = await getAuthUser()
+    
+    if (!user) {
+      return {
+        success: false,
+        error: "User not authenticated"
+      }
+    }
+
+    // Map role to database role names
+    const roleName = newRole === "teacher" ? "TEACHER" : "STUDENT"
+    
+    // Find the role in the database
+    const roleRecord = await prisma.role.findFirst({
+      where: { name: roleName }
+    })
+    
+    if (!roleRecord) {
+      return {
+        success: false,
+        error: "Role not found"
+      }
+    }
+    
+    // Update user role (disconnect all existing roles and connect the new one)
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        roles: {
+          set: [], // Disconnect all existing roles
+          connect: { id: roleRecord.id } // Connect new role
+        }
+      }
+    })
+    
+    return {
+      success: true,
+      role: roleName
+    }
+  } catch (error) {
+    console.error("Error updating user role:", error)
+    return {
+      success: false,
+      error: "Failed to update role"
+    }
+  }
+}
+
+/**
  * Get all user's questions with pagination
  */
 export async function getAllUserQuestions(page = 1, limit = 10) {

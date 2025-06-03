@@ -1,6 +1,5 @@
 import { getAuthUser } from "@/lib/auth/get-user"
 import { ProfileEditForm } from "./_components/ProfileEditForm"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
@@ -35,24 +34,19 @@ export default async function EditProfilePage() {
       </div>
       
       <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile Information</CardTitle>
-            <CardDescription>
-              Update your name and other profile details
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ProfileEditForm 
-              user={{
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                image: user.image
-              }} 
-            />
-          </CardContent>
-        </Card>
+        <ProfileEditForm 
+          user={{
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            createdAt: user.createdAt,
+            roles: user.roles.map(role => ({
+              name: role.name,
+              permissions: role.permissions.map(p => p.name)
+            }))
+          }} 
+        />
       </div>
     </div>
   )

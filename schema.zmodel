@@ -58,6 +58,11 @@ model Role {
   name        String
   users       User[] // users belonging to the role
   permissions Permission[] // permissions assigned to the role
+  
+  // Access control - roles can be read by anyone authenticated (needed for onboarding)
+  @@allow('read', true)
+  // Only admins can create/update/delete roles
+  @@allow('all', auth().roles?[permissions?[name == MANAGE]])
 }
 
 enum PermissionType {
@@ -72,6 +77,11 @@ model Permission {
   id    Int            @id @default(autoincrement())
   name  PermissionType
   roles Role[]
+  
+  // Access control - permissions can be read by anyone authenticated
+  @@allow('read', true)
+  // Only admins can create/update/delete permissions
+  @@allow('all', auth().roles?[permissions?[name == MANAGE]])
 }
 
 model Account {
