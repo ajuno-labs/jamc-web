@@ -7,6 +7,7 @@ import { RoleSelectionStep } from "./RoleSelectionStep"
 import { TeacherNextSteps } from "./TeacherNextSteps"
 import { StudentNextSteps } from "./StudentNextSteps"
 import { type UserWithRoles } from "@/lib/types/prisma"
+import { assignUserRole } from "../_actions/onboarding-actions"
 
 type OnboardingStep = "welcome" | "role-selection" | "next-steps"
 type UserRole = "teacher" | "student"
@@ -19,6 +20,7 @@ export function OnboardingFlow({ user }: OnboardingFlowProps) {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState<OnboardingStep>("welcome")
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null)
+  const [isSkipping, setIsSkipping] = useState(false)
 
   const handleWelcomeNext = () => {
     setCurrentStep("role-selection")
@@ -29,9 +31,18 @@ export function OnboardingFlow({ user }: OnboardingFlowProps) {
     setCurrentStep("next-steps")
   }
 
-  const handleSkipOnboarding = () => {
-    // Redirect to main app without setting a role
-    router.push("/")
+  const handleSkipOnboarding = async () => {
+    setIsSkipping(true)
+    
+    try {
+      // Assign student role when user skips onboarding
+      await assignUserRole("student")
+    } catch (error) {
+      console.error("Error assigning student role during skip:", error)
+    } finally {
+      // Redirect to main app regardless of success/failure
+      router.push("/")
+    }
   }
 
   const handleCompleteOnboarding = () => {
@@ -47,6 +58,7 @@ export function OnboardingFlow({ user }: OnboardingFlowProps) {
             user={user}
             onNext={handleWelcomeNext}
             onSkip={handleSkipOnboarding}
+            isSkipping={isSkipping}
           />
         )}
         
@@ -54,6 +66,7 @@ export function OnboardingFlow({ user }: OnboardingFlowProps) {
           <RoleSelectionStep
             onRoleSelect={handleRoleSelect}
             onSkip={handleSkipOnboarding}
+            isSkipping={isSkipping}
           />
         )}
         

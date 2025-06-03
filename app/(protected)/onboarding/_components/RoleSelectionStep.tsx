@@ -9,9 +9,10 @@ import { assignUserRole } from "../_actions/onboarding-actions"
 interface RoleSelectionStepProps {
   onRoleSelect: (role: "teacher" | "student") => void
   onSkip: () => void
+  isSkipping?: boolean
 }
 
-export function RoleSelectionStep({ onRoleSelect, onSkip }: RoleSelectionStepProps) {
+export function RoleSelectionStep({ onRoleSelect, onSkip, isSkipping = false }: RoleSelectionStepProps) {
   const [isLoading, setIsLoading] = useState<string | null>(null)
 
   const handleRoleSelect = async (role: "teacher" | "student") => {
@@ -50,7 +51,7 @@ export function RoleSelectionStep({ onRoleSelect, onSkip }: RoleSelectionStepPro
           {/* Student Option */}
           <Card 
             className="cursor-pointer border-2 transition-all hover:border-primary hover:shadow-md"
-            onClick={() => handleRoleSelect("student")}
+            onClick={() => !isLoading && !isSkipping && handleRoleSelect("student")}
           >
             <CardContent className="p-6 text-center space-y-4">
               <div className="flex justify-center">
@@ -65,7 +66,7 @@ export function RoleSelectionStep({ onRoleSelect, onSkip }: RoleSelectionStepPro
               <Button 
                 variant="outline" 
                 className="w-full"
-                disabled={isLoading !== null}
+                disabled={isLoading !== null || isSkipping}
                 onClick={(e) => {
                   e.stopPropagation()
                   handleRoleSelect("student")
@@ -86,7 +87,7 @@ export function RoleSelectionStep({ onRoleSelect, onSkip }: RoleSelectionStepPro
           {/* Teacher Option */}
           <Card 
             className="cursor-pointer border-2 transition-all hover:border-primary hover:shadow-md"
-            onClick={() => handleRoleSelect("teacher")}
+            onClick={() => !isLoading && !isSkipping && handleRoleSelect("teacher")}
           >
             <CardContent className="p-6 text-center space-y-4">
               <div className="flex justify-center">
@@ -101,7 +102,7 @@ export function RoleSelectionStep({ onRoleSelect, onSkip }: RoleSelectionStepPro
               <Button 
                 variant="outline" 
                 className="w-full"
-                disabled={isLoading !== null}
+                disabled={isLoading !== null || isSkipping}
                 onClick={(e) => {
                   e.stopPropagation()
                   handleRoleSelect("teacher")
@@ -121,8 +122,8 @@ export function RoleSelectionStep({ onRoleSelect, onSkip }: RoleSelectionStepPro
         </div>
 
         <div className="text-center pt-4">
-          <Button variant="ghost" onClick={onSkip}>
-            I&apos;ll decide later
+          <Button variant="ghost" onClick={onSkip} disabled={isLoading !== null || isSkipping}>
+            {isSkipping ? "Setting up..." : "I'll decide later"}
           </Button>
         </div>
       </CardContent>

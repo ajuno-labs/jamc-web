@@ -7,9 +7,10 @@ interface WelcomeStepProps {
   user: UserWithRoles
   onNext: () => void
   onSkip: () => void
+  isSkipping?: boolean
 }
 
-export function WelcomeStep({ user, onNext, onSkip }: WelcomeStepProps) {
+export function WelcomeStep({ user, onNext, onSkip, isSkipping = false }: WelcomeStepProps) {
   return (
     <Card className="text-center">
       <CardHeader className="space-y-6">
@@ -40,11 +41,11 @@ export function WelcomeStep({ user, onNext, onSkip }: WelcomeStepProps) {
         </div>
         
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button onClick={onNext} size="lg" className="flex-1 sm:flex-none">
+          <Button onClick={onNext} size="lg" className="flex-1 sm:flex-none" disabled={isSkipping}>
             Get Started
           </Button>
-          <Button variant="outline" onClick={onSkip} size="lg" className="flex-1 sm:flex-none">
-            Skip Setup
+          <Button variant="outline" onClick={onSkip} size="lg" className="flex-1 sm:flex-none" disabled={isSkipping}>
+            {isSkipping ? "Setting up..." : "Skip Setup"}
           </Button>
         </div>
       </CardContent>
