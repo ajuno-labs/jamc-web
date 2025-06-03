@@ -2,6 +2,7 @@
 
 import { getAuthUser } from "@/lib/auth/get-user"
 import { getEnhancedPrisma } from "@/lib/db/enhanced"
+import { prisma } from "@/lib/db/prisma"
 
 export async function assignUserRole(role: "teacher" | "student") {
   try {
@@ -14,7 +15,7 @@ export async function assignUserRole(role: "teacher" | "student") {
       }
     }
 
-    const db = await getEnhancedPrisma()
+    const db = prisma
     
     // Map role to database role names
     const roleName = role === "teacher" ? "TEACHER" : "STUDENT"
