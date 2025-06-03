@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link";
-import { useState } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   Card,
@@ -13,10 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatDistanceToNow } from "date-fns";
-import { updateUserRole } from "../_actions/profile-actions";
-import { useRouter } from "next/navigation";
 
 interface UserInfoCardProps {
   user: {
@@ -45,31 +41,6 @@ interface UserInfoCardProps {
 }
 
 export function UserInfoCard({ user, stats }: UserInfoCardProps) {
-  const router = useRouter();
-  const [isUpdatingRole, setIsUpdatingRole] = useState(false);
-  
-  const currentRole = user.roles[0]?.name?.toLowerCase() || "";
-  const canSwitchRole = currentRole === "student" || currentRole === "teacher";
-
-  const handleRoleChange = async (newRole: string) => {
-    if (newRole === currentRole || !canSwitchRole) return;
-    
-    setIsUpdatingRole(true);
-    try {
-      const result = await updateUserRole(newRole as "teacher" | "student");
-      if (result.success) {
-        router.refresh(); // Refresh the page to show updated role
-      } else {
-        console.error("Failed to update role:", result.error);
-        // You might want to show a toast notification here
-      }
-    } catch (error) {
-      console.error("Error updating role:", error);
-    } finally {
-      setIsUpdatingRole(false);
-    }
-  };
-
   return (
     <Card>
       <CardHeader className="flex flex-col items-center text-center space-y-2">
@@ -93,24 +64,6 @@ export function UserInfoCard({ user, stats }: UserInfoCardProps) {
             </Badge>
           ))}
         </div>
-
-        {canSwitchRole && (
-          <div className="w-full max-w-xs">
-            <Select 
-              value={currentRole} 
-              onValueChange={handleRoleChange}
-              disabled={isUpdatingRole}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="student">Student</SelectItem>
-                <SelectItem value="teacher">Teacher</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        )}
       </CardHeader>
 
       <CardContent className="space-y-4">
