@@ -5,6 +5,7 @@ import { getEnhancedPrisma } from '@/lib/db/enhanced'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { Buffer } from 'buffer'
 import { slugify } from '@/lib/utils'
+import { notifyNewLesson } from '@/lib/services/notification-triggers'
 
 export async function createLesson(formData: FormData) {
   const user = await getAuthUser()
@@ -104,7 +105,7 @@ export async function createLesson(formData: FormData) {
     if (!chapterRecord) throw new Error('Chapter not found')
   }
 
-  await prisma.lesson.create({
+  const lesson = await prisma.lesson.create({
     data: {
       title,
       slug,
@@ -116,4 +117,12 @@ export async function createLesson(formData: FormData) {
       files: { create: fileCreateData },
     },
   })
+
+  // Send notification to enrolled students about the new lesson
+  try {
+    await notifyNewLesson(lesson.id, course.id, user.id)
+  } catch (error) {
+    console.error('Failed to send new lesson notification:', error)
+    // Don't fail the lesson creation if notification fails
+  }
 } 

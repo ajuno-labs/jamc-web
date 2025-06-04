@@ -4,6 +4,7 @@ import { getPublicEnhancedPrisma } from "@/lib/db/enhanced"
 import { signUpSchema, type SignUpInput } from "@/lib/types/auth"
 import { signIn } from "@/auth"
 import { z } from "zod"
+import { notifyWelcome } from "@/lib/services/notification-triggers"
 
 export async function signUpUser(data: SignUpInput) {
   try {
@@ -32,6 +33,14 @@ export async function signUpUser(data: SignUpInput) {
         password: validatedData.password
       }
     })
+
+    // 🔥 Send welcome notification
+    try {
+      await notifyWelcome(user.id)
+    } catch (notificationError) {
+      console.error("Failed to send welcome notification:", notificationError)
+      // Don't fail the entire signup if notification fails
+    }
 
     // Automatically sign in the user after successful signup
     try {

@@ -246,6 +246,37 @@ export async function seedUsersAndRoles() {
 
   console.log('Users and roles seeded successfully')
   
+  // Create default notification preferences for all users
+  console.log('Creating default notification preferences...')
+  const allUsers = [adminUser, ...teacherUsers, ...studentUsers]
+  
+  await Promise.all(allUsers.map(user => 
+    prisma.notificationPreferences.upsert({
+      where: { userId: user.id },
+      update: {}, // Don't update existing preferences
+      create: {
+        userId: user.id,
+        newAnswer: ['IN_APP', 'EMAIL'],
+        answerAccepted: ['IN_APP', 'EMAIL'],
+        questionComment: ['IN_APP', 'EMAIL'],
+        answerComment: ['IN_APP', 'EMAIL'],
+        questionVote: ['IN_APP'],
+        answerVote: ['IN_APP'],
+        newCourseQuestion: ['IN_APP', 'EMAIL'],
+        newLesson: ['IN_APP', 'EMAIL'],
+        courseUpdate: ['IN_APP', 'EMAIL'],
+        followedUserActivity: ['IN_APP'],
+        followedQuestionActivity: ['IN_APP'],
+        studentEngagement: ['IN_APP', 'EMAIL'],
+        systemNotifications: ['IN_APP', 'EMAIL'],
+        emailDigestFrequency: 'WEEKLY',
+        timezone: 'UTC'
+      }
+    })
+  ))
+  
+  console.log('Notification preferences created successfully')
+  
   return { 
     adminUser, 
     teacherUsers, 

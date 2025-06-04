@@ -51,6 +51,13 @@ model User {
   
   // Teacher accepted answers relation
   teacherAcceptedAnswers Answer[]    @relation("TeacherAcceptedAnswers")
+  
+  // Notification system relations
+  notifications              Notification[]          @relation("UserNotifications")
+  notificationsAsActor       Notification[]          @relation("NotificationActor")
+  notificationPreferences    NotificationPreferences?
+  notificationSubscriptions  NotificationSubscription[]
+  notificationAnalytics      NotificationAnalytics[]
 }
 
 model Role {
@@ -555,4 +562,209 @@ model CourseChapter {
   @@allow('read', true)
   @@allow('update', auth() != null && auth().roles?[permissions?[name == UPDATE]])
   @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
+}
+
+// Notification System Models
+
+enum NotificationType {
+  // Q&A Notifications
+  NEW_ANSWER
+  ANSWER_ACCEPTED_USER
+  ANSWER_ACCEPTED_TEACHER
+  QUESTION_COMMENT
+  ANSWER_COMMENT
+  QUESTION_UPVOTE
+  QUESTION_DOWNVOTE
+  ANSWER_UPVOTE
+  ANSWER_DOWNVOTE
+  
+  // Course/Lesson Notifications
+  NEW_COURSE_QUESTION
+  NEW_LESSON
+  COURSE_UPDATE
+  
+  // Subscription Notifications
+  FOLLOWED_USER_QUESTION
+  FOLLOWED_USER_ANSWER
+  FOLLOWED_QUESTION_ANSWER
+  FOLLOWED_TOPIC_QUESTION
+  
+  // Engagement Notifications
+  STUDENT_AT_RISK
+  STUDENT_INACTIVE
+  DAILY_ACTIVITY_SUMMARY
+  
+  // System Notifications
+  WELCOME
+  REPUTATION_MILESTONE
+  WEEKLY_DIGEST
+  ACCOUNT_UPDATE
+}
+
+enum NotificationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum NotificationStatus {
+  UNREAD
+  READ
+  ARCHIVED
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  PUSH
+}
+
+model Notification {
+  id              String               @id @default(cuid())
+  type            NotificationType
+  title           String               @length(min: 1, max: 200)
+  message         String               @length(min: 1, max: 1000)
+  priority        NotificationPriority @default(MEDIUM)
+  status          NotificationStatus   @default(UNREAD)
+  channels        NotificationChannel[]
+  metadata        Json?                @default("{}")
+  createdAt       DateTime             @default(now())
+  readAt          DateTime?
+  archivedAt      DateTime?
+  
+  // Relations
+  userId          String
+  user            User                 @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  actorId         String?
+  actor           User?                @relation("NotificationActor", fields: [actorId], references: [id])
+  
+  // Polymorphic relations for the entity this notification is about
+  relatedEntityType String?
+  relatedEntityId   String?
+  
+  // Analytics relation
+  analytics       NotificationAnalytics[]
+  
+  // Access control - users can only see their own notifications
+  @@allow('create', auth() != null)
+  @@allow('read', auth() == user)
+  @@allow('update', auth() == user)
+  @@allow('delete', auth() == user)
+  
+  @@index([userId, status])
+  @@index([userId, createdAt])
+  @@index([relatedEntityType, relatedEntityId])
+}
+
+model NotificationPreferences {
+  id                     String               @id @default(cuid())
+  userId                 String               @unique
+  user                   User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Channel preferences for each notification category
+  newAnswer              NotificationChannel[] @default([IN_APP, EMAIL])
+  answerAccepted         NotificationChannel[] @default([IN_APP, EMAIL])
+  questionComment        NotificationChannel[] @default([IN_APP, EMAIL])
+  answerComment          NotificationChannel[] @default([IN_APP, EMAIL])
+  questionVote           NotificationChannel[] @default([IN_APP])
+  answerVote             NotificationChannel[] @default([IN_APP])
+  newCourseQuestion      NotificationChannel[] @default([IN_APP, EMAIL])
+  newLesson              NotificationChannel[] @default([IN_APP, EMAIL])
+  courseUpdate           NotificationChannel[] @default([IN_APP, EMAIL])
+  followedUserActivity   NotificationChannel[] @default([IN_APP])
+  followedQuestionActivity NotificationChannel[] @default([IN_APP])
+  studentEngagement      NotificationChannel[] @default([IN_APP, EMAIL])
+  systemNotifications    NotificationChannel[] @default([IN_APP, EMAIL])
+  
+  // General preferences
+  emailDigestFrequency   String               @default("WEEKLY") // DAILY, WEEKLY, MONTHLY, NEVER
+  quietHoursStart        String?              // HH:mm format
+  quietHoursEnd          String?              // HH:mm format
+  timezone               String?              @default("UTC")
+  
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+  
+  // Allow anyone authenticated to create notification preferences for any user (needed for system operations)
+  @@allow('create', auth() != null)
+  // Allow public reading of notification preferences (needed for notification system)
+  @@allow('read', true)
+  // Allow user to update their own preferences
+  @@allow('update', auth() == user)
+  @@allow('delete', auth() == user)
+}
+
+model NotificationSubscription {
+  id               String              @id @default(cuid())
+  userId           String
+  user             User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptionType String              // USER, QUESTION, COURSE, TAG, LESSON
+  entityId         String              // ID of the entity being followed
+  channels         NotificationChannel[] @default([IN_APP])
+  createdAt        DateTime            @default(now())
+  
+  @@unique([userId, subscriptionType, entityId])
+  @@allow('create', auth() != null)
+  @@allow('read', auth() == user)
+  @@allow('update', auth() == user)
+  @@allow('delete', auth() == user)
+  
+  @@index([subscriptionType, entityId])
+}
+
+model NotificationTemplate {
+  id              String               @id @default(cuid())
+  type            NotificationType     @unique
+  titleTemplate   String               @length(min: 1, max: 200)
+  messageTemplate String               @length(min: 1, max: 1000)
+  defaultPriority NotificationPriority @default(MEDIUM)
+  defaultChannels NotificationChannel[]
+  variables       String[]             // JSON array of variable names that can be replaced
+  isActive        Boolean              @default(true)
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  
+  @@allow('create', auth() != null && auth().roles?[permissions?[name == MANAGE]])
+  @@allow('read', true)
+  @@allow('update', auth() != null && auth().roles?[permissions?[name == MANAGE]])
+  @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
+}
+
+model NotificationBatch {
+  id                     String              @id @default(cuid())
+  batchData              Json                // Array of notification data
+  scheduledFor           DateTime?
+  processingStartedAt    DateTime?
+  processingCompletedAt  DateTime?
+  status                 String              @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
+  errorMessage           String?
+  createdAt              DateTime            @default(now())
+  
+  @@allow('create', auth() != null)
+  @@allow('read', auth() != null && auth().roles?[permissions?[name == READ]])
+  @@allow('update', auth() != null && auth().roles?[permissions?[name == UPDATE]])
+  @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
+  
+  @@index([status, scheduledFor])
+}
+
+model NotificationAnalytics {
+  id             String              @id @default(cuid())
+  notificationId String
+  notification   Notification        @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventType      String              // DELIVERED, OPENED, CLICKED, DISMISSED
+  channel        NotificationChannel
+  timestamp      DateTime            @default(now())
+  metadata       Json?               @default("{}")
+  
+  @@allow('create', auth() != null)
+  @@allow('read', auth() != null && auth().roles?[permissions?[name == READ]])
+  @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
+  
+  @@index([notificationId])
+  @@index([userId, eventType])
+  @@index([timestamp])
 }

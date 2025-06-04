@@ -47,30 +47,80 @@ enum ActivityType {
   DOWNVOTE_ANSWER
 }
 
+enum NotificationType {
+  NEW_ANSWER
+  ANSWER_ACCEPTED_USER
+  ANSWER_ACCEPTED_TEACHER
+  QUESTION_COMMENT
+  ANSWER_COMMENT
+  QUESTION_UPVOTE
+  QUESTION_DOWNVOTE
+  ANSWER_UPVOTE
+  ANSWER_DOWNVOTE
+  NEW_COURSE_QUESTION
+  NEW_LESSON
+  COURSE_UPDATE
+  FOLLOWED_USER_QUESTION
+  FOLLOWED_USER_ANSWER
+  FOLLOWED_QUESTION_ANSWER
+  FOLLOWED_TOPIC_QUESTION
+  STUDENT_AT_RISK
+  STUDENT_INACTIVE
+  DAILY_ACTIVITY_SUMMARY
+  WELCOME
+  REPUTATION_MILESTONE
+  WEEKLY_DIGEST
+  ACCOUNT_UPDATE
+}
+
+enum NotificationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum NotificationStatus {
+  UNREAD
+  READ
+  ARCHIVED
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  PUSH
+}
+
 model User {
-  id                     String             @id() @default(cuid())
-  name                   String?
-  email                  String             @unique()
-  password               String?
-  emailVerified          DateTime?
-  image                  String?
-  accounts               Account[]
-  sessions               Session[]
-  Authenticator          Authenticator[]
-  createdAt              DateTime           @default(now())
-  updatedAt              DateTime           @updatedAt()
-  roles                  Role[]
-  questions              Question[]
-  answers                Answer[]
-  questionVotes          QuestionVote[]
-  answerVotes            AnswerVote[]
-  comments               Comment[]
-  commentVotes           CommentVote[]
-  createdCourses         Course[]           @relation("CourseCreator")
-  enrolledCourses        CourseEnrollment[]
-  lessonViews            LessonView[]
-  activityLogs           ActivityLog[]
-  teacherAcceptedAnswers Answer[]           @relation("TeacherAcceptedAnswers")
+  id                        String                     @id() @default(cuid())
+  name                      String?
+  email                     String                     @unique()
+  password                  String?
+  emailVerified             DateTime?
+  image                     String?
+  accounts                  Account[]
+  sessions                  Session[]
+  Authenticator             Authenticator[]
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt()
+  roles                     Role[]
+  questions                 Question[]
+  answers                   Answer[]
+  questionVotes             QuestionVote[]
+  answerVotes               AnswerVote[]
+  comments                  Comment[]
+  commentVotes              CommentVote[]
+  createdCourses            Course[]                   @relation("CourseCreator")
+  enrolledCourses           CourseEnrollment[]
+  lessonViews               LessonView[]
+  activityLogs              ActivityLog[]
+  teacherAcceptedAnswers    Answer[]                   @relation("TeacherAcceptedAnswers")
+  notifications             Notification[]             @relation("UserNotifications")
+  notificationsAsActor      Notification[]             @relation("NotificationActor")
+  notificationPreferences   NotificationPreferences?
+  notificationSubscriptions NotificationSubscription[]
+  notificationAnalytics     NotificationAnalytics[]
 }
 
 model Role {
@@ -359,4 +409,109 @@ model CourseChapter {
   updatedAt DateTime     @default(now())
 
   @@unique([moduleId, slug])
+}
+
+model Notification {
+  id                String                  @id() @default(cuid())
+  type              NotificationType
+  title             String
+  message           String
+  priority          NotificationPriority    @default(MEDIUM)
+  status            NotificationStatus      @default(UNREAD)
+  channels          NotificationChannel[]
+  metadata          Json?                   @default("{}")
+  createdAt         DateTime                @default(now())
+  readAt            DateTime?
+  archivedAt        DateTime?
+  userId            String
+  user              User                    @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  actorId           String?
+  actor             User?                   @relation("NotificationActor", fields: [actorId], references: [id])
+  relatedEntityType String?
+  relatedEntityId   String?
+  analytics         NotificationAnalytics[]
+
+  @@index([userId, status])
+  @@index([userId, createdAt])
+  @@index([relatedEntityType, relatedEntityId])
+}
+
+model NotificationPreferences {
+  id                       String                @id() @default(cuid())
+  userId                   String                @unique()
+  user                     User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  newAnswer                NotificationChannel[] @default([IN_APP, EMAIL])
+  answerAccepted           NotificationChannel[] @default([IN_APP, EMAIL])
+  questionComment          NotificationChannel[] @default([IN_APP, EMAIL])
+  answerComment            NotificationChannel[] @default([IN_APP, EMAIL])
+  questionVote             NotificationChannel[] @default([IN_APP])
+  answerVote               NotificationChannel[] @default([IN_APP])
+  newCourseQuestion        NotificationChannel[] @default([IN_APP, EMAIL])
+  newLesson                NotificationChannel[] @default([IN_APP, EMAIL])
+  courseUpdate             NotificationChannel[] @default([IN_APP, EMAIL])
+  followedUserActivity     NotificationChannel[] @default([IN_APP])
+  followedQuestionActivity NotificationChannel[] @default([IN_APP])
+  studentEngagement        NotificationChannel[] @default([IN_APP, EMAIL])
+  systemNotifications      NotificationChannel[] @default([IN_APP, EMAIL])
+  emailDigestFrequency     String                @default("WEEKLY")
+  quietHoursStart          String?
+  quietHoursEnd            String?
+  timezone                 String?               @default("UTC")
+  createdAt                DateTime              @default(now())
+  updatedAt                DateTime              @updatedAt()
+}
+
+model NotificationSubscription {
+  id               String                @id() @default(cuid())
+  userId           String
+  user             User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptionType String
+  entityId         String
+  channels         NotificationChannel[] @default([IN_APP])
+  createdAt        DateTime              @default(now())
+
+  @@unique([userId, subscriptionType, entityId])
+  @@index([subscriptionType, entityId])
+}
+
+model NotificationTemplate {
+  id              String                @id() @default(cuid())
+  type            NotificationType      @unique()
+  titleTemplate   String
+  messageTemplate String
+  defaultPriority NotificationPriority  @default(MEDIUM)
+  defaultChannels NotificationChannel[]
+  variables       String[]
+  isActive        Boolean               @default(true)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt()
+}
+
+model NotificationBatch {
+  id                    String    @id() @default(cuid())
+  batchData             Json
+  scheduledFor          DateTime?
+  processingStartedAt   DateTime?
+  processingCompletedAt DateTime?
+  status                String    @default("PENDING")
+  errorMessage          String?
+  createdAt             DateTime  @default(now())
+
+  @@index([status, scheduledFor])
+}
+
+model NotificationAnalytics {
+  id             String              @id() @default(cuid())
+  notificationId String
+  notification   Notification        @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventType      String
+  channel        NotificationChannel
+  timestamp      DateTime            @default(now())
+  metadata       Json?               @default("{}")
+
+  @@index([notificationId])
+  @@index([userId, eventType])
+  @@index([timestamp])
 }
