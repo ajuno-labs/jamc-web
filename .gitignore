@@ -51,4 +51,5 @@ node_modules/
 .bivvy/
 .idea/
 .vscode/
+.pnpm-store/
 node-compile-cache/
