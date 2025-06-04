@@ -6,7 +6,7 @@
     "predev": "pnpm db:migrate",
     "dev": "next dev --turbopack",
     "prestart": "pnpm db:migrate",
-    "prebuild": "pnpm db:migrate",
+    "prebuild": "pnpm db:migrate && pnpm db:seed",
     "build": "next build",
     "start": "next start",
     "postinstall": "pnpm prisma generate",
