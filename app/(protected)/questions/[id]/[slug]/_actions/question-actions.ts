@@ -4,6 +4,7 @@ import { auth } from "@/auth"
 import { prisma } from "@/lib/db/prisma"
 import { revalidatePath } from "next/cache"
 import { calculateUserReputation } from "@/lib/utils/reputation"
+import { notifyNewAnswer, notifyVote } from "@/lib/services/notification-triggers"
 
 export async function getQuestionDetails(id: string) {
   const question = await prisma.question.findUnique({
@@ -138,6 +139,13 @@ export async function addAnswer(questionId: string, content: string) {
     },
   })
 
+  // Send notification to question author
+  try {
+    await notifyNewAnswer(answer.id, session.user.id)
+  } catch (error) {
+    console.error('Failed to send new answer notification:', error)
+    // Don't fail the answer creation if notification fails
+  }
 
   revalidatePath(`/question/${questionId}`)
   return answer
@@ -160,14 +168,12 @@ export async function voteQuestion(questionId: string, value: 1 | -1) {
 
   if (existingVote) {
     if (existingVote.value === value) {
-      // Remove vote if clicking the same button
       await prisma.questionVote.delete({
         where: {
           id: existingVote.id,
         },
       })
     } else {
-      // Update vote if changing from upvote to downvote or vice versa
       await prisma.questionVote.update({
         where: {
           id: existingVote.id,
@@ -176,9 +182,15 @@ export async function voteQuestion(questionId: string, value: 1 | -1) {
           value,
         },
       })
+      
+      // Send notification for vote change
+      try {
+        await notifyVote('question', questionId, value, session.user.id)
+      } catch (error) {
+        console.error('Failed to send vote notification:', error)
+      }
     }
   } else {
-    // Create new vote
     await prisma.questionVote.create({
       data: {
         questionId,
@@ -186,9 +198,16 @@ export async function voteQuestion(questionId: string, value: 1 | -1) {
         value,
       },
     })
+    
+    // Send notification for new vote
+    try {
+      await notifyVote('question', questionId, value, session.user.id)
+    } catch (error) {
+      console.error('Failed to send vote notification:', error)
+    }
   }
 
-  // Get the question slug for proper revalidation
+  // Get the question details for proper revalidation
   const question = await prisma.question.findUnique({
     where: { id: questionId },
     select: { slug: true },
@@ -335,6 +354,13 @@ export async function voteAnswer(answerId: string, value: 1 | -1) {
           value,
         },
       })
+      
+      // Send notification for vote change
+      try {
+        await notifyVote('answer', answerId, value, session.user.id)
+      } catch (error) {
+        console.error('Failed to send vote notification:', error)
+      }
     }
   } else {
     await prisma.answerVote.create({
@@ -344,6 +370,13 @@ export async function voteAnswer(answerId: string, value: 1 | -1) {
         value,
       },
     })
+    
+    // Send notification for new vote
+    try {
+      await notifyVote('answer', answerId, value, session.user.id)
+    } catch (error) {
+      console.error('Failed to send vote notification:', error)
+    }
   }
 
   // Get the answer and question details for proper revalidation

@@ -182,36 +182,71 @@ function replaceTemplateVariables(template: string, metadata: NotificationMetada
   return result
 }
 
-// Get user's notification preferences
-async function getUserNotificationPreferences(userId: string) {
+// Helper function to create default notification preferences for a user
+export async function createDefaultNotificationPreferences(userId: string) {
   const db = await getEnhancedPrisma()
   
-  let preferences = await db.notificationPreferences.findUnique({
+  return await db.notificationPreferences.upsert({
+    where: { userId },
+    update: {}, // Don't update existing preferences
+    create: {
+      userId,
+      newAnswer: ['IN_APP', 'EMAIL'],
+      answerAccepted: ['IN_APP', 'EMAIL'],
+      questionComment: ['IN_APP', 'EMAIL'],
+      answerComment: ['IN_APP', 'EMAIL'],
+      questionVote: ['IN_APP'],
+      answerVote: ['IN_APP'],
+      newCourseQuestion: ['IN_APP', 'EMAIL'],
+      newLesson: ['IN_APP', 'EMAIL'],
+      courseUpdate: ['IN_APP', 'EMAIL'],
+      followedUserActivity: ['IN_APP'],
+      followedQuestionActivity: ['IN_APP'],
+      studentEngagement: ['IN_APP', 'EMAIL'],
+      systemNotifications: ['IN_APP', 'EMAIL'],
+      emailDigestFrequency: 'WEEKLY',
+      timezone: 'UTC'
+    }
+  })
+}
+
+// Get user's notification preferences
+async function getUserNotificationPreferences(userId: string) {
+  // Use public client to read preferences for any user (needed for notifications)
+  const { getPublicEnhancedPrisma } = await import("@/lib/db/enhanced")
+  const publicDb = getPublicEnhancedPrisma()
+  
+  const preferences = await publicDb.notificationPreferences.findUnique({
     where: { userId }
   })
   
-  // Create default preferences if none exist
+  // If no preferences exist, return default values instead of trying to create them
   if (!preferences) {
-    preferences = await db.notificationPreferences.create({
-      data: {
-        userId,
-        newAnswer: ['IN_APP', 'EMAIL'],
-        answerAccepted: ['IN_APP', 'EMAIL'],
-        questionComment: ['IN_APP', 'EMAIL'],
-        answerComment: ['IN_APP', 'EMAIL'],
-        questionVote: ['IN_APP'],
-        answerVote: ['IN_APP'],
-        newCourseQuestion: ['IN_APP', 'EMAIL'],
-        newLesson: ['IN_APP', 'EMAIL'],
-        courseUpdate: ['IN_APP', 'EMAIL'],
-        followedUserActivity: ['IN_APP'],
-        followedQuestionActivity: ['IN_APP'],
-        studentEngagement: ['IN_APP', 'EMAIL'],
-        systemNotifications: ['IN_APP', 'EMAIL'],
-        emailDigestFrequency: 'WEEKLY',
-        timezone: 'UTC'
-      }
-    })
+    // Return a default preferences object that matches the expected type
+    return {
+      id: `default-${userId}`,
+      userId,
+      newAnswer: ['IN_APP', 'EMAIL'],
+      answerAccepted: ['IN_APP', 'EMAIL'],
+      questionComment: ['IN_APP', 'EMAIL'],
+      answerComment: ['IN_APP', 'EMAIL'],
+      questionVote: ['IN_APP'],
+      answerVote: ['IN_APP'],
+      newCourseQuestion: ['IN_APP', 'EMAIL'],
+      newLesson: ['IN_APP', 'EMAIL'],
+      courseUpdate: ['IN_APP', 'EMAIL'],
+      followedUserActivity: ['IN_APP'],
+      followedQuestionActivity: ['IN_APP'],
+      studentEngagement: ['IN_APP', 'EMAIL'],
+      systemNotifications: ['IN_APP', 'EMAIL'],
+      emailDigestFrequency: 'WEEKLY',
+      quietHoursStart: null,
+      quietHoursEnd: null,
+      timezone: 'UTC',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      user: { id: userId }
+    } as const
   }
   
   return preferences
@@ -449,4 +484,29 @@ export async function getUnreadNotificationCount(userId?: string): Promise<numbe
       status: 'UNREAD'
     }
   })
+}
+
+// Debug function to test notifications
+export async function debugCreateTestNotification(userId: string) {
+  const db = await getEnhancedPrisma()
+  
+  try {
+    const notification = await db.notification.create({
+      data: {
+        type: 'WELCOME',
+        title: "Test Notification",
+        message: "This is a test notification to verify the system is working",
+        priority: 'MEDIUM',
+        channels: ['IN_APP'],
+        metadata: { test: true },
+        userId: userId
+      }
+    })
+    
+    console.log("Test notification created:", notification.id)
+    return notification
+  } catch (error) {
+    console.error("Failed to create test notification:", error)
+    throw error
+  }
 } 

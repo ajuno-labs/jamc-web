@@ -3,6 +3,8 @@
 import { getAuthUser } from "@/lib/auth/get-user"
 import { getEnhancedPrisma } from "@/lib/db/enhanced"
 import { prisma } from "@/lib/db/prisma"
+import { notifyWelcome } from "@/lib/services/notification-triggers"
+import { redirect } from "next/navigation"
 
 export async function assignUserRole(role: "teacher" | "student") {
   try {
@@ -41,6 +43,35 @@ export async function assignUserRole(role: "teacher" | "student") {
         }
       }
     })
+    
+    // Create default notification preferences for the user
+    try {
+      await db.notificationPreferences.upsert({
+        where: { userId: user.id },
+        update: {}, // Don't update existing preferences
+        create: {
+          userId: user.id,
+          newAnswer: ['IN_APP', 'EMAIL'],
+          answerAccepted: ['IN_APP', 'EMAIL'],
+          questionComment: ['IN_APP', 'EMAIL'],
+          answerComment: ['IN_APP', 'EMAIL'],
+          questionVote: ['IN_APP'],
+          answerVote: ['IN_APP'],
+          newCourseQuestion: ['IN_APP', 'EMAIL'],
+          newLesson: ['IN_APP', 'EMAIL'],
+          courseUpdate: ['IN_APP', 'EMAIL'],
+          followedUserActivity: ['IN_APP'],
+          followedQuestionActivity: ['IN_APP'],
+          studentEngagement: ['IN_APP', 'EMAIL'],
+          systemNotifications: ['IN_APP', 'EMAIL'],
+          emailDigestFrequency: 'WEEKLY',
+          timezone: 'UTC'
+        }
+      })
+    } catch (preferencesError) {
+      console.warn("Failed to create notification preferences (non-critical):", preferencesError)
+      // Don't fail the entire onboarding if notification preferences fail
+    }
     
     return {
       success: true,
@@ -117,5 +148,20 @@ export async function joinCourseWithCode(joinCode: string) {
       success: false,
       error: "Failed to join course. Please try again."
     }
+  }
+}
+
+export async function triggerWelcomeNotification() {
+  const user = await getAuthUser()
+  if (!user) {
+    redirect("/signin")
+  }
+
+  try {
+    await notifyWelcome(user.id)
+    return { success: true }
+  } catch (error) {
+    console.error("Failed to send welcome notification:", error)
+    return { success: false, error: "Failed to send welcome notification" }
   }
 } 

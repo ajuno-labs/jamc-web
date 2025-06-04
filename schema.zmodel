@@ -686,8 +686,11 @@ model NotificationPreferences {
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @updatedAt
   
+  // Allow anyone authenticated to create notification preferences for any user (needed for system operations)
   @@allow('create', auth() != null)
-  @@allow('read', auth() == user)
+  // Allow public reading of notification preferences (needed for notification system)
+  @@allow('read', true)
+  // Allow user to update their own preferences
   @@allow('update', auth() == user)
   @@allow('delete', auth() == user)
 }

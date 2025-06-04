@@ -3,6 +3,7 @@
 import { getEnhancedPrisma } from "@/lib/db/enhanced"
 import { getAuthUser } from "@/lib/auth/get-user"
 import { revalidatePath } from "next/cache"
+import { notifyAnswerAccepted } from "@/lib/services/notification-triggers"
 
 export async function acceptAnswerByUser(answerId: string) {
   const user = await getAuthUser()
@@ -55,6 +56,14 @@ export async function acceptAnswerByUser(answerId: string) {
       acceptedByUserAt: new Date(),
     }
   })
+
+  // Send notification to answer author
+  try {
+    await notifyAnswerAccepted(answerId, user.id, false)
+  } catch (error) {
+    console.error('Failed to send answer accepted notification:', error)
+    // Don't fail the acceptance if notification fails
+  }
 
   revalidatePath(`/questions/${answer.question.id}/${answer.question.slug}`)
   return updatedAnswer
@@ -165,6 +174,14 @@ export async function acceptAnswerByTeacher(answerId: string) {
       acceptedByTeacherId: user.id,
     }
   })
+
+  // Send notification to answer author
+  try {
+    await notifyAnswerAccepted(answerId, user.id, true)
+  } catch (error) {
+    console.error('Failed to send teacher answer accepted notification:', error)
+    // Don't fail the acceptance if notification fails
+  }
 
   revalidatePath(`/questions/${answer.question.id}/${answer.question.slug}`)
   return updatedAnswer

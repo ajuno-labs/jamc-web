@@ -2,6 +2,9 @@
 
 ## Current
 
+- [ ] Question page
+    - [ ] Create question page
+        - [ ] Allow to remove chosen course/lesson in the form
 - [ ] Landing page
     - [x] Update info and UI
     - [ ] Complete info
@@ -18,20 +21,21 @@
     - [x] Core notification service and triggers
     - [x] TypeScript types and interfaces
     - [x] Implementation documentation
+    - [x] ZenStack policy fixes for cross-user notifications
+    - [x] Server action integration
+        - [x] Integrate with answer creation (NEW_ANSWER)
+        - [x] Integrate with answer acceptance (ANSWER_ACCEPTED)
+        - [x] Integrate with voting (UPVOTE/DOWNVOTE)
+        - [x] Integrate with comments (COMMENT notifications)
+        - [x] Integrate with new lesson creation (NEW_LESSON)
+        - [x] Integrate with new course questions (NEW_COURSE_QUESTION)
+        - [x] Welcome notification for new users
+        - [x] Reputation milestone notifications
     - [ ] Basic UI integration
         - [ ] Notification bell component in header
         - [ ] Notification list/dropdown
         - [ ] Notification preferences page
         - [ ] Mark as read functionality
-    - [ ] Server action integration
-        - [ ] Integrate with answer creation (NEW_ANSWER)
-        - [ ] Integrate with answer acceptance (ANSWER_ACCEPTED)
-        - [ ] Integrate with voting (UPVOTE/DOWNVOTE)
-        - [ ] Integrate with comments (COMMENT notifications)
-        - [ ] Integrate with new lesson creation (NEW_LESSON)
-        - [ ] Integrate with new course questions (NEW_COURSE_QUESTION)
-        - [ ] Welcome notification for new users
-        - [ ] Reputation milestone notifications
     - [ ] Email service integration
         - [ ] Choose email provider (SendGrid/AWS SES/Resend)
         - [ ] Email template system

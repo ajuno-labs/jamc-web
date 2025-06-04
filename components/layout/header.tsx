@@ -1,11 +1,11 @@
 "use client"
 
-import { Search, Bell } from "lucide-react"
+import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import { ModeToggle } from "./mode-toggle"
 import { UserNav } from "./user-nav"
 import { SidebarTrigger } from "@/components/ui/sidebar"
+import { NotificationBell } from "@/components/notifications/NotificationBell"
 
 interface HeaderProps {
   user?: {
@@ -36,9 +36,7 @@ export function Header({ user }: HeaderProps) {
 
           {/* Right side actions */}
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Bell className="h-4 w-4" />
-            </Button>
+            {user && <NotificationBell />}
             <ModeToggle />
             <UserNav user={user} />
           </div>
