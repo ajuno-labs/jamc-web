@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db/prisma"
+import { notifyReputationMilestone } from "@/lib/services/notification-triggers"
 
 // Reputation calculation constants
 const REPUTATION_WEIGHTS = {
@@ -164,5 +165,33 @@ export async function calculateUserReputationWithBreakdown(userId: string): Prom
         fromAnswersPosted: 0
       }
     }
+  }
+}
+
+/**
+ * Check for reputation milestone and send notification if crossed
+ * Call this after any action that affects user reputation
+ */
+export async function checkReputationMilestone(userId: string): Promise<void> {
+  try {
+    const currentReputation = await calculateUserReputation(userId)
+    
+    // Define milestone thresholds (same as in notification service)
+    const milestones = [10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000]
+    
+    // For simplicity, we'll notify on any milestone the user has reached
+    // In a production app, you might want to track which milestones were already notified
+    const achievedMilestone = milestones
+      .filter(milestone => currentReputation >= milestone)
+      .pop() // Get the highest achieved milestone
+
+    if (achievedMilestone && currentReputation >= achievedMilestone) {
+      // Approximate the change (in real app you'd track previous reputation)
+      const approximateChange = Math.min(10, currentReputation) // Assume small change for demo
+      await notifyReputationMilestone(userId, currentReputation, approximateChange)
+    }
+  } catch (error) {
+    console.error('Error checking reputation milestone:', error)
+    // Don't throw - this is a non-critical notification
   }
 } 

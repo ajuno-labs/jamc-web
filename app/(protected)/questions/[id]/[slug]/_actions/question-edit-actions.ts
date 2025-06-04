@@ -4,6 +4,7 @@ import { auth } from "@/auth"
 import { prisma } from "@/lib/db/prisma"
 import { revalidatePath } from "next/cache"
 import { calculateUserReputation } from "@/lib/utils/reputation"
+import { notifyComment } from "@/lib/services/notification-triggers"
 
 export async function updateQuestion(questionId: string, title: string, content: string) {
   const session = await auth()
@@ -83,6 +84,14 @@ export async function addComment(content: string, questionId?: string, answerId?
       answerId
     }
   })
+
+  // Send notification to question/answer author
+  try {
+    await notifyComment(comment.id, session.user.id, questionId, answerId)
+  } catch (error) {
+    console.error('Failed to send comment notification:', error)
+    // Don't fail the comment creation if notification fails
+  }
 
   // Get the question slug for revalidation
   if (questionId) {

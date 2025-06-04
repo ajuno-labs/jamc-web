@@ -7,6 +7,7 @@ import { userWithRolesInclude } from "@/lib/types/prisma"
 import { slugify } from "@/lib/utils"
 import { QuestionType, Visibility } from "@prisma/client"
 import { revalidatePath } from "next/cache"
+import { notifyNewCourseQuestion } from "@/lib/services/notification-triggers"
 
 interface CreateQuestionParams {
   title: string
@@ -87,6 +88,16 @@ export async function createQuestion(data: CreateQuestionParams) {
         ...(data.lessonId ? { lesson: { connect: { id: data.lessonId } } } : {}),
       }
     })
+    
+    // Send notification if this is a course question
+    if (data.courseId) {
+      try {
+        await notifyNewCourseQuestion(question.id, user.id)
+      } catch (error) {
+        console.error('Failed to send new course question notification:', error)
+        // Don't fail the question creation if notification fails
+      }
+    }
     
     // Revalidate the questions page
     revalidatePath('/questions')

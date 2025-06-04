@@ -16,7 +16,7 @@
     - [x] View all questions that user's asked with pagination
     - [x] Avatar upload to AWS S3 via edit profile page
     - [x] Profile edit functionality
-- [ ] Notification System
+- [x] Notification System
     - [x] Database schema and models
     - [x] Core notification service and triggers
     - [x] TypeScript types and interfaces

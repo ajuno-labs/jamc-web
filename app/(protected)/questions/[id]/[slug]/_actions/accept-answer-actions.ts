@@ -4,6 +4,7 @@ import { getEnhancedPrisma } from "@/lib/db/enhanced"
 import { getAuthUser } from "@/lib/auth/get-user"
 import { revalidatePath } from "next/cache"
 import { notifyAnswerAccepted } from "@/lib/services/notification-triggers"
+import { checkReputationMilestone } from "@/lib/utils/reputation"
 
 export async function acceptAnswerByUser(answerId: string) {
   const user = await getAuthUser()
@@ -63,6 +64,13 @@ export async function acceptAnswerByUser(answerId: string) {
   } catch (error) {
     console.error('Failed to send answer accepted notification:', error)
     // Don't fail the acceptance if notification fails
+  }
+
+  // Check for reputation milestone for answer author
+  try {
+    await checkReputationMilestone(answer.authorId)
+  } catch (error) {
+    console.error('Failed to check reputation milestone:', error)
   }
 
   revalidatePath(`/questions/${answer.question.id}/${answer.question.slug}`)
@@ -181,6 +189,13 @@ export async function acceptAnswerByTeacher(answerId: string) {
   } catch (error) {
     console.error('Failed to send teacher answer accepted notification:', error)
     // Don't fail the acceptance if notification fails
+  }
+
+  // Check for reputation milestone for answer author
+  try {
+    await checkReputationMilestone(answer.authorId)
+  } catch (error) {
+    console.error('Failed to check reputation milestone:', error)
   }
 
   revalidatePath(`/questions/${answer.question.id}/${answer.question.slug}`)

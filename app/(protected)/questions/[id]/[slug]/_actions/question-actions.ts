@@ -3,8 +3,8 @@
 import { auth } from "@/auth"
 import { prisma } from "@/lib/db/prisma"
 import { revalidatePath } from "next/cache"
-import { calculateUserReputation } from "@/lib/utils/reputation"
-import { notifyNewAnswer, notifyVote } from "@/lib/services/notification-triggers"
+import { calculateUserReputation, checkReputationMilestone } from "@/lib/utils/reputation"
+import { notifyNewAnswer, notifyVote, notifyComment } from "@/lib/services/notification-triggers"
 
 export async function getQuestionDetails(id: string) {
   const question = await prisma.question.findUnique({
@@ -166,6 +166,12 @@ export async function voteQuestion(questionId: string, value: 1 | -1) {
     },
   })
 
+  // Get question author for milestone check
+  const question = await prisma.question.findUnique({
+    where: { id: questionId },
+    select: { authorId: true, slug: true }
+  })
+
   if (existingVote) {
     if (existingVote.value === value) {
       await prisma.questionVote.delete({
@@ -207,11 +213,14 @@ export async function voteQuestion(questionId: string, value: 1 | -1) {
     }
   }
 
-  // Get the question details for proper revalidation
-  const question = await prisma.question.findUnique({
-    where: { id: questionId },
-    select: { slug: true },
-  })
+  // Check for reputation milestone for question author
+  if (question?.authorId) {
+    try {
+      await checkReputationMilestone(question.authorId)
+    } catch (error) {
+      console.error('Failed to check reputation milestone:', error)
+    }
+  }
 
   if (question) {
     // Fix the revalidation path to match the actual route
@@ -298,6 +307,14 @@ export async function addComment(content: string, questionId?: string, answerId?
     }
   })
 
+  // Send notification to question/answer author
+  try {
+    await notifyComment(comment.id, session.user.id, questionId, answerId)
+  } catch (error) {
+    console.error('Failed to send comment notification:', error)
+    // Don't fail the comment creation if notification fails
+  }
+
   // Get the question slug for revalidation
   let questionSlug: string
   if (questionId) {
@@ -335,6 +352,20 @@ export async function voteAnswer(answerId: string, value: 1 | -1) {
         answerId,
         userId: session.user.id,
       },
+    },
+  })
+
+  // Get answer author for milestone check
+  const answer = await prisma.answer.findUnique({
+    where: { id: answerId },
+    select: { 
+      authorId: true,
+      questionId: true,
+      question: {
+        select: {
+          slug: true
+        }
+      }
     },
   })
 
@@ -379,18 +410,14 @@ export async function voteAnswer(answerId: string, value: 1 | -1) {
     }
   }
 
-  // Get the answer and question details for proper revalidation
-  const answer = await prisma.answer.findUnique({
-    where: { id: answerId },
-    select: { 
-      questionId: true,
-      question: {
-        select: {
-          slug: true
-        }
-      }
-    },
-  })
+  // Check for reputation milestone for answer author
+  if (answer?.authorId) {
+    try {
+      await checkReputationMilestone(answer.authorId)
+    } catch (error) {
+      console.error('Failed to check reputation milestone:', error)
+    }
+  }
 
   if (answer && answer.question) {
     // Fix the revalidation path to match the actual route
