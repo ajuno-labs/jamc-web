@@ -30,21 +30,15 @@ git clone https://github.com/yourusername/jamc.git
 cd jamc
 ```
 
-2. Install dependencies:
+2. Run the setup script to install dependencies, create `.env.local`, start Docker services and apply database migrations:
 
 ```bash
-pnpm install
+./setup.sh
 ```
 
-3. Set up environment variables:
+After the script completes, edit the `.env.local` file with your configuration values if needed.
 
-```bash
-cp .env.example .env.local
-```
-
-Edit the `.env.local` file with your configuration values.
-
-4. Run the development server:
+3. Run the development server:
 
 ```bash
 pnpm dev
