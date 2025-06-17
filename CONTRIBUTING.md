@@ -1,6 +1,6 @@
 # Contributing to JAMC
 
-Thank you for your interest in contributing! This project is a Next.js application with a PostgreSQL database and an optional Python similarity service. Below are guidelines to get your environment ready and to submit changes.
+Thank you for your interest in contributing!
 
 ## Setup Options
 
