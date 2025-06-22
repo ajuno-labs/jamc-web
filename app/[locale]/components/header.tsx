@@ -7,6 +7,7 @@ import { GraduationCap, Menu, X } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { UserNav } from "@/components/layout/user-nav"
 import { useSessionRefresh } from "@/hooks/use-session-refresh"
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -27,6 +28,7 @@ export function Header() {
         </nav>
         
         <div className="hidden md:flex items-center gap-2">
+          <LanguageSwitcher />
           {session ? (
             <UserNav user={session.user} />
           ) : (
@@ -80,6 +82,9 @@ export function Header() {
               </nav>
               
               <div className="mt-auto flex flex-col gap-3 py-6">
+                <div className="mb-3">
+                  <LanguageSwitcher />
+                </div>
                 {session ? (
                   <div className="flex flex-col gap-3">
                     <Button variant="outline" asChild className="w-full">

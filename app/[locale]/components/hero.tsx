@@ -5,8 +5,11 @@ import { motion } from "framer-motion"
 import { ArrowRight, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { useTranslations } from 'next-intl'
 
 export function Hero() {
+  const t = useTranslations('LandingPage.hero');
+
   return (
     <section className="py-24 md:py-32 flex justify-center">
       <div className="container">
@@ -22,24 +25,23 @@ export function Hero() {
           </Badge>
           
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl mb-8">
-            Connect, <span className="text-primary">Ask</span>, and <span className="text-primary">Learn</span>
+            {t('title')}
           </h1>
           
           <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8 mb-12">
-            JAMC Q&A brings together students and educators in a vibrant community of 
-            knowledge sharing and collaborative learning.
+            {t('subtitle')}
           </p>
           
           <div className="flex flex-wrap gap-4 justify-center mb-16">
             <Button size="lg" asChild>
               <Link href="/signup">
-                Get Started
+                {t('getStarted')}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
               <Link href="#features">
-                Learn More
+                {t('learnMore')}
               </Link>
             </Button>
           </div>
