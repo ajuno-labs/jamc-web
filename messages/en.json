@@ -1,0 +1,38 @@
+{
+  "LandingPage": {
+    "hero": {
+      "title": "Build Your Knowledge Together",
+      "subtitle": "A collaborative learning platform where students and teachers connect to share knowledge, ask questions, and grow together.",
+      "getStarted": "Get Started",
+      "learnMore": "Learn More"
+    },
+    "features": {
+      "title": "Why Choose Our Platform",
+      "askQuestions": {
+        "title": "Ask Questions",
+        "description": "Get help from the community with your academic questions"
+      },
+      "shareKnowledge": {
+        "title": "Share Knowledge", 
+        "description": "Help others by sharing your expertise and experience"
+      },
+      "buildCourses": {
+        "title": "Build Courses",
+        "description": "Create and manage comprehensive learning courses"
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works"
+    },
+    "cta": {
+      "title": "Ready to Start Learning?",
+      "subtitle": "Join thousands of students and teachers already using our platform",
+      "getStarted": "Get Started Today"
+    },
+    "footer": {
+      "description": "Empowering education through collaborative learning",
+      "quickLinks": "Quick Links",
+      "legal": "Legal"
+    }
+  }
+} 

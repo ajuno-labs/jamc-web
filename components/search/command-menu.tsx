@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { DialogProps } from "@radix-ui/react-dialog";
 import { Command as CommandPrimitive } from "cmdk";
 import { Search, MessageSquare, ThumbsUp, Tag } from "lucide-react";
@@ -11,7 +11,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useDebounce } from "@/lib/hooks/use-debounce";
-import { searchQuestions } from "@/app/(protected)/questions/_actions/search";
+import { searchQuestions } from "@/lib/actions/search-actions";
 
 interface SearchResult {
   id: string;
