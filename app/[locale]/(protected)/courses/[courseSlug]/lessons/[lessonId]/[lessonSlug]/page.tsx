@@ -1,5 +1,6 @@
-import { notFound, redirect } from "next/navigation";
-import Link from "next/link";
+import { redirect } from "@/i18n/navigation";
+import { notFound } from "next/navigation";
+import { Link } from "@/i18n/navigation";
 import { getLessonSummary } from "./_actions/summary-actions";
 import { getAuthUser } from "@/lib/auth/get-user";
 import { Card } from "@/components/ui/card";

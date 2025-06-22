@@ -4,7 +4,7 @@ import { SignUpWithGoogle } from "./_components/signup-with-google"
 import { SignUpForm } from "./_components/signup-form"
 import { Card, CardContent, CardHeader, CardFooter, CardDescription, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 
 export default function SignUpPage() {
   return (

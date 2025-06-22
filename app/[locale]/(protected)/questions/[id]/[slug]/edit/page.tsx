@@ -1,4 +1,5 @@
-import { notFound, redirect } from "next/navigation"
+import { redirect } from "@/i18n/navigation"
+import { notFound } from "next/navigation"
 import { getAuthUser } from "@/lib/auth/get-user"
 import { getQuestionWithReputation } from "../_actions/question-edit-actions"
 import { EditQuestionForm } from "./_components/EditQuestionForm"

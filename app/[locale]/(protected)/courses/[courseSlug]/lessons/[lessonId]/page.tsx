@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { redirect } from "@/i18n/navigation";
 import { getLessonAndRedirect } from "../../_components/lesson-actions";
 
 export default async function LessonRedirectPage({

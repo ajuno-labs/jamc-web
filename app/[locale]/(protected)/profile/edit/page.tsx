@@ -2,7 +2,7 @@ import { getAuthUser } from "@/lib/auth/get-user"
 import { ProfileEditForm } from "./_components/ProfileEditForm"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 
 export default async function EditProfilePage() {
   const user = await getAuthUser()

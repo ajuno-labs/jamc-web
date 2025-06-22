@@ -3,7 +3,7 @@
 import React from "react"
 import { ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Separator } from "@/components/ui/separator"
 import { EnrollmentCodeCard } from "./EnrollmentCodeCard"

@@ -9,7 +9,7 @@ import LessonStructure from '../create/_components/LessonStructure'
 import LessonFiles from '../create/_components/LessonFiles'
 import { MetadataSection } from '../create/_components/MetadataSection'
 import LessonActions from '../create/_components/LessonActions'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
 import type { LessonFormProps, LessonFormValues } from './LessonForm.types'
 import { MathContent } from '@/components/MathContent'
 

@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, BookOpen, Users } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { PaginationWrapper } from "@/components/ui/pagination-wrapper";
 import JoinCourseDialog from "./JoinCourseDialog";
 

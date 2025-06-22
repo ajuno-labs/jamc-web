@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Clock, MessageSquare, AlertTriangle, ThumbsUp, ThumbsDown } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { MathContent } from "@/components/MathContent";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";

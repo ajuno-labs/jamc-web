@@ -6,7 +6,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Camera, Upload, Loader2 } from "lucide-react"
 import { uploadAvatar } from "../../_actions/edit-profile-actions"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@/i18n/navigation"
 import { toast } from "sonner"
 
 interface AvatarSectionProps {

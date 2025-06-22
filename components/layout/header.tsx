@@ -6,7 +6,7 @@ import { ModeToggle } from "./mode-toggle"
 import { UserNav } from "./user-nav"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { NotificationBell } from "@/components/notifications/NotificationBell"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@/i18n/navigation"
 import { useState, useEffect, useRef } from "react"
 
 interface HeaderProps {

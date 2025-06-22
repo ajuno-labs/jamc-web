@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Plus, Loader2 } from "lucide-react";
 import { joinCourseWithCode } from "../_actions/course-actions";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 
 export default function JoinCourseDialog() {
   const [open, setOpen] = useState(false);

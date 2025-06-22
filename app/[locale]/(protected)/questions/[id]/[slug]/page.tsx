@@ -10,7 +10,8 @@ import {
   getQuestionWithReputation,
   getAnswersWithReputation
 } from "./_actions/question-edit-actions"
-import { notFound, redirect } from "next/navigation"
+import { redirect } from "@/i18n/navigation"
+import { notFound } from "next/navigation"
 import { hasPermission } from "@/lib/types/prisma"
 
 interface QuestionPageProps {

@@ -1,6 +1,6 @@
 import { SignInForm } from "./_components/signin-form"
 import { GraduationCap} from "lucide-react"
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 import { Separator } from "@/components/ui/separator"
 import { SignInWithGoogle } from "./_components/signin-with-google"
 import { Card, CardContent, CardHeader, CardFooter, CardDescription, CardTitle } from "@/components/ui/card"

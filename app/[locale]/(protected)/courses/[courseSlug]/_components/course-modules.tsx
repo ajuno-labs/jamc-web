@@ -1,4 +1,4 @@
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card"
 import { CourseModule } from "@/lib/types/course"
 

@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2 } from "lucide-react"
 import { updateProfile } from "../../_actions/edit-profile-actions"
-import { useRouter } from "next/navigation"
+import { useRouter } from "@/i18n/navigation"
 import { toast } from "sonner"
 
 interface ProfileInfoSectionProps {

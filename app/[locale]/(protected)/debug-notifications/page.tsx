@@ -1,5 +1,5 @@
 import { getAuthUser } from "@/lib/auth/get-user"
-import { redirect } from "next/navigation"
+import { redirect } from "@/i18n/navigation"
 import { DebugNotificationActions } from "./_components/DebugNotificationActions"
 
 export default async function DebugNotificationsPage() {

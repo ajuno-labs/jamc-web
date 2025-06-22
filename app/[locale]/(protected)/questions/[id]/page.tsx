@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db/prisma";
-import { redirect, notFound } from "next/navigation";
+import { redirect } from "@/i18n/navigation";
+import { notFound } from "next/navigation";
 
 interface Props {
   params: Promise<{ id: string }>;

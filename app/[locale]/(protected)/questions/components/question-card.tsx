@@ -1,4 +1,4 @@
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 import { format } from "date-fns"
 import { MessageSquare, ThumbsUp, Tag } from "lucide-react"
 import { Badge } from "@/components/ui/badge"

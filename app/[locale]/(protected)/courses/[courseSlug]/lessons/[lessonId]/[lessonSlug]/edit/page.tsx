@@ -1,4 +1,5 @@
-import { notFound, redirect } from 'next/navigation'
+import { redirect } from '@/i18n/navigation'
+import { notFound } from 'next/navigation'
 import { getAuthUser } from '@/lib/auth/get-user'
 import { getEnhancedPrisma } from '@/lib/db/enhanced'
 import LessonForm from '../../../_components/LessonForm'

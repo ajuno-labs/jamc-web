@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { searchQuestions } from "@/lib/actions/search-actions"
 import { QuestionType } from "@prisma/client"
