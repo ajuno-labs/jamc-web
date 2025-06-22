@@ -1,7 +1,7 @@
 "use server"
 
-import { searchQuestions } from "@/app/(protected)/questions/_actions/search"
-import { getCourses } from "@/app/(protected)/courses/_actions/course-actions"
+import { searchQuestions } from "@/lib/actions/search-actions"
+import { getCourses } from "@/lib/actions/search-actions"
 
 export interface GenericSearchResult {
   courses: Awaited<ReturnType<typeof getCourses>>["data"]

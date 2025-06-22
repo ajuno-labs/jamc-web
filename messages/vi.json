@@ -1,0 +1,38 @@
+{
+  "LandingPage": {
+    "hero": {
+      "title": "Xây Dựng Kiến Thức Cùng Nhau",
+      "subtitle": "Một nền tảng học tập hợp tác nơi học sinh và giáo viên kết nối để chia sẻ kiến thức, đặt câu hỏi và cùng nhau phát triển.",
+      "getStarted": "Bắt Đầu",
+      "learnMore": "Tìm Hiểu Thêm"
+    },
+    "features": {
+      "title": "Tại Sao Chọn Nền Tảng Của Chúng Tôi",
+      "askQuestions": {
+        "title": "Đặt Câu Hỏi",
+        "description": "Nhận trợ giúp từ cộng đồng với các câu hỏi học thuật của bạn"
+      },
+      "shareKnowledge": {
+        "title": "Chia Sẻ Kiến Thức", 
+        "description": "Giúp đỡ người khác bằng cách chia sẻ chuyên môn và kinh nghiệm của bạn"
+      },
+      "buildCourses": {
+        "title": "Xây Dựng Khóa Học",
+        "description": "Tạo và quản lý các khóa học toàn diện"
+      }
+    },
+    "howItWorks": {
+      "title": "Cách Thức Hoạt Động"
+    },
+    "cta": {
+      "title": "Sẵn Sàng Bắt Đầu Học?",
+      "subtitle": "Tham gia cùng hàng nghìn học sinh và giáo viên đã sử dụng nền tảng của chúng tôi",
+      "getStarted": "Bắt Đầu Ngay Hôm Nay"
+    },
+    "footer": {
+      "description": "Trao quyền cho giáo dục thông qua học tập hợp tác",
+      "quickLinks": "Liên Kết Nhanh",
+      "legal": "Pháp Lý"
+    }
+  }
+} 

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db/prisma"
 import { QuestionType, Prisma } from "@prisma/client"
 import { auth } from "@/auth"
 import { questionWithRelationsInclude } from "@/lib/types/prisma"
+import { getPublicEnhancedPrisma } from "@/lib/db/enhanced"
 
 interface SearchQuestionsResult {
   items: Array<{
@@ -23,6 +24,37 @@ interface SearchQuestionsResult {
   }>
   total: number
   hasMore: boolean
+}
+
+export interface Course {
+  id: string;
+  title: string;
+  description: string;
+  slug: string;
+  author: {
+    id: string;
+    name: string;
+    image: string | null;
+  };
+  tags: {
+    id: string;
+    name: string;
+  }[];
+  lessonCount: number;
+  enrollmentCount: number;
+  createdAt: Date;
+}
+
+export interface PaginatedResult<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
 }
 
 /**
@@ -123,5 +155,132 @@ export async function searchQuestions(
   } catch (error) {
     console.error("Search error:", error)
     return { items: [], total: 0, hasMore: false }
+  }
+}
+
+/**
+ * Get all courses with filtering options and pagination
+ */
+export async function getCourses(options?: {
+  searchTerm?: string;
+  topic?: string;
+  teacherId?: string;
+  page?: number;
+  limit?: number;
+}): Promise<PaginatedResult<Course>> {
+  try {
+    const { searchTerm, topic, teacherId, page = 1, limit = 12 } = options || {};
+    const skip = (page - 1) * limit;
+
+    // Build the where clause based on filter options
+    const where: Prisma.CourseWhereInput = {};
+
+    if (searchTerm) {
+      where.OR = [
+        { title: { contains: searchTerm, mode: "insensitive" } },
+        { description: { contains: searchTerm, mode: "insensitive" } },
+      ];
+    }
+
+    if (topic) {
+      where.tags = {
+        some: {
+          name: topic,
+        },
+      };
+    }
+
+    if (teacherId) {
+      where.authorId = teacherId;
+    }
+
+    // Fetch courses with related data
+    const db = getPublicEnhancedPrisma();
+    
+    // Get total count for pagination
+    const total = await db.course.count({ where });
+    
+    const courses = await db.course.findMany({
+      where,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        slug: true,
+        createdAt: true,
+        author: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+        tags: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        lessons: {
+          select: {
+            id: true,
+          },
+        },
+        enrollments: {
+          select: {
+            userId: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip,
+      take: limit,
+    });
+
+    // Transform the data for the frontend
+    const transformedCourses = courses.map((course) => ({
+      id: course.id,
+      title: course.title,
+      description: course.description,
+      slug: course.slug,
+      author: {
+        id: course.author.id,
+        name: course.author.name || "Unknown",
+        image: course.author.image,
+      },
+      tags: course.tags,
+      lessonCount: course.lessons.length,
+      enrollmentCount: course.enrollments.length,
+      createdAt: course.createdAt,
+    }));
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data: transformedCourses,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    return {
+      data: [],
+      pagination: {
+        page: 1,
+        limit: 12,
+        total: 0,
+        totalPages: 0,
+        hasNext: false,
+        hasPrev: false,
+      },
+    };
   }
 } 

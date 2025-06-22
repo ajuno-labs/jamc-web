@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getLessonAndRedirect } from "@/app/(protected)/courses/[courseSlug]/_components/lesson-actions";
+import { getLessonAndRedirect } from "../../_components/lesson-actions";
 
 export default async function LessonRedirectPage({
   params,

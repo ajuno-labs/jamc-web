@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { searchQuestions } from "./_actions/search"
+import { searchQuestions } from "@/lib/actions/search-actions"
 import { QuestionType } from "@prisma/client"
 import { QuestionSearch } from "./components/question-search"
 import { QuestionCard } from "./components/question-card"

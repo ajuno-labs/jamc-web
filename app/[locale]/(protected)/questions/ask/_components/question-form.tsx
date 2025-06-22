@@ -24,7 +24,7 @@ import {
 import { Loader2, HelpCircle } from "lucide-react";
 import { TagFilter } from "../../components/tag-filter";
 import { createQuestion } from "../../_actions/create-question";
-import { getMyCoursesWithLessons } from "@/app/(protected)/courses/_actions/course-actions";
+import { getMyCoursesWithLessons } from "../../../courses/_actions/course-actions";
 import { Input } from "@/components/ui/input";
 import { AttachmentUpload } from "./AttachmentUpload";
 import { AttachmentGallery } from "./AttachmentGallery";

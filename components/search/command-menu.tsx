@@ -11,7 +11,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useDebounce } from "@/lib/hooks/use-debounce";
-import { searchQuestions } from "@/app/(protected)/questions/_actions/search";
+import { searchQuestions } from "@/lib/actions/search-actions";
 
 interface SearchResult {
   id: string;
