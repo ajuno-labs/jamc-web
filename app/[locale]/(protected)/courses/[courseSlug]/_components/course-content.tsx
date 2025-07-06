@@ -93,7 +93,7 @@ export function CourseContent({ courseSlug, modules, lessons = [] }: CourseConte
               </h3>
             )}
             <div className="space-y-1 pl-1">
-              {lessons.sort((a, b) => a.order - b.order).map((lesson) => (
+              {[...lessons].sort((a, b) => a.order - b.order).map((lesson) => (
                 <Link
                   key={lesson.id}
                   href={`/courses/${courseSlug}/lessons/${lesson.id}/${lesson.slug}`}
