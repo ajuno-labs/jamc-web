@@ -2,23 +2,26 @@
 
 import { motion } from "framer-motion"
 import { Search, MessageCircle, Sparkles, ArrowRight } from "lucide-react"
+import { useTranslations } from 'next-intl'
 
 export function HowItWorks() {
+  const t = useTranslations('LandingPage.howItWorks');
+  
   const steps = [
     {
       icon: <Search className="h-10 w-10 text-primary" />,
-      title: "Ask a Question",
-      description: "Post your academic queries and get help from the community."
+      title: t('askQuestion.title'),
+      description: t('askQuestion.description')
     },
     {
       icon: <MessageCircle className="h-10 w-10 text-primary" />,
-      title: "Receive Answers",
-      description: "Get responses from peers and educators, often within minutes."
+      title: t('receiveAnswers.title'),
+      description: t('receiveAnswers.description')
     },
     {
       icon: <Sparkles className="h-10 w-10 text-primary" />,
-      title: "Learn & Grow",
-      description: "Expand your knowledge and improve your academic performance."
+      title: t('learnGrow.title'),
+      description: t('learnGrow.description')
     }
   ]
 
@@ -26,9 +29,9 @@ export function HowItWorks() {
     <section id="how-it-works" className=" py-24 md:py-32 flex justify-center">
       <div className="container flex flex-col items-center">
         <div className="flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center mb-16">
-          <h2 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">How It Works</h2>
+          <h2 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">{t('title')}</h2>
           <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-            Three simple steps to enhance your learning experience
+            {t('subtitle')}
           </p>
         </div>
 

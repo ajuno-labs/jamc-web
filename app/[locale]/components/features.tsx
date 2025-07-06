@@ -3,40 +3,43 @@
 import { motion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { MessageCircle, Lightbulb, Users, BookOpen, Trophy, ThumbsUp } from "lucide-react"
+import { useTranslations } from 'next-intl'
 
 const MotionCard = motion(Card)
 
 export function Features() {
+  const t = useTranslations('LandingPage.features');
+  
   const features = [
     {
       icon: <MessageCircle className="h-10 w-10 text-primary" />,
-      title: "Ask & Answer",
-      description: "Post questions, provide answers, and engage in meaningful academic discussions."
+      title: t('askAnswer.title'),
+      description: t('askAnswer.description')
     },
     {
       icon: <Lightbulb className="h-10 w-10 text-primary" />,
-      title: "AI-Powered Insights",
-      description: "Receive intelligent recommendations and related content suggestions."
+      title: t('aiInsights.title'),
+      description: t('aiInsights.description')
     },
     {
       icon: <Users className="h-10 w-10 text-primary" />,
-      title: "Collaborative Learning",
-      description: "Foster a supportive community where knowledge is shared freely."
+      title: t('collaborativeLearning.title'),
+      description: t('collaborativeLearning.description')
     },
     {
       icon: <BookOpen className="h-10 w-10 text-primary" />,
-      title: "Rich Knowledge Base",
-      description: "Access a growing library of questions, answers, and academic resources."
+      title: t('knowledgeBase.title'),
+      description: t('knowledgeBase.description')
     },
     {
       icon: <Trophy className="h-10 w-10 text-primary" />,
-      title: "Reputation System",
-      description: "Earn recognition for your contributions and build your academic profile."
+      title: t('reputationSystem.title'),
+      description: t('reputationSystem.description')
     },
     {
       icon: <ThumbsUp className="h-10 w-10 text-primary" />,
-      title: "Quality Control",
-      description: "Educators verify and rate answers to ensure accuracy and reliability."
+      title: t('qualityControl.title'),
+      description: t('qualityControl.description')
     }
   ]
 
@@ -44,9 +47,9 @@ export function Features() {
     <section id="features" className="py-24 md:py-32 flex justify-center bg-muted/40">
       <div className="container flex flex-col items-center">
         <div className="flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center mb-16">
-          <h2 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">Key Features</h2>
+          <h2 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">{t('title')}</h2>
           <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-            Discover the tools that make JAMC Q&A the ultimate learning platform
+            {t('subtitle')}
           </p>
         </div>
 

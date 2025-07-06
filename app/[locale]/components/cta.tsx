@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { motion } from "framer-motion"
 import { Mail } from "lucide-react"
+import { useTranslations } from 'next-intl'
 
 export function CTA() {
+  const t = useTranslations('LandingPage.cta');
   const [email, setEmail] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
 
@@ -31,11 +33,10 @@ export function CTA() {
           viewport={{ once: true }}
         >
           <h2 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">
-            Ready to Transform Your Learning Experience?
+            {t('title')}
           </h2>
           <p className="text-primary-foreground/80 text-lg md:text-xl max-w-[40rem]">
-            Join thousands of students and educators who are already benefiting from our platform. 
-            Start asking questions, sharing knowledge, and growing academically today.
+            {t('subtitle')}
           </p>
           
           <div className="w-full max-w-md mx-auto mt-4">
@@ -45,7 +46,7 @@ export function CTA() {
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder={t('emailPlaceholder')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10 bg-primary-foreground text-background border-primary-foreground/20"
@@ -57,7 +58,7 @@ export function CTA() {
                   variant="secondary" 
                   className="font-medium text-primary"
                 >
-                  Subscribe
+                  {t('subscribe')}
                 </Button>
               </div>
               
@@ -67,12 +68,12 @@ export function CTA() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  Thank you for subscribing to our newsletter!
+                  {t('thankYou')}
                 </motion.p>
               )}
               
               <p className="text-xs text-primary-foreground/70">
-                By subscribing, you agree to our Privacy Policy and consent to receive updates from our company.
+                {t('privacyNotice')}
               </p>
             </form>
           </div>

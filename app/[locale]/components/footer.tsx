@@ -1,7 +1,9 @@
 import { Link } from "@/i18n/navigation"
 import { GraduationCap } from "lucide-react"
+import { useTranslations } from 'next-intl'
 
 export function Footer() {
+  const t = useTranslations('LandingPage.footer');
   return (
     <footer className="border-t py-12 md:py-16 flex justify-center">
       <div className="container">
@@ -12,79 +14,79 @@ export function Footer() {
               <span className="font-bold text-xl">JAMC</span>
             </Link>
             <p className="mt-4 text-sm text-muted-foreground">
-              Connecting students and educators in a collaborative learning environment.
+              {t('description')}
             </p>
           </div>
           
           <div className="md:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-8">
             <div>
-              <h3 className="font-medium mb-4">Platform</h3>
+              <h3 className="font-medium mb-4">{t('platform')}</h3>
               <ul className="space-y-3 text-sm">
                 <li>
                   <Link href="/features" className="text-muted-foreground hover:text-foreground transition-colors">
-                    Features
+                    {t('features')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">
-                    How It Works
+                    {t('howItWorks')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/pricing" className="text-muted-foreground hover:text-foreground transition-colors">
-                    Pricing
+                    {t('pricing')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/faq" className="text-muted-foreground hover:text-foreground transition-colors">
-                    FAQ
+                    {t('faq')}
                   </Link>
                 </li>
               </ul>
             </div>
             
             <div>
-              <h3 className="font-medium mb-4">Company</h3>
+              <h3 className="font-medium mb-4">{t('company')}</h3>
               <ul className="space-y-3 text-sm">
                 <li>
                   <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors">
-                    About Us
+                    {t('aboutUs')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/blog" className="text-muted-foreground hover:text-foreground transition-colors">
-                    Blog
+                    {t('blog')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/careers" className="text-muted-foreground hover:text-foreground transition-colors">
-                    Careers
+                    {t('careers')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
-                    Contact
+                    {t('contact')}
                   </Link>
                 </li>
               </ul>
             </div>
             
             <div>
-              <h3 className="font-medium mb-4">Legal</h3>
+              <h3 className="font-medium mb-4">{t('legal')}</h3>
               <ul className="space-y-3 text-sm">
                 <li>
                   <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">
-                    Terms of Service
+                    {t('termsOfService')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">
-                    Privacy Policy
+                    {t('privacyPolicy')}
                   </Link>
                 </li>
                 <li>
                   <Link href="/cookies" className="text-muted-foreground hover:text-foreground transition-colors">
-                    Cookie Policy
+                    {t('cookiePolicy')}
                   </Link>
                 </li>
               </ul>
@@ -94,7 +96,7 @@ export function Footer() {
         
         <div className="mt-12 pt-8 border-t flex flex-col sm:flex-row justify-between items-center">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} JAMC. All rights reserved.
+            {t('copyright', { year: new Date().getFullYear() })}
           </p>
           <div className="flex space-x-6 mt-4 sm:mt-0">
             <Link href="#" className="text-muted-foreground hover:text-foreground">

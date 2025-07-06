@@ -1,38 +1,93 @@
 {
   "LandingPage": {
+    "header": {
+      "features": "Features",
+      "howItWorks": "How It Works",
+      "signIn": "Sign In",
+      "signUp": "Sign Up",
+      "qa": "Q&A",
+      "courses": "Courses"
+    },
     "hero": {
       "title": "Build Your Knowledge Together",
       "subtitle": "A collaborative learning platform where students and teachers connect to share knowledge, ask questions, and grow together.",
       "getStarted": "Get Started",
-      "learnMore": "Learn More"
+      "learnMore": "Learn More",
+      "badge": "Learning reimagined",
+      "qaCommunity": "Q&A Community",
+      "qaDescription": "Ask questions and help others learn",
+      "courseLibrary": "Course Library",
+      "courseDescription": "Explore structured learning paths"
     },
     "features": {
-      "title": "Why Choose Our Platform",
-      "askQuestions": {
-        "title": "Ask Questions",
-        "description": "Get help from the community with your academic questions"
+      "title": "Key Features",
+      "subtitle": "Discover the tools that make JAMC Q&A the ultimate learning platform",
+      "askAnswer": {
+        "title": "Ask & Answer",
+        "description": "Post questions, provide answers, and engage in meaningful academic discussions."
       },
-      "shareKnowledge": {
-        "title": "Share Knowledge", 
-        "description": "Help others by sharing your expertise and experience"
+      "aiInsights": {
+        "title": "AI-Powered Insights",
+        "description": "Receive intelligent recommendations and related content suggestions."
       },
-      "buildCourses": {
-        "title": "Build Courses",
-        "description": "Create and manage comprehensive learning courses"
+      "collaborativeLearning": {
+        "title": "Collaborative Learning",
+        "description": "Foster a supportive community where knowledge is shared freely."
+      },
+      "knowledgeBase": {
+        "title": "Rich Knowledge Base",
+        "description": "Access a growing library of questions, answers, and academic resources."
+      },
+      "reputationSystem": {
+        "title": "Reputation System",
+        "description": "Earn recognition for your contributions and build your academic profile."
+      },
+      "qualityControl": {
+        "title": "Quality Control",
+        "description": "Educators verify and rate answers to ensure accuracy and reliability."
       }
     },
     "howItWorks": {
-      "title": "How It Works"
+      "title": "How It Works",
+      "subtitle": "Three simple steps to enhance your learning experience",
+      "askQuestion": {
+        "title": "Ask a Question",
+        "description": "Post your academic queries and get help from the community."
+      },
+      "receiveAnswers": {
+        "title": "Receive Answers",
+        "description": "Get responses from peers and educators, often within minutes."
+      },
+      "learnGrow": {
+        "title": "Learn & Grow",
+        "description": "Expand your knowledge and improve your academic performance."
+      }
     },
     "cta": {
-      "title": "Ready to Start Learning?",
-      "subtitle": "Join thousands of students and teachers already using our platform",
-      "getStarted": "Get Started Today"
+      "title": "Ready to Transform Your Learning Experience?",
+      "subtitle": "Join thousands of students and educators who are already benefiting from our platform. Start asking questions, sharing knowledge, and growing academically today.",
+      "emailPlaceholder": "Enter your email",
+      "subscribe": "Subscribe",
+      "thankYou": "Thank you for subscribing to our newsletter!",
+      "privacyNotice": "By subscribing, you agree to our Privacy Policy and consent to receive updates from our company."
     },
     "footer": {
-      "description": "Empowering education through collaborative learning",
-      "quickLinks": "Quick Links",
-      "legal": "Legal"
+      "description": "Connecting students and educators in a collaborative learning environment.",
+      "platform": "Platform",
+      "company": "Company",
+      "legal": "Legal",
+      "features": "Features",
+      "howItWorks": "How It Works",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "aboutUs": "About Us",
+      "blog": "Blog",
+      "careers": "Careers",
+      "contact": "Contact",
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy",
+      "cookiePolicy": "Cookie Policy",
+      "copyright": "© {year} JAMC. All rights reserved."
     }
   }
 } 

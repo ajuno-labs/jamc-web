@@ -1,38 +1,93 @@
 {
   "LandingPage": {
+    "header": {
+      "features": "Tính Năng",
+      "howItWorks": "Cách Thức Hoạt Động",
+      "signIn": "Đăng Nhập",
+      "signUp": "Đăng Ký",
+      "qa": "Hỏi Đáp",
+      "courses": "Khóa Học"
+    },
     "hero": {
       "title": "Xây Dựng Kiến Thức Cùng Nhau",
       "subtitle": "Một nền tảng học tập hợp tác nơi học sinh và giáo viên kết nối để chia sẻ kiến thức, đặt câu hỏi và cùng nhau phát triển.",
       "getStarted": "Bắt Đầu",
-      "learnMore": "Tìm Hiểu Thêm"
+      "learnMore": "Tìm Hiểu Thêm",
+      "badge": "Học tập được tái tưởng tượng",
+      "qaCommunity": "Cộng Đồng Hỏi Đáp",
+      "qaDescription": "Đặt câu hỏi và giúp đỡ người khác học tập",
+      "courseLibrary": "Thư Viện Khóa Học",
+      "courseDescription": "Khám phá các lộ trình học tập có cấu trúc"
     },
     "features": {
-      "title": "Tại Sao Chọn Nền Tảng Của Chúng Tôi",
-      "askQuestions": {
-        "title": "Đặt Câu Hỏi",
-        "description": "Nhận trợ giúp từ cộng đồng với các câu hỏi học thuật của bạn"
+      "title": "Tính Năng Chính",
+      "subtitle": "Khám phá các công cụ làm cho JAMC Q&A trở thành nền tảng học tập tối ưu",
+      "askAnswer": {
+        "title": "Hỏi & Đáp",
+        "description": "Đăng câu hỏi, cung cấp câu trả lời và tham gia vào các cuộc thảo luận học thuật có ý nghĩa."
       },
-      "shareKnowledge": {
-        "title": "Chia Sẻ Kiến Thức", 
-        "description": "Giúp đỡ người khác bằng cách chia sẻ chuyên môn và kinh nghiệm của bạn"
+      "aiInsights": {
+        "title": "Thông Tin Chi Tiết AI",
+        "description": "Nhận các đề xuất thông minh và gợi ý nội dung liên quan."
       },
-      "buildCourses": {
-        "title": "Xây Dựng Khóa Học",
-        "description": "Tạo và quản lý các khóa học toàn diện"
+      "collaborativeLearning": {
+        "title": "Học Tập Hợp Tác",
+        "description": "Nuôi dưỡng một cộng đồng hỗ trợ nơi kiến thức được chia sẻ tự do."
+      },
+      "knowledgeBase": {
+        "title": "Cơ Sở Kiến Thức Phong Phú",
+        "description": "Truy cập thư viện ngày càng phát triển các câu hỏi, câu trả lời và tài nguyên học thuật."
+      },
+      "reputationSystem": {
+        "title": "Hệ Thống Uy Tín",
+        "description": "Nhận được sự công nhận cho những đóng góp của bạn và xây dựng hồ sơ học thuật."
+      },
+      "qualityControl": {
+        "title": "Kiểm Soát Chất Lượng",
+        "description": "Giáo viên xác minh và đánh giá câu trả lời để đảm bảo tính chính xác và đáng tin cậy."
       }
     },
     "howItWorks": {
-      "title": "Cách Thức Hoạt Động"
+      "title": "Cách Thức Hoạt Động",
+      "subtitle": "Ba bước đơn giản để nâng cao trải nghiệm học tập của bạn",
+      "askQuestion": {
+        "title": "Đặt Câu Hỏi",
+        "description": "Đăng các câu hỏi học thuật của bạn và nhận sự trợ giúp từ cộng đồng."
+      },
+      "receiveAnswers": {
+        "title": "Nhận Câu Trả Lời",
+        "description": "Nhận phản hồi từ bạn bè và giáo viên, thường trong vòng vài phút."
+      },
+      "learnGrow": {
+        "title": "Học Tập & Phát Triển",
+        "description": "Mở rộng kiến thức và cải thiện thành tích học tập của bạn."
+      }
     },
     "cta": {
-      "title": "Sẵn Sàng Bắt Đầu Học?",
-      "subtitle": "Tham gia cùng hàng nghìn học sinh và giáo viên đã sử dụng nền tảng của chúng tôi",
-      "getStarted": "Bắt Đầu Ngay Hôm Nay"
+      "title": "Sẵn Sàng Chuyển Đổi Trải Nghiệm Học Tập Của Bạn?",
+      "subtitle": "Tham gia cùng hàng nghìn học sinh và giáo viên đã được hưởng lợi từ nền tảng của chúng tôi. Bắt đầu đặt câu hỏi, chia sẻ kiến thức và phát triển học thuật ngay hôm nay.",
+      "emailPlaceholder": "Nhập email của bạn",
+      "subscribe": "Đăng Ký",
+      "thankYou": "Cảm ơn bạn đã đăng ký nhận bản tin của chúng tôi!",
+      "privacyNotice": "Bằng việc đăng ký, bạn đồng ý với Chính Sách Bảo Mật của chúng tôi và đồng ý nhận cập nhật từ công ty."
     },
     "footer": {
-      "description": "Trao quyền cho giáo dục thông qua học tập hợp tác",
-      "quickLinks": "Liên Kết Nhanh",
-      "legal": "Pháp Lý"
+      "description": "Kết nối học sinh và giáo viên trong môi trường học tập hợp tác.",
+      "platform": "Nền Tảng",
+      "company": "Công Ty",
+      "legal": "Pháp Lý",
+      "features": "Tính Năng",
+      "howItWorks": "Cách Thức Hoạt Động",
+      "pricing": "Giá Cả",
+      "faq": "Câu Hỏi Thường Gặp",
+      "aboutUs": "Về Chúng Tôi",
+      "blog": "Blog",
+      "careers": "Tuyển Dụng",
+      "contact": "Liên Hệ",
+      "termsOfService": "Điều Khoản Dịch Vụ",
+      "privacyPolicy": "Chính Sách Bảo Mật",
+      "cookiePolicy": "Chính Sách Cookie",
+      "copyright": "© {year} JAMC. Tất cả quyền được bảo lưu."
     }
   }
 } 
