@@ -25,7 +25,7 @@ interface UserNavProps {
 export function UserNav({ user }: UserNavProps) {
   if (!user) {
     return (
-      <Button variant="ghost" asChild>
+      <Button variant="default" asChild>
         <Link href="/signin">Sign in</Link>
       </Button>
     )
