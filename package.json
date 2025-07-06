@@ -13,8 +13,6 @@
     "test:e2e": "pnpm exec playwright test",
     "test:e2e:ui": "pnpm exec playwright test --ui",
     "test:e2e:debug": "pnpm exec playwright test --debug",
-    "db:migrate": "zenstack generate && prisma migrate dev",
-    "db:reset": "prisma migrate reset --force && zenstack generate && prisma migrate dev",
     "db:seed": "prisma db seed"
   },
   "dependencies": {

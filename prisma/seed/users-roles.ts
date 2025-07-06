@@ -244,11 +244,76 @@ export async function seedUsersAndRoles() {
     }),
   ])
 
+  const vietnameseTeacher = await prisma.user.upsert({
+    where: { email: "thay.nguyen@truongthpt.vn" },
+    update: {
+      name: "Nguyễn Văn Thầy",
+      roles: {
+        connect: { id: teacherRole.id }
+      }
+    },
+    create: {
+      name: "Nguyễn Văn Thầy",
+      email: "thay.nguyen@truongthpt.vn",
+      password: await bcrypt.hash("matkhau123", 10),
+      roles: {
+        connect: { id: teacherRole.id }
+      }
+    },
+  })
+
+  // Create 20 Vietnamese student users
+  const vietnameseStudentData = [
+    { name: "Nguyễn Văn An", email: "an.nguyen@student.thpt.vn" },
+    { name: "Trần Thị Bình", email: "binh.tran@student.thpt.vn" },
+    { name: "Lê Văn Cường", email: "cuong.le@student.thpt.vn" },
+    { name: "Phạm Thị Dung", email: "dung.pham@student.thpt.vn" },
+    { name: "Hoàng Văn Em", email: "em.hoang@student.thpt.vn" },
+    { name: "Vũ Thị Phương", email: "phuong.vu@student.thpt.vn" },
+    { name: "Đặng Văn Giang", email: "giang.dang@student.thpt.vn" },
+    { name: "Bùi Thị Hạnh", email: "hanh.bui@student.thpt.vn" },
+    { name: "Đỗ Văn Hậu", email: "hau.do@student.thpt.vn" },
+    { name: "Ngô Thị Hoa", email: "hoa.ngo@student.thpt.vn" },
+    { name: "Phan Văn Hùng", email: "hung.phan@student.thpt.vn" },
+    { name: "Lý Thị Lan", email: "lan.ly@student.thpt.vn" },
+    { name: "Tạ Văn Lộc", email: "loc.ta@student.thpt.vn" },
+    { name: "Trịnh Thị Mai", email: "mai.trinh@student.thpt.vn" },
+    { name: "Vương Văn Nam", email: "nam.vuong@student.thpt.vn" },
+    { name: "Chu Thị Ngọc", email: "ngoc.chu@student.thpt.vn" },
+    { name: "Đinh Văn Phát", email: "phat.dinh@student.thpt.vn" },
+    { name: "Lâm Thị Quỳnh", email: "quynh.lam@student.thpt.vn" },
+    { name: "Trương Văn Sơn", email: "son.truong@student.thpt.vn" },
+    { name: "Mai Thị Trang", email: "trang.mai@student.thpt.vn" },
+  ];
+
+  const vietnameseStudents = await Promise.all(
+    vietnameseStudentData.map(async (student) =>
+      prisma.user.upsert({
+        where: { email: student.email },
+        update: {
+          name: student.name,
+          roles: {
+            connect: { id: studentRole.id }
+          }
+        },
+        create: {
+          name: student.name,
+          email: student.email,
+          password: await bcrypt.hash("matkhau123", 10),
+          roles: {
+            connect: { id: studentRole.id }
+          }
+        },
+      })
+    )
+  );
+
   console.log('Users and roles seeded successfully')
+  console.log(`Created ${vietnameseStudents.length} Vietnamese students and 1 Vietnamese teacher`)
   
   // Create default notification preferences for all users
   console.log('Creating default notification preferences...')
-  const allUsers = [adminUser, ...teacherUsers, ...studentUsers]
+  const allUsers = [adminUser, ...teacherUsers, ...studentUsers, vietnameseTeacher, ...vietnameseStudents]
   
   await Promise.all(allUsers.map(user => 
     prisma.notificationPreferences.upsert({
@@ -282,6 +347,8 @@ export async function seedUsersAndRoles() {
     teacherUsers, 
     studentUsers,
     mainTeacher: teacherUsers[0],
-    mainStudent: studentUsers[0]
+    mainStudent: studentUsers[0],
+    vietnameseTeacher,
+    vietnameseStudents
   }
 } 
