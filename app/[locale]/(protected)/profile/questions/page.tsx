@@ -163,4 +163,4 @@ export default async function AllQuestionsPage({ searchParams }: PageProps) {
       )}
     </div>
   )
-} 
+}
