@@ -2,8 +2,7 @@ import { Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { TagFilter } from "./tag-filter"
 import { useTranslations } from 'next-intl'
-
-type QuestionType = 'YOLO' | 'FORMAL'
+import { QuestionType } from "@prisma/client"
 
 interface QuestionSearchProps {
   query: string

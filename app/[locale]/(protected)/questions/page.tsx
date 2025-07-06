@@ -4,7 +4,7 @@ import * as React from "react"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { searchQuestions } from "@/lib/actions/search-actions"
-type QuestionType = 'YOLO' | 'FORMAL'
+import { QuestionType } from "@prisma/client"
 import { QuestionSearch } from "./components/question-search"
 import { QuestionCard } from "./components/question-card"
 import { QuestionPagination } from "./components/question-pagination"
