@@ -3,8 +3,6 @@ import { notFound } from "next/navigation"
 import { getAuthUser } from "@/lib/auth/get-user"
 import { getQuestionWithReputation } from "../_actions/question-edit-actions"
 import { EditQuestionForm } from "./_components/EditQuestionForm"
-import { getLocale } from "next-intl/server"
-
 interface EditQuestionPageProps {
   params: Promise<{ id: string; slug: string }>
 }
@@ -32,21 +30,13 @@ export default async function EditQuestionPage({
   if (!question) {
     notFound()
   }
-
-  const locale = await getLocale()
   
   if (question.slug !== questionSlug) {
-    redirect({
-      href: `/questions/${questionId}/${question.slug}/edit`,
-      locale
-    })
+    return redirect(`/questions/${questionId}/${question.slug}/edit`)
   }
 
   if (!user || user.id !== question.author.id) {
-    redirect({
-      href: `/questions/${questionId}/${question.slug}`,
-      locale
-    })
+    return redirect(`/questions/${questionId}/${question.slug}`)
   }
 
   return (

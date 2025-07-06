@@ -5,8 +5,6 @@ import { getEnhancedPrisma } from '@/lib/db/enhanced'
 import LessonForm from '../../../_components/LessonForm'
 import { updateLesson } from './_actions/lesson-actions'
 import type { LessonFormValues } from '../../../_components/LessonForm.types'
-import { getLocale } from 'next-intl/server'
-
 interface EditPageProps {
   params: Promise<{
     courseSlug: string
@@ -21,7 +19,6 @@ interface LessonMetadata {
 }
 
 export default async function EditPage({ params }: EditPageProps) {
-  const locale = await getLocale()
   const { courseSlug, lessonId, lessonSlug } = await params
   const user = await getAuthUser()
   if (!user) {
@@ -62,10 +59,7 @@ export default async function EditPage({ params }: EditPageProps) {
   }
 
   if (lesson.course.slug !== courseSlug || lesson.slug !== lessonSlug) {
-    return redirect({
-      href: `/courses/${courseSlug}/lessons/${lessonId}/${lesson.slug}/edit`,
-      locale
-    })
+    return redirect(`/courses/${courseSlug}/lessons/${lessonId}/${lesson.slug}/edit`)
   }
 
   if (!lesson.chapter) {

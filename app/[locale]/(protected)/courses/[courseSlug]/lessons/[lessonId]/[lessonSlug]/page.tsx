@@ -13,15 +13,12 @@ import RelatedQuestions from "./_components/RelatedQuestions";
 import LessonResources from "./_components/LessonResources";
 import QuickActions from "./_components/QuickActions";
 import LessonNavigation from "./_components/LessonNavigation";
-import { getLocale } from "next-intl/server";
-
 interface PageProps {
   params: Promise<{ courseSlug: string; lessonId: string; lessonSlug: string }>;
 }
 
 export default async function LessonSummaryPage({ params }: PageProps) {
   const { courseSlug, lessonId, lessonSlug } = await params;
-  const locale = await getLocale();
 
   const lesson = await getLessonSummary(lessonId);
   if (!lesson) {
@@ -29,10 +26,7 @@ export default async function LessonSummaryPage({ params }: PageProps) {
   }
 
   if (lesson.course.slug !== courseSlug || lesson.slug !== lessonSlug) {
-    return redirect({
-      href: `/courses/${lesson.course.slug}/lessons/${lessonId}/${lesson.slug}`,
-      locale,
-    });
+    return redirect(`/courses/${lesson.course.slug}/lessons/${lessonId}/${lesson.slug}`);
   }
 
   const user = await getAuthUser();
