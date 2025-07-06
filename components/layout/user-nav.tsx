@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { User, Settings, LogOut } from "lucide-react"
-import { signOut } from "next-auth/react"
+import { signOut, signIn } from "next-auth/react"
+import { usePathname, useSearchParams } from "next/navigation"
 
 interface UserNavProps {
   user?: {
@@ -23,10 +24,21 @@ interface UserNavProps {
 }
 
 export function UserNav({ user }: UserNavProps) {
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  
+  const currentUrl = searchParams.toString() 
+    ? `${pathname}?${searchParams.toString()}`
+    : pathname
+
+  const handleSignIn = () => {
+    signIn(undefined, { callbackUrl: currentUrl })
+  }
+
   if (!user) {
     return (
-      <Button variant="default" asChild>
-        <Link href="/signin">Sign in</Link>
+      <Button variant="default" onClick={handleSignIn}>
+        Sign in
       </Button>
     )
   }
