@@ -5,18 +5,20 @@ import { AnswersSection } from "./_components/AnswersSection";
 import { BadgesSection } from "./_components/BadgesSection";
 import { SubscriptionsSection } from "./_components/SubscriptionsSection";
 import { NotificationsSection } from "./_components/NotificationsSection";
+import { getTranslations } from 'next-intl/server';
 
 // Force this page to be dynamic since it uses authentication
 export const dynamic = 'force-dynamic'
 
 export default async function ProfilePage() {
+  const t = await getTranslations('ProfilePage')
   const profileData = await getUserProfile();
 
   if (!profileData) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <p className="text-muted-foreground">Unable to load profile data.</p>
+          <p className="text-muted-foreground">{t('unableToLoad')}</p>
         </div>
       </div>
     );

@@ -8,8 +8,10 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { UserNav } from "@/components/layout/user-nav"
 import { useSessionRefresh } from "@/hooks/use-session-refresh"
 import { LanguageSwitcher } from "@/components/language-switcher"
+import { useTranslations } from 'next-intl'
 
 export function Header() {
+  const t = useTranslations('LandingPage.header');
   const [isOpen, setIsOpen] = useState(false)
   const { session } = useSessionRefresh()
 
@@ -23,8 +25,8 @@ export function Header() {
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex md:gap-6">
-          <a href="#features" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">Features</a>
-          <a href="#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">How It Works</a>
+          <a href="#features" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t('features')}</a>
+          <a href="#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t('howItWorks')}</a>
         </nav>
         
         <div className="hidden md:flex items-center gap-2">
@@ -34,10 +36,10 @@ export function Header() {
           ) : (
             <> 
               <Button variant="outline" asChild>
-                <Link href="/signin">Sign In</Link>
+                <Link href="/signin">{t('signIn')}</Link>
               </Button>
               <Button asChild>
-                <Link href="/signup">Sign Up</Link>
+                <Link href="/signup">{t('signUp')}</Link>
               </Button>
             </>
           )}
@@ -70,14 +72,14 @@ export function Header() {
                   className="text-base font-medium py-2 text-foreground hover:text-primary transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
-                  Features
+                  {t('features')}
                 </a>
                 <a
                   href="#how-it-works"
                   className="text-base font-medium py-2 text-foreground hover:text-primary transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
-                  How It Works
+                  {t('howItWorks')}
                 </a>
               </nav>
               
@@ -88,19 +90,19 @@ export function Header() {
                 {session ? (
                   <div className="flex flex-col gap-3">
                     <Button variant="outline" asChild className="w-full">
-                      <Link href="/questions">Q&A</Link>
+                      <Link href="/questions">{t('qa')}</Link>
                     </Button>
                     <Button variant="outline" asChild className="w-full">
-                      <Link href="/courses">Courses</Link>
+                      <Link href="/courses">{t('courses')}</Link>
                     </Button>
                   </div>
                 ) : (
                   <>
                     <Button variant="outline" asChild className="w-full">
-                      <Link href="/signin">Sign In</Link>
+                      <Link href="/signin">{t('signIn')}</Link>
                     </Button>
                     <Button asChild className="w-full">
-                      <Link href="/signup">Sign Up</Link>
+                      <Link href="/signup">{t('signUp')}</Link>
                     </Button>
                   </>
                 )}

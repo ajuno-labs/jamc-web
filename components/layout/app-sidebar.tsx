@@ -3,6 +3,7 @@
 import * as React from "react"
 import { BookOpen, GraduationCap, HelpCircle, LayoutDashboard, Users } from "lucide-react"
 import { Link, usePathname } from "@/i18n/navigation"
+import { useTranslations } from 'next-intl'
 
 import {
   Sidebar,
@@ -18,6 +19,7 @@ import {
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const t = useTranslations('Layout')
 
   const isActive = (path: string) => {
     if (path === "/") {
@@ -33,12 +35,12 @@ export function AppSidebar() {
 
   const navigationItems = [
     {
-      title: "Q&A",
+      title: t('qa'),
       url: "/questions",
       icon: HelpCircle,
     },
     {
-      title: "Courses",
+      title: t('courses'),
       url: "/courses",
       icon: BookOpen,
     },
@@ -47,17 +49,17 @@ export function AppSidebar() {
   // Teacher-specific navigation items
   const teacherNavigationItems = currentCourseSlug ? [
     {
-      title: "Dashboard",
+      title: t('dashboard'),
       url: `/courses/${currentCourseSlug}/teacher`,
       icon: LayoutDashboard,
     },
     {
-      title: "Q&A Forum",
+      title: t('qaForum'),
       url: `/courses/${currentCourseSlug}/teacher/questions`,
       icon: HelpCircle,
     },
     {
-      title: "Students",
+      title: t('students'),
       url: `/courses/${currentCourseSlug}/teacher/students`,
       icon: Users,
     },
@@ -76,7 +78,7 @@ export function AppSidebar() {
       
       <SidebarContent>
         <SidebarGroup>
-        <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+        <SidebarGroupLabel>{t('navigation')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (
@@ -96,7 +98,7 @@ export function AppSidebar() {
         {/* Teacher-specific navigation */}
         {isTeacherPage && teacherNavigationItems.length > 0 && (
           <SidebarGroup>
-            <SidebarGroupLabel>Course Management</SidebarGroupLabel>
+            <SidebarGroupLabel>{t('courseManagement')}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {teacherNavigationItems.map((item) => (
@@ -114,8 +116,6 @@ export function AppSidebar() {
           </SidebarGroup>
         )}
       </SidebarContent>
-      
-
     </Sidebar>
   )
 } 

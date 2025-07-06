@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { getAuthUser } from "@/lib/auth/get-user"
 import { getQuestionWithReputation } from "../_actions/question-edit-actions"
 import { EditQuestionForm } from "./_components/EditQuestionForm"
+import { getLocale } from "next-intl/server"
 
 interface EditQuestionPageProps {
   params: Promise<{ id: string; slug: string }>
@@ -32,14 +33,20 @@ export default async function EditQuestionPage({
     notFound()
   }
 
-  // If the slug doesn't match, redirect to the correct URL
+  const locale = await getLocale()
+  
   if (question.slug !== questionSlug) {
-    redirect(`/questions/${questionId}/${question.slug}/edit`)
+    redirect({
+      href: `/questions/${questionId}/${question.slug}/edit`,
+      locale
+    })
   }
 
-  // Check if user is the owner of the question
   if (!user || user.id !== question.author.id) {
-    redirect(`/questions/${questionId}/${question.slug}`)
+    redirect({
+      href: `/questions/${questionId}/${question.slug}`,
+      locale
+    })
   }
 
   return (

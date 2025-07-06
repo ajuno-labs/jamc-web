@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, BookOpen, Users } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { PaginationWrapper } from "@/components/ui/pagination-wrapper";
+import { useTranslations } from 'next-intl';
 
 interface Topic {
   name: string;
@@ -28,6 +29,7 @@ interface Teacher {
 }
 
 export default function ExploreCourses() {
+  const t = useTranslations('CoursesPage');
   const [searchTerm, setSearchTerm] = useState("");
   const [topicFilter, setTopicFilter] = useState("all");
   const [teacherFilter, setTeacherFilter] = useState("all");
@@ -152,7 +154,7 @@ export default function ExploreCourses() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
             type="text"
-            placeholder="Search courses..."
+            placeholder={t('searchCourses')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -161,14 +163,14 @@ export default function ExploreCourses() {
 
         <div className="flex gap-4 flex-wrap">
           <div>
-            <label className="text-sm font-medium mb-1 block">Topic</label>
+            <label className="text-sm font-medium mb-1 block">{t('topic')}</label>
             <select
               value={topicFilter}
               onChange={(e) => setTopicFilter(e.target.value)}
               className="border rounded-md p-2"
               disabled={isPending}
             >
-              <option value="all">All Topics</option>
+              <option value="all">{t('allTopics')}</option>
               {topics.map((topic) => (
                 <option key={topic.name} value={topic.name}>
                   {topic.name} ({topic.count})
@@ -178,14 +180,14 @@ export default function ExploreCourses() {
           </div>
 
           <div>
-            <label className="text-sm font-medium mb-1 block">Teacher</label>
+            <label className="text-sm font-medium mb-1 block">{t('teacher')}</label>
             <select
               value={teacherFilter}
               onChange={(e) => setTeacherFilter(e.target.value)}
               className="border rounded-md p-2"
               disabled={isPending}
             >
-              <option value="all">All Teachers</option>
+              <option value="all">{t('allTeachers')}</option>
               {teachers.map((teacher) => (
                 <option key={teacher.id} value={teacher.id}>
                   {teacher.name} ({teacher.courseCount})
@@ -202,7 +204,7 @@ export default function ExploreCourses() {
           <div className="absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center">
             <div className="flex items-center gap-2">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              <span className="text-sm text-muted-foreground">Loading courses...</span>
+              <span className="text-sm text-muted-foreground">{t('loadingCourses')}</span>
             </div>
           </div>
         </div>
@@ -229,20 +231,20 @@ export default function ExploreCourses() {
                 </p>
                 <div className="flex items-center gap-2 mb-4">
                   <span className="text-sm text-muted-foreground">
-                    By {course.author.name}
+                    {t('by')} {course.author.name}
                   </span>
                   <span className="text-sm text-muted-foreground">•</span>
                   <div className="flex items-center gap-1">
                     <BookOpen className="h-3 w-3" />
                     <span className="text-sm text-muted-foreground">
-                      {course.lessonCount} lessons
+                      {course.lessonCount} {t('lessons')}
                     </span>
                   </div>
                   <span className="text-sm text-muted-foreground">•</span>
                   <div className="flex items-center gap-1">
                     <Users className="h-3 w-3" />
                     <span className="text-sm text-muted-foreground">
-                      {course.enrollmentCount} students
+                      {course.enrollmentCount} {t('students')}
                     </span>
                   </div>
                 </div>
@@ -259,7 +261,7 @@ export default function ExploreCourses() {
         ) : (
           <div className="col-span-full text-center py-12">
             <p className="text-muted-foreground">
-              No courses found matching your criteria.
+              {t('noCoursesMatchSearch')}
             </p>
           </div>
         )}

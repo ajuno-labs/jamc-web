@@ -17,8 +17,10 @@ import { Plus, Loader2 } from "lucide-react";
 import { joinCourseWithCode } from "../_actions/course-actions";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from 'next-intl';
 
 export default function JoinCourseDialog() {
+  const t = useTranslations('CoursesPage');
   const [open, setOpen] = useState(false);
   const [joinCode, setJoinCode] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,7 +29,7 @@ export default function JoinCourseDialog() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!joinCode.trim()) {
-      toast.error("Please enter a join code");
+      toast.error(t('pleaseEnterJoinCode'));
       return;
     }
 
@@ -51,7 +53,7 @@ export default function JoinCourseDialog() {
       }
     } catch (error) {
       console.error("Error joining course:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to join course");
+      toast.error(error instanceof Error ? error.message : t('failedToJoinCourse'));
     } finally {
       setLoading(false);
     }
@@ -62,23 +64,23 @@ export default function JoinCourseDialog() {
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
           <Plus className="h-4 w-4 mr-2" />
-          Join Course
+          {t('joinCourse')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Join a Course</DialogTitle>
+          <DialogTitle>{t('joinCourseTitle')}</DialogTitle>
           <DialogDescription>
-            Enter the course join code provided by your instructor to enroll in a course.
+            {t('joinCourseDescription')}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="joinCode">Course Join Code</Label>
+              <Label htmlFor="joinCode">{t('courseJoinCode')}</Label>
               <Input
                 id="joinCode"
-                placeholder="Enter join code..."
+                placeholder={t('enterJoinCode')}
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value)}
                 disabled={loading}
@@ -93,11 +95,11 @@ export default function JoinCourseDialog() {
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button type="submit" disabled={loading || !joinCode.trim()}>
               {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Join Course
+              {t('joinCourse')}
             </Button>
           </DialogFooter>
         </form>

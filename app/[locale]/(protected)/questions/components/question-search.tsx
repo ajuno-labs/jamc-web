@@ -1,7 +1,8 @@
 import { Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { QuestionType } from "@prisma/client"
 import { TagFilter } from "./tag-filter"
+import { useTranslations } from 'next-intl'
+import { QuestionType } from "@prisma/client"
 
 interface QuestionSearchProps {
   query: string
@@ -20,6 +21,8 @@ export function QuestionSearch({
   selectedTags,
   onTagsChange,
 }: QuestionSearchProps) {
+  const t = useTranslations('QuestionsPage.search')
+  
   return (
     <div className="flex flex-col gap-6">
       {/* Search and Type filters */}
@@ -30,7 +33,7 @@ export function QuestionSearch({
             <input
               value={query}
               onChange={(e) => onQueryChange(e.target.value)}
-              placeholder="Search questions..."
+              placeholder={t('placeholder')}
               className="w-full pl-10 pr-4 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
@@ -40,19 +43,19 @@ export function QuestionSearch({
             variant={selectedType === "all" ? "default" : "outline"}
             onClick={() => onTypeChange("all")}
           >
-            All
+            {t('allTypes')}
           </Button>
           <Button
             variant={selectedType === "YOLO" ? "default" : "outline"}
             onClick={() => onTypeChange("YOLO")}
           >
-            YOLO
+            {t('yolo')}
           </Button>
           <Button
             variant={selectedType === "FORMAL" ? "default" : "outline"}
             onClick={() => onTypeChange("FORMAL")}
           >
-            Formal
+            {t('formal')}
           </Button>
         </div>
       </div>

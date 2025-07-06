@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "pnpm db:migrate",
     "dev": "next dev --turbopack",
     "prestart": "pnpm db:migrate",
     "prebuild": "pnpm db:migrate && pnpm db:seed",

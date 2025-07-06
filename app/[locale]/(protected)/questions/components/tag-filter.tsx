@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { getTags } from "../_actions/tags"
+import { useTranslations } from 'next-intl'
 
 interface Tag {
   id: string
@@ -33,6 +34,7 @@ interface TagFilterProps {
 }
 
 export function TagFilter({ selectedTags, onTagsChange }: TagFilterProps) {
+  const t = useTranslations('QuestionsPage.search')
   const [open, setOpen] = useState(false)
   const [tags, setTags] = useState<Tag[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -86,15 +88,15 @@ export function TagFilter({ selectedTags, onTagsChange }: TagFilterProps) {
           >
             <div className="flex items-center gap-2">
               <TagIcon className="h-4 w-4" />
-              <span>{selectedTags.length > 0 ? `${selectedTags.length} tags selected` : "Select tags"}</span>
+              <span>{selectedTags.length > 0 ? t('tagsSelected', { count: selectedTags.length }) : t('selectTags')}</span>
             </div>
           </Button>
         </PopoverTrigger>
         <PopoverContent className="p-0 w-full md:w-[250px]" align="start">
           <Command>
-            <CommandInput placeholder="Search tags..." />
+            <CommandInput placeholder={t('searchTags')} />
             <CommandList>
-              <CommandEmpty>No tags found.</CommandEmpty>
+              <CommandEmpty>{t('noTagsFound')}</CommandEmpty>
               <CommandGroup>
                 <ScrollArea className="h-[200px]">
                   {tags.map((tag) => (
@@ -153,7 +155,7 @@ export function TagFilter({ selectedTags, onTagsChange }: TagFilterProps) {
               className="h-6 text-xs"
               onClick={clearTags}
             >
-              Clear all
+              {t('clearAll')}
             </Button>
           )}
         </div>
