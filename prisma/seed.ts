@@ -13,13 +13,16 @@ async function main() {
     }
     const lessons = await prisma.lesson.findMany({
       where: { courseId: vietnameseMath.id },
-      select: { id: true, title: true }
+      select: { id: true, title: true },
+      orderBy: { order: "asc" }
     });
     await seedQuestions({
       students: vietnameseStudents.map(s => ({ id: s.id, name: s.name ?? "" })),
       course: vietnameseMath,
       lessons
     });
+    
+    console.log("Database seeded successfully");
   } catch (error) {
     console.error("Error seeding database:", error);
     throw error;
