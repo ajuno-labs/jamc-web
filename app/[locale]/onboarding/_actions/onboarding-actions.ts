@@ -2,12 +2,12 @@
 
 import { getAuthUser } from "@/lib/auth/get-user"
 import { notifyWelcome } from "@/lib/services/notification-triggers"
-import { redirect } from "next/navigation"
+import { redirect } from "@/i18n/navigation"
 
 export async function triggerWelcomeNotification() {
   const user = await getAuthUser()
   if (!user) {
-    redirect("/signin")
+    return redirect("/signin")
   }
 
   try {

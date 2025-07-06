@@ -388,8 +388,6 @@ model Course {
   slug        String             @unique
   joinCode    String?            @unique  // Unique code for students to join the course
   
-  // New field for course structure/hierarchy
-  // structure   Json?       // (Deprecated – use modules/chapters instead)
   modules     CourseModule[]
   
   // Metadata

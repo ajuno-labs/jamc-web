@@ -5,11 +5,15 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, Dialog
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { MessageCircle, FileText, Download } from 'lucide-react'
-import type { LessonSummary } from '../_actions/summary-actions'
 
-// Define props interface
+interface LessonFile {
+  id: string
+  url: string
+  type: string
+}
+
 interface QuickActionsProps {
-  files: LessonSummary['files']
+  files: LessonFile[]
 }
 
 export default function QuickActions({ files }: QuickActionsProps) {

@@ -1,6 +1,5 @@
 import { redirect } from "@/i18n/navigation";
 import { getLessonAndRedirect } from "../../_components/lesson-actions";
-
 export default async function LessonRedirectPage({
   params,
 }: {
@@ -10,10 +9,8 @@ export default async function LessonRedirectPage({
   const result = await getLessonAndRedirect(lessonId);
 
   if (!result) {
-    redirect(`/courses/${courseSlug}`);
+    return redirect(`/courses/${courseSlug}`);
   }
 
-  redirect(
-    `/courses/${result.courseSlug}/lessons/${lessonId}/${result.lessonSlug}`
-  );
+  return redirect(`/courses/${result.courseSlug}/lessons/${lessonId}/${result.lessonSlug}`);
 }

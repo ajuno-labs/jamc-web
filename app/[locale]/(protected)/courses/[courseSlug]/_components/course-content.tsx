@@ -28,16 +28,24 @@ export interface CourseContentProps {
       }[];
     }[];
   }[];
+  // Lessons that are attached directly to the course (no chapter/module)
+  lessons?: {
+    id: string;
+    title: string;
+    slug: string;
+    order: number;
+  }[];
 }
 
-export function CourseContent({ courseSlug, modules }: CourseContentProps) {
+export function CourseContent({ courseSlug, modules, lessons = [] }: CourseContentProps) {
   return (
     <Card className="mt-6 shadow-lg">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold">Course Syllabus</CardTitle>
+        <CardTitle className="text-2xl font-bold">Course Content</CardTitle>
       </CardHeader>
-      <CardContent className="px-4 md:px-6 pb-6">
-        {modules.length > 0 ? (
+      <CardContent className="px-4 md:px-6 pb-6 space-y-6">
+        {/* Render hierarchical syllabus when modules exist */}
+        {modules.length > 0 && (
           <Accordion type="multiple" defaultValue={modules.map((mod) => mod.slug)} className="w-full space-y-2">
             {modules.map((mod) => (
               <AccordionItem
@@ -74,7 +82,32 @@ export function CourseContent({ courseSlug, modules }: CourseContentProps) {
               </AccordionItem>
             ))}
           </Accordion>
-        ) : (
+        )}
+
+        {/* Render top-level lessons when provided */}
+        {lessons.length > 0 && (
+          <div className="space-y-2">
+            {modules.length === 0 && (
+              <h3 className="font-semibold flex items-center gap-2 text-lg">
+                <Folder className="h-4 w-4 text-primary/70" /> Lessons
+              </h3>
+            )}
+            <div className="space-y-1 pl-1">
+              {[...lessons].sort((a, b) => a.order - b.order).map((lesson) => (
+                <Link
+                  key={lesson.id}
+                  href={`/courses/${courseSlug}/lessons/${lesson.id}/${lesson.slug}`}
+                  className="flex items-center gap-2 py-1 hover:text-primary"
+                >
+                  <BookOpen className="h-4 w-4 text-primary/70" />
+                  <span className="text-sm truncate">{lesson.title}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {modules.length === 0 && lessons.length === 0 && (
           <p className="text-muted-foreground text-center py-4">
             The structure for this course has not been defined yet.
           </p>

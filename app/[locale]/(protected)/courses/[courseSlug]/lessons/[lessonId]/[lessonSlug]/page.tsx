@@ -13,7 +13,6 @@ import RelatedQuestions from "./_components/RelatedQuestions";
 import LessonResources from "./_components/LessonResources";
 import QuickActions from "./_components/QuickActions";
 import LessonNavigation from "./_components/LessonNavigation";
-
 interface PageProps {
   params: Promise<{ courseSlug: string; lessonId: string; lessonSlug: string }>;
 }

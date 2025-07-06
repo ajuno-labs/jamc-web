@@ -46,7 +46,7 @@ export default async function QuestionPage({
 
   // If the slug doesn't match, redirect to the correct URL
   if (question.slug !== questionSlug) {
-    redirect(`/questions/${questionId}/${question.slug}`)
+    return redirect(`/questions/${questionId}/${question.slug}`)
   }
 
   const isEducator = hasPermission(user, "MANAGE")

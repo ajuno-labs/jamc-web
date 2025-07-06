@@ -14,5 +14,5 @@ export default async function QuestionRedirectPage({ params }: Props) {
   });
 
   if (!question) notFound();
-  redirect(`/questions/${question.id}/${question.slug}`);
+  return redirect(`/questions/${question.id}/${question.slug}`);
 }
