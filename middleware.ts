@@ -3,30 +3,24 @@ import { NextResponse } from "next/server";
 import createMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
 
-// Create the i18n middleware
 const intlMiddleware = createMiddleware(routing);
 
 export default auth((req) => {
-  // Handle internationalization first
   const response = intlMiddleware(req);
   
-  // If i18n middleware returns a response (redirect), use it
   if (response) {
     return response;
   }
 
-  // Extract locale from pathname for auth logic
   const pathname = req.nextUrl.pathname;
   const pathnameHasLocale = routing.locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
   
-  // Strip locale from pathname for auth checks
   const pathWithoutLocale = pathnameHasLocale 
     ? pathname.replace(/^\/[^\/]+/, '') || '/'
     : pathname;
 
-  // Root path - allow both localized and non-localized
   if (pathWithoutLocale === "/") {
     return NextResponse.next();
   }
@@ -42,7 +36,6 @@ export default auth((req) => {
     }
   }
 
-  // Protected routes - require authentication
   if (!req.auth) {
     const locale = pathnameHasLocale ? pathname.split('/')[1] : routing.defaultLocale;
     const signInUrl = new URL(`/${locale}/signin`, req.url);
