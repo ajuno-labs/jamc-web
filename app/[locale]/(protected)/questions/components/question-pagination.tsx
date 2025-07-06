@@ -7,6 +7,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import { useTranslations } from 'next-intl'
 
 interface QuestionPaginationProps {
   currentPage: number
@@ -27,6 +28,7 @@ export function QuestionPagination({
   itemsPerPage,
   maxVisiblePages = 5,
 }: QuestionPaginationProps) {
+  const t = useTranslations('QuestionsPage.pagination')
   // Generate array of page numbers to display
   const getPageNumbers = () => {
     const pageNumbers: (number | 'ellipsis')[] = []
@@ -69,7 +71,11 @@ export function QuestionPagination({
   return (
     <div className="mt-8 space-y-4">
       <div className="text-sm text-muted-foreground text-center">
-        Showing {Math.min(itemsPerPage, totalItems)} of {totalItems} questions
+        {t('showing', {
+          from: (currentPage - 1) * itemsPerPage + 1,
+          to: Math.min(currentPage * itemsPerPage, totalItems),
+          total: totalItems
+        })}
       </div>
       <Pagination>
         <PaginationContent>

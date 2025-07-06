@@ -89,5 +89,52 @@
       "cookiePolicy": "Cookie Policy",
       "copyright": "© {year} JAMC. All rights reserved."
     }
+  },
+  "QuestionsPage": {
+    "title": "Questions",
+    "askQuestion": "Ask a Question",
+    "loading": "Loading questions...",
+    "noQuestionsFound": "No questions found matching your filters.",
+    "noQuestionsYet": "No questions yet. Be the first to ask!",
+    "search": {
+      "placeholder": "Search questions...",
+      "allTypes": "All Types",
+      "formal": "Formal",
+      "yolo": "YOLO",
+      "clearFilters": "Clear Filters",
+      "selectTags": "Select tags",
+      "tagsSelected": "{count} tags selected",
+      "searchTags": "Search tags...",
+      "noTagsFound": "No tags found.",
+      "clearAll": "Clear all"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "showing": "Showing {from} to {to} of {total} questions",
+      "loadMore": "Load More"
+    }
+  },
+  "AskQuestionPage": {
+    "title": "Ask a Question"
+  },
+  "SearchPage": {
+    "title": "Search",
+    "enterQuery": "Enter a search query above.",
+    "resultsFor": "Search Results for \"{query}\"",
+    "courses": "Courses",
+    "questions": "Questions",
+    "noResults": "No results found."
+  },
+  "ProfilePage": {
+    "unableToLoad": "Unable to load profile data."
+  },
+  "CoursesPage": {
+    "title": "Mathematics Courses",
+    "createNewCourse": "Create New Course",
+    "myCourses": "My Courses",
+    "explore": "Explore",
+    "exploreCourses": "Explore Courses",
+    "exploreDescription": "Discover new courses and expand your knowledge"
   }
-} 
+}

@@ -4,11 +4,12 @@ import * as React from "react"
 import { Link } from "@/i18n/navigation"
 import { Button } from "@/components/ui/button"
 import { searchQuestions } from "@/lib/actions/search-actions"
-import { QuestionType } from "@prisma/client"
+type QuestionType = 'YOLO' | 'FORMAL'
 import { QuestionSearch } from "./components/question-search"
 import { QuestionCard } from "./components/question-card"
 import { QuestionPagination } from "./components/question-pagination"
 import { useDebounce } from "@/lib/hooks/use-debounce"
+import { useTranslations } from 'next-intl'
 
 interface SearchResult {
   id: string
@@ -29,6 +30,7 @@ interface SearchResult {
 const ITEMS_PER_PAGE = 10
 
 export default function QuestionsPage() {
+  const t = useTranslations('QuestionsPage')
   const [query, setQuery] = React.useState("")
   const debouncedQuery = useDebounce(query, 300)
   const [results, setResults] = React.useState<SearchResult[]>([])
@@ -93,9 +95,9 @@ export default function QuestionsPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Questions</h1>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
         <Button asChild>
-          <Link href="/questions/ask">Ask a Question</Link>
+          <Link href="/questions/ask">{t('askQuestion')}</Link>
         </Button>
       </div>
 
@@ -112,10 +114,10 @@ export default function QuestionsPage() {
 
       <div className="space-y-4">
         {isLoading && currentPage === 1 ? (
-          <div className="text-center py-8">Loading questions...</div>
+          <div className="text-center py-8">{t('loading')}</div>
         ) : results.length === 0 ? (
           <div className="text-center py-8">
-            {query || selectedTags.length > 0 ? "No questions found matching your filters." : "No questions yet. Be the first to ask!"}
+            {query || selectedTags.length > 0 ? t('noQuestionsFound') : t('noQuestionsYet')}
           </div>
         ) : (
           <>

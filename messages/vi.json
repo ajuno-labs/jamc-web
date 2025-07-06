@@ -89,5 +89,52 @@
       "cookiePolicy": "Chính Sách Cookie",
       "copyright": "© {year} JAMC. Tất cả quyền được bảo lưu."
     }
+  },
+  "QuestionsPage": {
+    "title": "Câu Hỏi",
+    "askQuestion": "Đặt Câu Hỏi",
+    "loading": "Đang tải câu hỏi...",
+    "noQuestionsFound": "Không tìm thấy câu hỏi nào phù hợp với bộ lọc của bạn.",
+    "noQuestionsYet": "Chưa có câu hỏi nào. Hãy là người đầu tiên đặt câu hỏi!",
+    "search": {
+      "placeholder": "Tìm kiếm câu hỏi...",
+      "allTypes": "Tất Cả",
+      "formal": "Chính Thức",
+      "yolo": "YOLO",
+      "clearFilters": "Xóa Bộ Lọc",
+      "selectTags": "Chọn thẻ",
+      "tagsSelected": "{count} thẻ đã chọn",
+      "searchTags": "Tìm kiếm thẻ...",
+      "noTagsFound": "Không tìm thấy thẻ nào.",
+      "clearAll": "Xóa tất cả"
+    },
+    "pagination": {
+      "previous": "Trước",
+      "next": "Tiếp",
+      "showing": "Hiển thị {from} đến {to} trong tổng số {total} câu hỏi",
+      "loadMore": "Tải Thêm"
+    }
+  },
+  "AskQuestionPage": {
+    "title": "Đặt Câu Hỏi"
+  },
+  "SearchPage": {
+    "title": "Tìm Kiếm",
+    "enterQuery": "Nhập từ khóa tìm kiếm ở trên.",
+    "resultsFor": "Kết Quả Tìm Kiếm cho \"{query}\"",
+    "courses": "Khóa Học",
+    "questions": "Câu Hỏi",
+    "noResults": "Không tìm thấy kết quả nào."
+  },
+  "ProfilePage": {
+    "unableToLoad": "Không thể tải dữ liệu hồ sơ."
+  },
+  "CoursesPage": {
+    "title": "Khóa Học Toán Học",
+    "createNewCourse": "Tạo Khóa Học Mới",
+    "myCourses": "Khóa Học Của Tôi",
+    "explore": "Khám Phá",
+    "exploreCourses": "Khám Phá Khóa Học",
+    "exploreDescription": "Khám phá các khóa học mới và mở rộng kiến thức của bạn"
   }
 } 
