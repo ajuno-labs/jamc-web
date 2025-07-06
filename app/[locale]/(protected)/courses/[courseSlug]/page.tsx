@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { getAuthUser } from "@/lib/auth/get-user";
-import { getPublicEnhancedPrisma, getEnhancedPrisma } from "@/lib/db/enhanced";
+import { getPublicEnhancedPrisma } from "@/lib/db/enhanced";
+import { getCourseDetail } from "@/lib/actions/course-actions";
 import { CourseContent } from "./_components/course-content";
 import { CourseStats } from "./_components/course-stats";
 import { CourseSidebar } from "./_components/course-sidebar";
 
-// Generate metadata for the page
 export async function generateMetadata({ params }: { params: Promise<{ courseSlug: string }> }): Promise<Metadata> {
   const { courseSlug } = await params;
   const db = getPublicEnhancedPrisma();
@@ -38,52 +38,7 @@ export default async function CourseDetailPage({
   const user = await getAuthUser();
   const userId = user?.id;
 
-  // Use enhanced Prisma client with user context to respect policies
-  const db = await getEnhancedPrisma();
-
-  // Get course with lessons and enrollment count
-  const course = await db.course.findUnique({
-    where: { slug: courseSlug },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      slug: true,
-      createdAt: true,
-      updatedAt: true,
-      modules: {
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          order: true,
-          chapters: {
-            select: {
-              id: true,
-              title: true,
-              slug: true,
-              order: true,
-              lessons: {
-                select: {
-                  id: true,
-                  title: true,
-                  slug: true,
-                  order: true,
-                },
-                orderBy: { order: "asc" },
-              },
-            },
-            orderBy: { order: "asc" },
-          },
-        },
-        orderBy: { order: "asc" },
-      },
-      enrollments: {
-        select: { userId: true },
-      },
-      author: { select: { id: true, name: true, image: true } },
-    },
-  });
+  const course = await getCourseDetail(courseSlug);
 
   if (!course) {
     notFound();
@@ -93,6 +48,22 @@ export default async function CourseDetailPage({
   const isEnrolled = userId
     ? course.enrollments.some((e) => e.userId === userId)
     : false;
+
+  // Total lesson count (hierarchical + top-level)
+  const lessonsInHierarchy = course.modules.reduce(
+    (total, mod) =>
+      total + mod.chapters.reduce((ctotal, chap) => ctotal + chap.lessons.length, 0),
+    0
+  );
+  const lessonCount = lessonsInHierarchy + (course.lessons?.length ?? 0);
+
+  // Determine first lesson to link to (hierarchical first, else top-level)
+  const firstNestedLesson = course.modules[0]?.chapters[0]?.lessons[0];
+  const firstLesson = firstNestedLesson
+    ? { id: firstNestedLesson.id, slug: firstNestedLesson.slug }
+    : course.lessons?.[0]
+      ? { id: course.lessons[0].id, slug: course.lessons[0].slug }
+      : null;
 
   // Detect if the current user is the course instructor
   const isInstructor = userId === course.author.id;
@@ -108,11 +79,7 @@ export default async function CourseDetailPage({
           </div>
 
           <CourseStats
-            lessonCount={course.modules.reduce(
-              (total, module) =>
-                total + module.chapters.reduce((ctotal, chap) => ctotal + chap.lessons.length, 0),
-              0
-            )}
+            lessonCount={lessonCount}
             studentCount={course.enrollments.length}
             updatedAt={course.updatedAt}
           />
@@ -120,6 +87,7 @@ export default async function CourseDetailPage({
           <CourseContent
             courseSlug={courseSlug}
             modules={course.modules}
+            lessons={course.lessons ?? []}
           />
         </div>
 
@@ -131,14 +99,7 @@ export default async function CourseDetailPage({
             isEnrolled={isEnrolled}
             isLoggedIn={!!userId}
             isInstructor={isInstructor}
-            firstLesson={
-              course.modules[0]?.chapters[0]?.lessons[0]
-                ? {
-                    id: course.modules[0].chapters[0].lessons[0].id,
-                    slug: course.modules[0].chapters[0].lessons[0].slug,
-                  }
-                : null
-            }
+            firstLesson={firstLesson}
             instructor={{
               name: course.author.name,
               image: course.author.image,

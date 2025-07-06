@@ -41,49 +41,47 @@ export default function QuestionsPage() {
   const [total, setTotal] = React.useState(0)
   const [hasMore, setHasMore] = React.useState(false)
 
-  // Function to perform search
-  const performSearch = React.useCallback(async (resetPage: boolean = false) => {
-    setIsLoading(true)
-    try {
-      const page = resetPage ? 1 : currentPage
-      const result = await searchQuestions(
-        debouncedQuery, 
-        selectedType, 
-        page, 
-        ITEMS_PER_PAGE,
-        selectedTags
-      )
-      setResults(result.items)
-      setTotal(result.total)
-      setHasMore(result.hasMore)
-      if (resetPage) {
-        setCurrentPage(1)
+  /**
+   * Fetch questions based on the current filters and the page that should be displayed.
+   *
+   * NOTE: This function **must not** depend on `currentPage` otherwise its reference
+   * will change every time we navigate, triggering effects that reset the page back
+   * to 1. Instead, the page to fetch is passed explicitly as an argument.
+   */
+  const performSearch = React.useCallback(
+    async (pageToFetch: number) => {
+      setIsLoading(true)
+      try {
+        const result = await searchQuestions(
+          debouncedQuery,
+          selectedType,
+          pageToFetch,
+          ITEMS_PER_PAGE,
+          selectedTags
+        )
+
+        setResults(result.items)
+        setTotal(result.total)
+        setHasMore(result.hasMore ?? pageToFetch * ITEMS_PER_PAGE < result.total)
+      } catch (error) {
+        console.error("Search error:", error)
+      } finally {
+        setIsLoading(false)
       }
-    } catch (error) {
-      console.error("Search error:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [debouncedQuery, selectedType, currentPage, selectedTags])
+    },
+    [debouncedQuery, selectedType, selectedTags]
+  )
 
-  // Load initial questions
+  // Whenever the filtering options change, reset the page to 1 first
   React.useEffect(() => {
-    performSearch()
-  }, [performSearch])
+    setCurrentPage(1)
+  }, [debouncedQuery, selectedType, selectedTags])
 
-  // Perform search when query, type, or tags change
+  // Fetch data whenever the page or filters change
   React.useEffect(() => {
-    performSearch(true) // Reset to first page when filters change
-  }, [debouncedQuery, selectedType, selectedTags, performSearch])
+    performSearch(currentPage)
+  }, [performSearch, currentPage])
 
-  // Load more questions when page changes
-  React.useEffect(() => {
-    if (currentPage > 1) {
-      performSearch()
-    }
-  }, [currentPage, performSearch])
-
-  // Handle tag click from question items
   const handleTagClick = (tagName: string) => {
     if (!selectedTags.includes(tagName)) {
       setSelectedTags([...selectedTags, tagName])
