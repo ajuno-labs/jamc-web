@@ -1,12 +1,17 @@
 import { getAuthUser } from "@/lib/auth/get-user"
 import { redirect } from "@/i18n/navigation"
 import { DebugNotificationActions } from "./_components/DebugNotificationActions"
+import { getLocale } from "next-intl/server";
 
 export default async function DebugNotificationsPage() {
+  const locale = await getLocale();
   const user = await getAuthUser()
   
   if (!user) {
-    redirect("/signin")
+    redirect({
+      href: "/signin",
+      locale,
+    });
   }
 
   return (
