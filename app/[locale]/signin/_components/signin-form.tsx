@@ -11,15 +11,18 @@ import { signInSchema } from "@/lib/types/auth";
 import { z } from "zod";
 import { EmailField, PasswordField } from "@/components/auth-fields";
 import { markJustAuthenticated } from "@/hooks/use-session-refresh";
+import { useTranslations } from 'next-intl';
 
 export type SignInInput = z.infer<typeof signInSchema>;
 
 export function SignInForm() {
+  const t = useTranslations('SignInPage');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const { update } = useSession();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+  
   const {
     register,
     handleSubmit,
@@ -48,7 +51,7 @@ export function SignInForm() {
           errorCode === "CredentialsSignin" ||
           errorCode === "Configuration"
         ) {
-          message = "Invalid email or password";
+          message = t('invalidCredentials');
         }
         setError(message);
       } else if (result?.url) {
@@ -60,7 +63,7 @@ export function SignInForm() {
       }
     } catch (error) {
       console.error(error);
-      setError("An unexpected error occurred");
+      setError(t('unexpectedError'));
     } finally {
       setIsLoading(false);
     }
@@ -96,7 +99,7 @@ export function SignInForm() {
             href="#"
             className="font-medium text-indigo-600 hover:text-indigo-500"
           >
-            Forgot your password?
+            {t('forgotPassword')}
           </a>
         </div>
       </div>
@@ -110,10 +113,10 @@ export function SignInForm() {
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Signing in...
+              {t('signingIn')}
             </>
           ) : (
-            "Sign in"
+            t('signIn')
           )}
         </Button>
       </div>

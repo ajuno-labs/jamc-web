@@ -36,9 +36,6 @@ export default function SignUpPage() {
             <SignUpForm />
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <p className="text-xs text-muted-foreground">
-              For school-administered accounts, use your institutional email
-            </p>
             <p className="text-xs text-muted-foreground">By continuing, you agree to JAMC&apos;s Terms of Service</p>
             <div className="text-center text-sm text-muted-foreground">
               Already have an account?{" "}

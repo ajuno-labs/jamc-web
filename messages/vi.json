@@ -167,5 +167,29 @@
     "qaForum": "Diễn Đàn Hỏi Đáp",
     "students": "Học Sinh",
     "search": "Tìm kiếm..."
+  },
+  "SignInPage": {
+    "welcomeBack": "Chào mừng trở lại",
+    "workHardPlayHard": "Học chăm chỉ, chơi hết mình",
+    "signInWithGoogle": "Đăng nhập bằng Google",
+    "or": "hoặc",
+    "forgotPassword": "Quên mật khẩu?",
+    "signIn": "Đăng nhập",
+    "signingIn": "Đang đăng nhập...",
+    "termsOfService": "Bằng việc tiếp tục, bạn đồng ý với Điều Khoản Dịch Vụ của JAMC",
+    "dontHaveAccount": "Chưa có tài khoản?",
+    "signUp": "Đăng ký",
+    "invalidCredentials": "Email hoặc mật khẩu không hợp lệ",
+    "unexpectedError": "Đã xảy ra lỗi không mong muốn",
+    "pleaseSignInWithOAuth": "Vui lòng đăng nhập bằng nhà cung cấp OAuth",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "validation": {
+      "emailRequired": "Email là bắt buộc",
+      "invalidEmail": "Email không hợp lệ",
+      "passwordRequired": "Mật khẩu là bắt buộc",
+      "passwordMinLength": "Mật khẩu phải có ít nhất 8 ký tự",
+      "passwordMaxLength": "Mật khẩu phải có ít hơn 32 ký tự"
+    }
   }
 }

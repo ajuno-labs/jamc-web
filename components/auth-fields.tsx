@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Eye, EyeOff, Mail, Lock } from "lucide-react"
+import { useTranslations } from 'next-intl'
 
 interface EmailFieldProps {
   id?: string
@@ -15,6 +16,8 @@ interface EmailFieldProps {
 }
 
 export function EmailField({ id = "email", register, error, disabled }: EmailFieldProps) {
+  const t = useTranslations('SignInPage');
+  
   return (
     <div className="space-y-2">
       <div className="relative">
@@ -35,7 +38,7 @@ export function EmailField({ id = "email", register, error, disabled }: EmailFie
           htmlFor={id}
           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-background px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
         >
-          Email
+          {t('email')}
         </Label>
       </div>
       {error && (
@@ -60,9 +63,10 @@ export function PasswordField({
   register, 
   error, 
   disabled,
-  label = "Password" 
+  label 
 }: PasswordFieldProps) {
   const [showPassword, setShowPassword] = useState(false)
+  const t = useTranslations('SignInPage');
 
   return (
     <div className="space-y-2">
@@ -99,7 +103,7 @@ export function PasswordField({
           htmlFor={id}
           className="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-background px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
         >
-          {label}
+          {label || t('password')}
         </Label>
       </div>
       {error && (
@@ -109,4 +113,4 @@ export function PasswordField({
       )}
     </div>
   )
-} 
+}

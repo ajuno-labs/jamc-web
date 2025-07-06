@@ -167,5 +167,29 @@
     "qaForum": "Q&A Forum",
     "students": "Students",
     "search": "Search..."
+  },
+  "SignInPage": {
+    "welcomeBack": "Welcome back",
+    "workHardPlayHard": "Work hard, play hard",
+    "signInWithGoogle": "Sign in with Google",
+    "or": "or",
+    "forgotPassword": "Forgot your password?",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "termsOfService": "By continuing, you agree to JAMC's Terms of Service",
+    "dontHaveAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "invalidCredentials": "Invalid email or password",
+    "unexpectedError": "An unexpected error occurred",
+    "pleaseSignInWithOAuth": "Please sign in with OAuth provider",
+    "email": "Email",
+    "password": "Password",
+    "validation": {
+      "emailRequired": "Email is required",
+      "invalidEmail": "Invalid email",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be more than 8 characters",
+      "passwordMaxLength": "Password must be less than 32 characters"
+    }
   }
 }
