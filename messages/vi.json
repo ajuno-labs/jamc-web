@@ -130,11 +130,32 @@
     "unableToLoad": "Không thể tải dữ liệu hồ sơ."
   },
   "CoursesPage": {
-    "title": "Khóa Học Toán Học",
+    "title": "Khóa Học",
     "createNewCourse": "Tạo Khóa Học Mới",
     "myCourses": "Khóa Học Của Tôi",
     "explore": "Khám Phá",
     "exploreCourses": "Khám Phá Khóa Học",
-    "exploreDescription": "Khám phá các khóa học mới và mở rộng kiến thức của bạn"
+    "exploreDescription": "Khám phá các khóa học mới và mở rộng kiến thức của bạn",
+    "searchMyCourses": "Tìm kiếm khóa học của bạn...",
+    "loadingCourses": "Đang tải khóa học...",
+    "noCoursesFound": "Không tìm thấy khóa học nào",
+    "noCoursesMatchSearch": "Không có khóa học nào phù hợp với tiêu chí tìm kiếm của bạn.",
+    "noEnrolledCourses": "Bạn chưa đăng ký khóa học nào hoặc tạo khóa học nào.",
+    "searchCourses": "Tìm kiếm khóa học...",
+    "allTopics": "Tất Cả Chủ Đề",
+    "allTeachers": "Tất Cả Giáo Viên",
+    "topic": "Chủ Đề",
+    "teacher": "Giáo Viên",
+    "lessons": "bài học",
+    "students": "học sinh",
+    "by": "Bởi",
+    "joinCourse": "Tham Gia Khóa Học",
+    "joinCourseTitle": "Tham Gia Khóa Học",
+    "joinCourseDescription": "Nhập mã tham gia khóa học được cung cấp bởi giáo viên của bạn để đăng ký khóa học.",
+    "courseJoinCode": "Mã Tham Gia Khóa Học",
+    "enterJoinCode": "Nhập mã tham gia...",
+    "cancel": "Hủy",
+    "pleaseEnterJoinCode": "Vui lòng nhập mã tham gia",
+    "failedToJoinCourse": "Không thể tham gia khóa học"
   }
-} 
+}

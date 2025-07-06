@@ -9,8 +9,10 @@ import { Search, BookOpen, Users } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { PaginationWrapper } from "@/components/ui/pagination-wrapper";
 import JoinCourseDialog from "./JoinCourseDialog";
+import { useTranslations } from 'next-intl';
 
 export default function MyCourses() {
+  const t = useTranslations('CoursesPage');
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [result, setResult] = useState<PaginatedResult<Course>>({
@@ -64,7 +66,7 @@ export default function MyCourses() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
             type="text"
-            placeholder="Search your courses..."
+            placeholder={t('searchMyCourses')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -79,7 +81,7 @@ export default function MyCourses() {
           <div className="absolute inset-0 bg-background/50 backdrop-blur-sm z-10 flex items-center justify-center">
             <div className="flex items-center gap-2">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              <span className="text-sm text-muted-foreground">Loading courses...</span>
+              <span className="text-sm text-muted-foreground">{t('loadingCourses')}</span>
             </div>
           </div>
         </div>
@@ -106,20 +108,20 @@ export default function MyCourses() {
                 </p>
                 <div className="flex items-center gap-2 mb-4">
                   <span className="text-sm text-muted-foreground">
-                    By {course.author.name}
+                    {t('by')} {course.author.name}
                   </span>
                   <span className="text-sm text-muted-foreground">•</span>
                   <div className="flex items-center gap-1">
                     <BookOpen className="h-3 w-3" />
                     <span className="text-sm text-muted-foreground">
-                      {course.lessonCount} lessons
+                      {course.lessonCount} {t('lessons')}
                     </span>
                   </div>
                   <span className="text-sm text-muted-foreground">•</span>
                   <div className="flex items-center gap-1">
                     <Users className="h-3 w-3" />
                     <span className="text-sm text-muted-foreground">
-                      {course.enrollmentCount} students
+                      {course.enrollmentCount} {t('students')}
                     </span>
                   </div>
                 </div>
@@ -136,11 +138,11 @@ export default function MyCourses() {
         ) : (
           <div className="col-span-full text-center py-12">
             <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No courses found</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('noCoursesFound')}</h3>
             <p className="text-muted-foreground mb-4">
               {searchTerm
-                ? "No courses match your search criteria."
-                : "You haven't enrolled in any courses yet, or created any courses."}
+                ? t('noCoursesMatchSearch')
+                : t('noEnrolledCourses')}
             </p>
             {!searchTerm && <JoinCourseDialog />}
           </div>

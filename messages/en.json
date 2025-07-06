@@ -130,11 +130,32 @@
     "unableToLoad": "Unable to load profile data."
   },
   "CoursesPage": {
-    "title": "Mathematics Courses",
+    "title": "Courses",
     "createNewCourse": "Create New Course",
     "myCourses": "My Courses",
     "explore": "Explore",
     "exploreCourses": "Explore Courses",
-    "exploreDescription": "Discover new courses and expand your knowledge"
+    "exploreDescription": "Discover new courses and expand your knowledge",
+    "searchMyCourses": "Search your courses...",
+    "loadingCourses": "Loading courses...",
+    "noCoursesFound": "No courses found",
+    "noCoursesMatchSearch": "No courses match your search criteria.",
+    "noEnrolledCourses": "You haven't enrolled in any courses yet, or created any courses.",
+    "searchCourses": "Search courses...",
+    "allTopics": "All Topics",
+    "allTeachers": "All Teachers",
+    "topic": "Topic",
+    "teacher": "Teacher",
+    "lessons": "lessons",
+    "students": "students",
+    "by": "By",
+    "joinCourse": "Join Course",
+    "joinCourseTitle": "Join a Course",
+    "joinCourseDescription": "Enter the course join code provided by your instructor to enroll in a course.",
+    "courseJoinCode": "Course Join Code",
+    "enterJoinCode": "Enter join code...",
+    "cancel": "Cancel",
+    "pleaseEnterJoinCode": "Please enter a join code",
+    "failedToJoinCourse": "Failed to join course"
   }
 }
