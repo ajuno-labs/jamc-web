@@ -6,6 +6,9 @@ import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from 'next-intl';
 
+/**
+ * Renders a button that initiates Google sign-in using NextAuth, with support for internationalized button text and optional callback URL redirection.
+ */
 export function SignInWithGoogle() {
   const t = useTranslations('SignInPage');
   const searchParams = useSearchParams();

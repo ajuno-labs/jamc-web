@@ -10,6 +10,11 @@ import { useSessionRefresh } from "@/hooks/use-session-refresh"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { useTranslations } from 'next-intl'
 
+/**
+ * Renders a responsive, localized navigation header with user session awareness and language switching.
+ *
+ * Displays navigation links, authentication buttons, and user-specific options based on session state. Adapts layout for desktop and mobile screens, providing a slide-in menu on mobile devices.
+ */
 export function Header() {
   const t = useTranslations('LandingPage.header');
   const [isOpen, setIsOpen] = useState(false)

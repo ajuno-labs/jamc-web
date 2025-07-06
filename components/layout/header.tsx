@@ -15,6 +15,13 @@ interface HeaderProps {
   } | null
 }
 
+/**
+ * Renders the main application header with navigation controls, search bar, and user-related actions.
+ *
+ * Displays a sidebar trigger, search bar, and a group of controls including notifications, mode toggle, language switcher, and user navigation. The notification bell is shown only if a user is provided.
+ *
+ * @param user - Optional user information for displaying personalized navigation and notifications
+ */
 export function Header({ user }: HeaderProps) {
 
   return (

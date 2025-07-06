@@ -15,6 +15,11 @@ import { useTranslations } from 'next-intl';
 
 export type SignInInput = z.infer<typeof signInSchema>;
 
+/**
+ * Renders a localized sign-in form with email and password fields, handling user authentication and error display.
+ *
+ * Validates input using Zod and React Hook Form, manages loading and error states, and redirects on successful authentication. All user-facing text and error messages are internationalized.
+ */
 export function SignInForm() {
   const t = useTranslations('SignInPage');
   const [isLoading, setIsLoading] = useState(false);

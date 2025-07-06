@@ -28,6 +28,13 @@ interface Teacher {
   courseCount: number;
 }
 
+/**
+ * Displays a searchable, filterable, and paginated list of courses with internationalized UI.
+ *
+ * Fetches and displays courses based on user-selected search terms, topic and teacher filters, and pagination. Shows loading states, handles empty results, and integrates with internationalization for all user-facing text.
+ *
+ * @returns The rendered React component for exploring courses.
+ */
 export default function ExploreCourses() {
   const t = useTranslations('CoursesPage');
   const [searchTerm, setSearchTerm] = useState("");

@@ -19,6 +19,21 @@ interface QuestionPaginationProps {
   maxVisiblePages?: number
 }
 
+/**
+ * Renders a paginated navigation UI for a list of questions, including localized item range summary and page controls.
+ *
+ * Displays the current range of items being shown, and provides navigation buttons for previous, next, and specific pages, with ellipsis for skipped ranges when there are many pages.
+ *
+ * @param currentPage - The currently active page number.
+ * @param totalPages - The total number of available pages.
+ * @param hasMore - Whether there are more pages after the current one.
+ * @param onPageChange - Callback invoked with the new page number when a page is selected.
+ * @param totalItems - The total number of items across all pages.
+ * @param itemsPerPage - The number of items displayed per page.
+ * @param maxVisiblePages - The maximum number of page buttons to display in the pagination control (defaults to 5).
+ *
+ * @returns The pagination UI component.
+ */
 export function QuestionPagination({
   currentPage,
   totalPages,

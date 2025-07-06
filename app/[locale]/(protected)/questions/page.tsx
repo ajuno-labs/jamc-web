@@ -29,6 +29,11 @@ interface SearchResult {
 
 const ITEMS_PER_PAGE = 10
 
+/**
+ * Displays a searchable, filterable, and paginated list of questions with internationalized UI.
+ *
+ * Integrates debounced search, filtering by type and tags, and pagination. Handles asynchronous data fetching, loading states, and empty result messaging. Allows users to navigate to question submission and interact with question tags for filtering.
+ */
 export default function QuestionsPage() {
   const t = useTranslations('QuestionsPage')
   const [query, setQuery] = React.useState("")

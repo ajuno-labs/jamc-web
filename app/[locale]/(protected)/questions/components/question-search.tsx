@@ -14,6 +14,11 @@ interface QuestionSearchProps {
   onTagsChange: (tags: string[]) => void
 }
 
+/**
+ * Renders a search and filter UI for questions, allowing users to filter by query, type, and tags with localization support.
+ *
+ * Provides a controlled interface for updating the search query, selecting a question type, and choosing tags. All UI text is localized.
+ */
 export function QuestionSearch({
   query,
   onQueryChange,

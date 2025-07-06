@@ -4,6 +4,11 @@ import { motion } from "framer-motion"
 import { Search, MessageCircle, Sparkles, ArrowRight } from "lucide-react"
 import { useTranslations } from 'next-intl'
 
+/**
+ * Renders a localized "How It Works" section with animated steps for the landing page.
+ *
+ * Displays a title, subtitle, and a three-step process, each with an icon, title, and description. Steps are animated into view and connected visually on larger screens. All text is dynamically localized using translation keys.
+ */
 export function HowItWorks() {
   const t = useTranslations('LandingPage.howItWorks');
   

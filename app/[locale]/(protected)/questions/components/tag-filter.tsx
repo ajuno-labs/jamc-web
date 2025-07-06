@@ -33,6 +33,16 @@ interface TagFilterProps {
   onTagsChange: (tags: string[]) => void
 }
 
+/**
+ * Renders a tag selection UI that allows users to search, select, and manage tags from a list.
+ *
+ * Displays a popover with searchable tag options, supports multi-selection, and shows selected tags with options to remove individual tags or clear all selections. Tag data is fetched asynchronously on mount. UI strings are internationalized.
+ *
+ * @param selectedTags - Array of currently selected tag names
+ * @param onTagsChange - Callback invoked with the updated array of selected tag names when the selection changes
+ *
+ * @returns A React component for tag filtering and selection
+ */
 export function TagFilter({ selectedTags, onTagsChange }: TagFilterProps) {
   const t = useTranslations('QuestionsPage.search')
   const [open, setOpen] = useState(false)

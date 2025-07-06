@@ -7,6 +7,11 @@ import { useTranslations } from 'next-intl'
 
 const MotionCard = motion(Card)
 
+/**
+ * Renders a localized section showcasing key features with animated cards.
+ *
+ * Displays a responsive grid of feature cards, each with an icon, title, and description, using translations scoped to the landing page. Animations and layout adapt to screen size for optimal presentation.
+ */
 export function Features() {
   const t = useTranslations('LandingPage.features');
   

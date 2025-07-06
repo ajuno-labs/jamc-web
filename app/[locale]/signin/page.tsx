@@ -9,6 +9,9 @@ import { Suspense } from "react"
 import { SignupSuccessMessage } from "./_components/signup-success-message"
 import { useTranslations } from 'next-intl'
 
+/**
+ * Displays a placeholder UI simulating the loading state for the sign-in form fields.
+ */
 function SignInFormFallback() {
   return (
     <div className="space-y-6">
@@ -21,6 +24,9 @@ function SignInFormFallback() {
   )
 }
 
+/**
+ * Displays a loading placeholder for the Google sign-in button.
+ */
 function GoogleSignInFallback() {
   return (
     <div className="animate-pulse">
@@ -29,6 +35,11 @@ function GoogleSignInFallback() {
   )
 }
 
+/**
+ * Renders the sign-in page with internationalization support, offering both OAuth (Google) and email/password authentication options.
+ *
+ * The layout adapts responsively, displaying OAuth and email/password forms side by side on large screens and stacked on smaller screens. All static text is localized using the `useTranslations` hook.
+ */
 export default function SignInPage() {
   const t = useTranslations('SignInPage');
 

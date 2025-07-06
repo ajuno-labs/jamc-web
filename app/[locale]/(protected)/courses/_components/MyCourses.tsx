@@ -11,6 +11,11 @@ import { PaginationWrapper } from "@/components/ui/pagination-wrapper";
 import JoinCourseDialog from "./JoinCourseDialog";
 import { useTranslations } from 'next-intl';
 
+/**
+ * Displays a paginated, searchable list of courses accessible to the user, with support for joining new courses and internationalized UI text.
+ *
+ * Fetches the user's accessible courses, allows client-side filtering by search term, and provides pagination controls. Shows loading states, handles empty results, and integrates a dialog for joining additional courses.
+ */
 export default function MyCourses() {
   const t = useTranslations('CoursesPage');
   const [searchTerm, setSearchTerm] = useState("");

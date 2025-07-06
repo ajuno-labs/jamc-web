@@ -6,6 +6,11 @@ import { useRouter } from "@/i18n/navigation"
 import { useState, useEffect, useRef } from "react"
 import { useTranslations } from 'next-intl'
 
+/**
+ * Renders a search input with keyboard shortcut support and navigates to a search results page on submit.
+ *
+ * The component allows users to focus the search input using "Ctrl+K" or "Cmd+K" and displays a shortcut hint when the input is not focused or empty. On form submission, it navigates to a search results page with the entered query as a URL parameter and clears the input.
+ */
 export function SearchBar() {
   const router = useRouter()
   const t = useTranslations('Layout')

@@ -13,6 +13,13 @@ interface CoursesClientProps {
   isTeacher: boolean;
 }
 
+/**
+ * Renders a tabbed interface for managing and exploring courses, with localized UI and role-based access to course creation.
+ *
+ * Displays "My Courses" and "Explore" tabs, and conditionally shows a "Create New Course" button for teachers.
+ *
+ * @param isTeacher - Whether the current user has teacher privileges, enabling course creation.
+ */
 export default function CoursesClient({ isTeacher }: CoursesClientProps) {
   const t = useTranslations('CoursesPage')
   

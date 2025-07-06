@@ -10,6 +10,11 @@ import { getTranslations } from 'next-intl/server';
 // Force this page to be dynamic since it uses authentication
 export const dynamic = 'force-dynamic'
 
+/**
+ * Renders the user profile page with localized content and dynamic sections based on authentication.
+ *
+ * Displays user information, badges, subscriptions, questions, answers, and notifications. If profile data cannot be loaded, shows a localized error message.
+ */
 export default async function ProfilePage() {
   const t = await getTranslations('ProfilePage')
   const profileData = await getUserProfile();

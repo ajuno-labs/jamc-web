@@ -23,6 +23,13 @@ interface UserNavProps {
   } | null
 }
 
+/**
+ * Renders a user navigation menu with authentication controls.
+ *
+ * Displays a sign-in button if no user is provided. If a user is present, shows a dropdown menu with profile, settings, and log-out options, along with the user's avatar, name, and email.
+ *
+ * @param user - Optional user object containing name, email, and image information for the authenticated user.
+ */
 export function UserNav({ user }: UserNavProps) {
   const pathname = usePathname()
   const searchParams = useSearchParams()

@@ -2,6 +2,11 @@ import { Link } from "@/i18n/navigation"
 import { GraduationCap } from "lucide-react"
 import { useTranslations } from 'next-intl'
 
+/**
+ * Renders the website footer with internationalized text, navigation links, and social media icons.
+ *
+ * The footer includes a logo, a localized description, grouped navigation links for platform, company, and legal sections, and a bottom bar with a dynamic copyright.
+ */
 export function Footer() {
   const t = useTranslations('LandingPage.footer');
   return (

@@ -8,6 +8,14 @@ interface AskQuestionPageProps {
   searchParams: Promise<{ courseId?: string; lessonId?: string }>
 }
 
+/**
+ * Renders the question submission page, fetching translations, tags, and existing questions before displaying the form.
+ *
+ * Awaits search parameters to optionally prefill the form context with course and lesson information.
+ *
+ * @param searchParams - A promise resolving to an object that may include `courseId` and `lessonId` for contextualizing the question form.
+ * @returns The React elements for the question submission page.
+ */
 export default async function AskQuestionPage({ searchParams }: AskQuestionPageProps) {
   const t = await getTranslations('AskQuestionPage')
   const tags = await getTags()

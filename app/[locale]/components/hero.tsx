@@ -7,6 +7,11 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useTranslations } from 'next-intl'
 
+/**
+ * Renders the hero section of the landing page with localized content, animated introduction, and navigation cards.
+ *
+ * Displays a prominent badge, title, subtitle, call-to-action buttons, and navigation cards for authenticated users, all with internationalization support.
+ */
 export function Hero() {
   const t = useTranslations('LandingPage.hero');
 

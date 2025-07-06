@@ -17,6 +17,11 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
+/**
+ * Renders the application sidebar with navigation links, displaying general and course management sections based on the current URL path.
+ *
+ * The sidebar adapts its content to show teacher-specific navigation when viewing a course management page. All labels and menu items are localized using the 'Layout' translation namespace.
+ */
 export function AppSidebar() {
   const pathname = usePathname()
   const t = useTranslations('Layout')

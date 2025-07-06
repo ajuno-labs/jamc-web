@@ -9,6 +9,14 @@ interface EditQuestionPageProps {
   params: Promise<{ id: string; slug: string }>
 }
 
+/**
+ * Server component for rendering the question editing page with access control and localization.
+ *
+ * Validates the question ID and slug, fetches the question and authenticated user, and ensures only the author can access the edit form. Handles 404 and redirect scenarios for invalid parameters, missing questions, slug mismatches, and unauthorized access, preserving locale context in redirects.
+ *
+ * @param params - A promise resolving to an object containing the question's `id` and `slug`.
+ * @returns The React elements for the edit question page, or triggers navigation actions for invalid access.
+ */
 export default async function EditQuestionPage({
   params,
 }: EditQuestionPageProps) {

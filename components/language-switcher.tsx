@@ -10,6 +10,11 @@ const languages = [
   { code: 'vi', name: 'Tiếng Việt', flag: '🇻🇳' }
 ]
 
+/**
+ * Renders a language selection dropdown that allows users to switch the application's locale.
+ *
+ * Updates the current route to use the selected language without changing the page.
+ */
 export function LanguageSwitcher() {
   const router = useRouter()
   const pathname = usePathname()

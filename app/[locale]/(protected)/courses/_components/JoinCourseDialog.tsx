@@ -19,6 +19,11 @@ import { toast } from "sonner";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from 'next-intl';
 
+/**
+ * Displays a dialog interface for joining a course using a join code.
+ *
+ * Presents a localized form where users can enter a course join code, submit it, and receive feedback on the join attempt. On successful joining, navigates to the course page if available and refreshes the course list.
+ */
 export default function JoinCourseDialog() {
   const t = useTranslations('CoursesPage');
   const [open, setOpen] = useState(false);

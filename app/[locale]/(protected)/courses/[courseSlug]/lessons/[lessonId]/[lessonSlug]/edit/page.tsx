@@ -20,6 +20,11 @@ interface LessonMetadata {
   readingTime?: number;
 }
 
+/**
+ * Renders the lesson editing form for a specific course lesson, ensuring the user is authenticated and authorized as the course author.
+ *
+ * Retrieves the lesson and course data, validates user permissions, and redirects to the canonical edit URL if slugs do not match. Initializes the form with existing lesson details and metadata for editing.
+ */
 export default async function EditPage({ params }: EditPageProps) {
   const locale = await getLocale()
   const { courseSlug, lessonId, lessonSlug } = await params

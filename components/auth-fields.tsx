@@ -15,6 +15,11 @@ interface EmailFieldProps {
   disabled?: boolean
 }
 
+/**
+ * Renders an accessible, internationalized email input field integrated with react-hook-form.
+ *
+ * Displays a styled email input with a label, icon, and error message support. The label text is localized using the 'SignInPage' translation namespace.
+ */
 export function EmailField({ id = "email", register, error, disabled }: EmailFieldProps) {
   const t = useTranslations('SignInPage');
   
@@ -58,6 +63,14 @@ interface PasswordFieldProps {
   label?: string
 }
 
+/**
+ * Renders a password input field with a toggle to show or hide the password, integrated with react-hook-form and internationalized labels.
+ *
+ * Displays a lock icon, an animated label, and an optional error message. The label can be customized via the `label` prop or will default to a translated string. Includes accessibility attributes and disables input and toggle button when requested.
+ *
+ * @param label - Optional label text to override the default translated label
+ * @returns A styled password input field component with show/hide functionality
+ */
 export function PasswordField({ 
   id = "password", 
   register, 

@@ -6,6 +6,11 @@ import { Card, CardContent, CardHeader, CardFooter, CardDescription, CardTitle }
 import { Button } from "@/components/ui/button"
 import { Link } from "@/i18n/navigation"
 
+/**
+ * Renders the sign-up page with options for Google OAuth or email/password registration.
+ *
+ * Displays a responsive layout with two sections: one for signing up with Google and another for traditional email and password registration, including links to terms of service and sign-in for existing users.
+ */
 export default function SignUpPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col lg:flex-row">

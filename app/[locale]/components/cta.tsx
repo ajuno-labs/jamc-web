@@ -7,6 +7,13 @@ import { motion } from "framer-motion"
 import { Mail } from "lucide-react"
 import { useTranslations } from 'next-intl'
 
+/**
+ * Renders a call-to-action subscription form with internationalized text and animated feedback.
+ *
+ * Displays a styled section containing a title, subtitle, email input, and subscribe button. Upon form submission, shows a thank-you message for a short duration and resets the input field. All user-facing text is localized using the `next-intl` translation hook.
+ *
+ * @returns The JSX element for the call-to-action subscription form.
+ */
 export function CTA() {
   const t = useTranslations('LandingPage.cta');
   const [email, setEmail] = useState("")

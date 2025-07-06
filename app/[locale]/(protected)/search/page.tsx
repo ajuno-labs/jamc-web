@@ -3,6 +3,13 @@ import { CourseCard } from "../courses/_components/course-card"
 import { QuestionCard } from "../questions/components/question-card"
 import { getTranslations } from 'next-intl/server'
 
+/**
+ * Renders a localized search results page based on a query parameter.
+ *
+ * Displays a prompt if no query is provided. If a query is present, fetches and displays matching courses and questions, or a message if no results are found.
+ *
+ * @param searchParams - A promise resolving to an object that may contain a search query string under the key `q`.
+ */
 export default async function SearchPage({
   searchParams,
 }: {
