@@ -157,5 +157,15 @@
     "cancel": "Hủy",
     "pleaseEnterJoinCode": "Vui lòng nhập mã tham gia",
     "failedToJoinCourse": "Không thể tham gia khóa học"
+  },
+  "Layout": {
+    "navigation": "Điều Hướng",
+    "courseManagement": "Quản Lý Khóa Học",
+    "qa": "Hỏi Đáp",
+    "courses": "Khóa Học",
+    "dashboard": "Bảng Điều Khiển",
+    "qaForum": "Diễn Đàn Hỏi Đáp",
+    "students": "Học Sinh",
+    "search": "Tìm kiếm..."
   }
 }

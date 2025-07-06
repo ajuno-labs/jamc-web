@@ -157,5 +157,15 @@
     "cancel": "Cancel",
     "pleaseEnterJoinCode": "Please enter a join code",
     "failedToJoinCourse": "Failed to join course"
+  },
+  "Layout": {
+    "navigation": "Navigation",
+    "courseManagement": "Course Management",
+    "qa": "Q&A",
+    "courses": "Courses",
+    "dashboard": "Dashboard",
+    "qaForum": "Q&A Forum",
+    "students": "Students",
+    "search": "Search..."
   }
 }

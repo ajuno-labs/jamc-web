@@ -4,9 +4,11 @@ import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "@/i18n/navigation"
 import { useState, useEffect, useRef } from "react"
+import { useTranslations } from 'next-intl'
 
 export function SearchBar() {
   const router = useRouter()
+  const t = useTranslations('Layout')
   const [query, setQuery] = useState("")
   const [isFocused, setIsFocused] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -38,7 +40,7 @@ export function SearchBar() {
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
         <Input
           type="search"
-          placeholder="Search..."
+          placeholder={t('search')}
           className="pl-10 w-full"
           ref={inputRef}
           value={query}
