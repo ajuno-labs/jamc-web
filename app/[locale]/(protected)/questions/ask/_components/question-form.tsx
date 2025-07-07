@@ -35,26 +35,27 @@ import PostingGuideline from "./posting-guideline";
 import SimilarQuestion from "./similar-question";
 import { QuestionFormFields } from "../../_components/QuestionFormFields";
 import { Tag, ExistingQuestion } from "../_actions/ask-data";
+import { useTranslations } from "next-intl";
 
 // Define the form schema with zod
-const questionSchema = z.object({
+const createQuestionSchema = (t: (key: string) => string) => z.object({
   title: z
     .string()
-    .min(10, { message: "Title must be at least 10 characters" })
-    .max(150, { message: "Title must be less than 150 characters" }),
+    .min(10, { message: t('validation.titleMin') })
+    .max(150, { message: t('validation.titleMax') }),
   content: z
     .string()
-    .min(20, { message: "Description must be at least 20 characters" }),
+    .min(20, { message: t('validation.contentMin') }),
   type: z.nativeEnum(QuestionType, {
-    errorMap: () => ({ message: "Please select a question type" }),
+    errorMap: () => ({ message: t('validation.typeRequired') }),
   }),
   visibility: z.nativeEnum(Visibility, {
-    errorMap: () => ({ message: "Please select visibility" }),
+    errorMap: () => ({ message: t('validation.visibilityRequired') }),
   }),
   topic: z.string().optional(),
 });
 
-type QuestionFormValues = z.infer<typeof questionSchema>;
+type QuestionFormValues = z.infer<ReturnType<typeof createQuestionSchema>>;
 
 interface QuestionFormProps {
   tags: Tag[];
@@ -62,7 +63,6 @@ interface QuestionFormProps {
   existingQuestions: ExistingQuestion[];
 }
 
-// Shape of courses returned by getMyCoursesWithLessons
 interface EnrolledCourse {
   id: string;
   title: string;
@@ -81,6 +81,9 @@ export function QuestionForm({
   existingQuestions,
 }: QuestionFormProps) {
   void tags;
+  const t = useTranslations('AskQuestionPage.QuestionForm');
+  const questionSchema = createQuestionSchema(t);
+
   const [localContext, setLocalContext] = useState<QuestionContext>(context);
   const [allQuestions] = useState<ExistingQuestion[]>(existingQuestions);
   const router = useRouter();
@@ -141,7 +144,7 @@ export function QuestionForm({
         setSimilarQuestions(top);
       } catch (err) {
         console.error(err);
-        setSimilarityError("Failed to fetch similar questions");
+        setSimilarityError(t('similarity.error'));
         setSimilarQuestions([]);
       } finally {
         setIsSimilarityLoading(false);
@@ -157,7 +160,7 @@ export function QuestionForm({
 
   const onSubmit = async (data: QuestionFormValues) => {
     if (selectedTags.length === 0) {
-      toast.error("Please select at least one tag");
+      toast.error(t('validation.tagsRequired'));
       return;
     }
 
@@ -180,15 +183,15 @@ export function QuestionForm({
       const result = await createQuestion(formData);
 
       if (result.success) {
-        toast.success("Question posted successfully!");
+        toast.success(t('postSuccess'));
         // Redirect to the new question page
         router.push(`/questions/${result.questionId}/${result.slug}`);
       } else {
-        toast.error(result.error || "Failed to post question");
+        toast.error(result.error || t('postError'));
       }
     } catch (error) {
       console.error("Error posting question:", error);
-      toast.error("An unexpected error occurred");
+      toast.error(t('unexpectedError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -214,7 +217,7 @@ export function QuestionForm({
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
                     <Label htmlFor="question-type" className="text-base font-medium">
-                      {selectedTypeValue === QuestionType.FORMAL ? 'Formal Mode' : 'YOLO Mode'}
+                      {selectedTypeValue === QuestionType.FORMAL ? t('formalMode') : t('yoloMode')}
                     </Label>
                                          <Tooltip>
                        <TooltipTrigger asChild>
@@ -224,16 +227,16 @@ export function QuestionForm({
                        </TooltipTrigger>
                       <TooltipContent side="right" className="max-w-xs">
                         <div className="space-y-2">
-                          <p><strong>Formal mode:</strong> Add files, choose topics, and write detailed questions for comprehensive help.</p>
-                          <p><strong>YOLO mode:</strong> Quick questions for fast answers - just type and go!</p>
+                          <p><strong>{t('formalMode')}:</strong> {t('formalModeTooltip')}</p>
+                          <p><strong>{t('yoloMode')}:</strong> {t('yoloModeTooltip')}</p>
                         </div>
                       </TooltipContent>
                     </Tooltip>
                   </div>
                   <p className="text-sm text-muted-foreground">
                     {selectedTypeValue === QuestionType.FORMAL 
-                      ? 'Comprehensive questioning with attachments and topics'
-                      : 'Quick and casual questions for immediate help'
+                      ? t('formalModeDescription')
+                      : t('yoloModeDescription')
                     }
                   </p>
                 </div>
@@ -264,14 +267,14 @@ export function QuestionForm({
             />
 
           <div className="space-y-2">
-            <Label>Tags</Label>
+            <Label>{t('tags')}</Label>
           <TagFilter
             selectedTags={selectedTags}
             onTagsChange={setSelectedTags}
           />
           {selectedTags.length === 0 && (
             <p className="text-sm text-muted-foreground">
-              Select at least one tag to categorize your question
+              {t('tagsHint')}
             </p>
           )}
         </div>
@@ -279,7 +282,7 @@ export function QuestionForm({
         {selectedTypeValue === QuestionType.FORMAL && (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="topic">Topic</Label>
+              <Label htmlFor="topic">{t('topic')}</Label>
               <Input id="topic" {...register("topic")} disabled={isSubmitting} />
             </div>
             <AttachmentUpload onFilesSelected={setAttachments} />
@@ -288,7 +291,7 @@ export function QuestionForm({
         )}
 
           <div className="space-y-2">
-            <Label htmlFor="visibility">Visibility</Label>
+            <Label htmlFor="visibility">{t('visibility')}</Label>
             <Controller
               name="visibility"
               control={control}
@@ -299,12 +302,12 @@ export function QuestionForm({
                   disabled={isSubmitting}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select visibility" />
+                    <SelectValue placeholder={t('selectVisibility')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={Visibility.PUBLIC}>Public</SelectItem>
+                    <SelectItem value={Visibility.PUBLIC}>{t('public')}</SelectItem>
                     <SelectItem value={Visibility.PRIVATE}>
-                      Private
+                      {t('private')}
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -319,7 +322,7 @@ export function QuestionForm({
 
           {/* Course / Lesson selection */}
           <div className="space-y-2">
-            <Label>Course (Optional)</Label>
+            <Label>{t('courseOptional')}</Label>
             {loadingCourses ? (
               <Loader2 className="animate-spin" />
             ) : coursesError ? (
@@ -338,7 +341,7 @@ export function QuestionForm({
                 disabled={isSubmitting}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a course" />
+                  <SelectValue placeholder={t('selectCourse')} />
                 </SelectTrigger>
                 <SelectContent>
                   {courses.map((course) => (
@@ -353,7 +356,7 @@ export function QuestionForm({
 
           {localContext.courseId && (
             <div className="space-y-2">
-              <Label>Lesson (Optional)</Label>
+              <Label>{t('lessonOptional')}</Label>
               <Select
                 value={localContext.lessonId || ""}
                 onValueChange={(value) =>
@@ -362,7 +365,7 @@ export function QuestionForm({
                 disabled={isSubmitting}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a lesson" />
+                  <SelectValue placeholder={t('selectLesson')} />
                 </SelectTrigger>
                 <SelectContent>
                   {courses
@@ -385,17 +388,16 @@ export function QuestionForm({
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Posting Question...
+                {t('posting')}
               </>
             ) : (
-              "Post Question"
+              t('postQuestion')
             )}
           </Button>
         </form>
       </div>
 
       <div>
-        {/* Similarity suggestions */}
         {isSimilarityLoading && <Loader2 className="animate-spin" />}
         {similarityError && (
           <p className="text-sm text-destructive">{similarityError}</p>
