@@ -34,6 +34,8 @@ export interface DashboardPageProps {
   weeklyActivityData: WeeklyActivityData[]
   moduleCompletionData: ModuleProgressData[]
   enrollmentTrendData: EnrollmentTrendData[]
+  openQuestionsCount: number
+  unansweredCount: number
 }
 
 export function DashboardPage({ 
@@ -44,7 +46,9 @@ export function DashboardPage({
   activitySummary,
   weeklyActivityData,
   moduleCompletionData,
-  enrollmentTrendData
+  enrollmentTrendData,
+  openQuestionsCount,
+  unansweredCount,
 }: DashboardPageProps) {
   const selectedCourse = courses.find(c => c.slug === currentCourseSlug)?.title || ''
   const router = useRouter()
@@ -88,8 +92,8 @@ export function DashboardPage({
             ? Math.round((activitySummary.activeStudents / activitySummary.totalStudents) * 100)
             : 0
           }
-          openQuestionsCount={questions.length}
-          unansweredCount={questions.filter(q => q._count.answers === 0).length}
+          openQuestionsCount={openQuestionsCount}
+          unansweredCount={unansweredCount}
           averageCompletion={activitySummary.averageProgressPercentage}
           atRiskStudentsCount={activitySummary.atRiskStudents}
           inactiveStudentsCount={activitySummary.inactiveStudents}
