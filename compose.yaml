@@ -14,14 +14,29 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - jamc-network
 
-  # Adminer for database management (development only)
-  adminer:
-    image: adminer
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
     ports:
-      - "8080:8080"
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://jamc:jamc@db:5432/jamc?schema=public
+      - SIMILARITY_API_URL=http://qa-service:8000
+    volumes:
+      - .:/app
+      - /app/node_modules
     depends_on:
-      - db
+      - db: condition: service_healthy
+      - qa-service: condition: service_healthy
+    networks:
+      - jamc-network
 
   qa-service:
     build:
@@ -30,7 +45,13 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      - db: condition: service_healthy
+    networks:
+      - jamc-network
 
 volumes:
   postgres_data:
+
+networks:
+  jamc-network:
+    driver: bridge
