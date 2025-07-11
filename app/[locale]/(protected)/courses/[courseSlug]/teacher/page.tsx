@@ -65,7 +65,18 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
   const rawQuestions = await db.question.findMany({
     where: { courseId: course.id },
     include: questionWithVotesIncludeArgs,
-    orderBy: { createdAt: 'desc' }
+    orderBy: { createdAt: 'desc' },
+    take: 3,
+  })
+
+  // Get total question count for stats
+  const openQuestionsCount = await db.question.count({
+    where: { courseId: course.id },
+  })
+
+  // Get unanswered questions count for stats
+  const unansweredCount = await db.question.count({
+    where: { courseId: course.id, answers: { none: {} } },
   })
 
   // Serialize dates for client component, defaulting null author names to 'Unknown'
@@ -95,5 +106,7 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
     weeklyActivityData={weeklyActivityData}
     moduleCompletionData={moduleCompletionData}
     enrollmentTrendData={enrollmentTrendData}
+    openQuestionsCount={openQuestionsCount}
+    unansweredCount={unansweredCount}
   />
 } 

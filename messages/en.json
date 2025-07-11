@@ -116,7 +116,42 @@
     }
   },
   "AskQuestionPage": {
-    "title": "Ask a Question"
+    "title": "Ask a Question",
+    "QuestionForm": {
+      "validation": {
+        "titleMin": "Title must be at least 10 characters",
+        "titleMax": "Title must be less than 150 characters",
+        "contentMin": "Description must be at least 20 characters",
+        "typeRequired": "Please select a question type",
+        "visibilityRequired": "Please select visibility",
+        "tagsRequired": "Please select at least one tag"
+      },
+      "similarity": {
+        "error": "Failed to fetch similar questions"
+      },
+      "postSuccess": "Question posted successfully!",
+      "postError": "Failed to post question",
+      "unexpectedError": "An unexpected error occurred",
+      "formalMode": "Formal Mode",
+      "yoloMode": "YOLO Mode",
+      "formalModeTooltip": "Add files, choose topics, and write detailed questions for comprehensive help.",
+      "yoloModeTooltip": "Quick questions for fast answers - just type and go!",
+      "formalModeDescription": "Comprehensive questioning with attachments and topics",
+      "yoloModeDescription": "Quick and casual questions for immediate help",
+      "tags": "Tags",
+      "tagsHint": "Select at least one tag to categorize your question",
+      "topic": "Topic",
+      "visibility": "Visibility",
+      "selectVisibility": "Select visibility",
+      "public": "Public",
+      "private": "Private",
+      "courseOptional": "Course (Optional)",
+      "selectCourse": "Select a course",
+      "lessonOptional": "Lesson (Optional)",
+      "selectLesson": "Select a lesson",
+      "posting": "Posting Question...",
+      "postQuestion": "Post Question"
+    }
   },
   "SearchPage": {
     "title": "Search",

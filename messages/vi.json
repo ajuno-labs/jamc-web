@@ -116,7 +116,42 @@
     }
   },
   "AskQuestionPage": {
-    "title": "Đặt Câu Hỏi"
+    "title": "Đặt Câu Hỏi",
+    "QuestionForm": {
+      "validation": {
+        "titleMin": "Tiêu đề phải có ít nhất 10 ký tự",
+        "titleMax": "Tiêu đề phải ít hơn 150 ký tự",
+        "contentMin": "Mô tả phải có ít nhất 20 ký tự",
+        "typeRequired": "Vui lòng chọn loại câu hỏi",
+        "visibilityRequired": "Vui lòng chọn chế độ hiển thị",
+        "tagsRequired": "Vui lòng chọn ít nhất một thẻ"
+      },
+      "similarity": {
+        "error": "Không thể tải các câu hỏi tương tự"
+      },
+      "postSuccess": "Đăng câu hỏi thành công!",
+      "postError": "Không thể đăng câu hỏi",
+      "unexpectedError": "Đã xảy ra lỗi không mong muốn",
+      "formalMode": "Chế độ chính thức",
+      "yoloMode": "Chế độ YOLO",
+      "formalModeTooltip": "Thêm tệp, chọn chủ đề và viết câu hỏi chi tiết để được trợ giúp toàn diện.",
+      "yoloModeTooltip": "Câu hỏi nhanh để có câu trả lời nhanh - chỉ cần nhập và gửi!",
+      "formalModeDescription": "Hỏi đáp toàn diện với tệp đính kèm và chủ đề",
+      "yoloModeDescription": "Câu hỏi nhanh và đơn giản để được trợ giúp ngay lập tức",
+      "tags": "Thẻ",
+      "tagsHint": "Chọn ít nhất một thẻ để phân loại câu hỏi của bạn",
+      "topic": "Chủ đề",
+      "visibility": "Hiển thị",
+      "selectVisibility": "Chọn chế độ hiển thị",
+      "public": "Công khai",
+      "private": "Riêng tư",
+      "courseOptional": "Khóa học (Tùy chọn)",
+      "selectCourse": "Chọn một khóa học",
+      "lessonOptional": "Bài học (Tùy chọn)",
+      "selectLesson": "Chọn một bài học",
+      "posting": "Đang đăng câu hỏi...",
+      "postQuestion": "Đăng câu hỏi"
+    }
   },
   "SearchPage": {
     "title": "Tìm Kiếm",
