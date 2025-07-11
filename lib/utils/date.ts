@@ -1,30 +1,19 @@
+import { format } from "date-fns"
+
 export function formatDateTime(date: Date | string): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date
   
-  return dateObj.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  return format(dateObj, "MMM d, yyyy 'at' HH:mm")
 }
 
 export function formatDateOnly(date: Date | string): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date
   
-  return dateObj.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
+  return format(dateObj, "MMM d, yyyy")
 }
 
 export function formatTimeOnly(date: Date | string): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date
   
-  return dateObj.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-  })
+  return format(dateObj, "HH:mm")
 } 

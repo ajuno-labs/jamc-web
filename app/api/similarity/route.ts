@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from "next/server"
 export async function POST(req: NextRequest) {
   const { sentence1, sentence2 } = await req.json()
 
-  // Forward request to the QA-service FastAPI backend
-  const response = await fetch("http://localhost:8000/similarity", {
+  const qaServiceUrl = process.env.SIMILARITY_API_URL || "http://localhost:8000"
+  const response = await fetch(`${qaServiceUrl}/similarity`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ sentence1, sentence2 }),
