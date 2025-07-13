@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card"
 import { QuestionForm } from "./_components/question-form"
 import { QuestionContext } from "@/lib/types/question"
-import { getTags, getExistingQuestions} from "./_actions/ask-data"
+import { getTags, getExistingQuestions, searchSimilarQuestions } from "./_actions/ask-data"
 import { getTranslations } from 'next-intl/server'
 
 interface AskQuestionPageProps {
@@ -14,7 +14,6 @@ export default async function AskQuestionPage({ searchParams }: AskQuestionPageP
   const existingQuestions = await getExistingQuestions()
   const { courseId, lessonId } = await searchParams
 
-  // Create initial context with courseId and lessonId if provided
   const context: QuestionContext = {}
   if (courseId) {
     context.courseId = courseId
@@ -31,6 +30,7 @@ export default async function AskQuestionPage({ searchParams }: AskQuestionPageP
           tags={tags}
           context={context}
           existingQuestions={existingQuestions}
+          searchSimilarQuestions={searchSimilarQuestions}
         />
       </Card>
     </div>

@@ -10,6 +10,7 @@ import { revalidatePath } from "next/cache"
 import { notifyNewCourseQuestion } from "@/lib/services/notification-triggers"
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
 import { Buffer } from "buffer"
+import { addQuestionToSearchIndex } from "../ask/_actions/ask-data"
 
 // Use FormData to support file uploads for attachments
 
@@ -141,6 +142,18 @@ export async function createQuestion(formData: FormData) {
         console.error('Failed to send new course question notification:', error)
         // Don't fail the question creation if notification fails
       }
+    }
+    
+    try {
+      await addQuestionToSearchIndex({
+        id: question.id,
+        title: question.title,
+        content: question.content,
+        tags: existingTags.map(t => t.name),
+        category: courseId ? 'course' : 'general'
+      })
+    } catch (error) {
+      console.error('Failed to add question to search index:', error)
     }
     
     // Revalidate the questions page

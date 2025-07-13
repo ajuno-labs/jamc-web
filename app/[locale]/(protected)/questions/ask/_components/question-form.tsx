@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,7 +34,7 @@ import { toast } from "sonner";
 import PostingGuideline from "./posting-guideline";
 import SimilarQuestion from "./similar-question";
 import { QuestionFormFields } from "../../_components/QuestionFormFields";
-import { Tag, ExistingQuestion } from "../_actions/ask-data";
+import { Tag, ExistingQuestion, SimilarQuestion as SimilarQuestionType, searchSimilarQuestions } from "../_actions/ask-data";
 import { useTranslations } from "next-intl";
 
 // Define the form schema with zod
@@ -61,6 +61,7 @@ interface QuestionFormProps {
   tags: Tag[];
   context: QuestionContext;
   existingQuestions: ExistingQuestion[];
+  searchSimilarQuestions: typeof searchSimilarQuestions;
 }
 
 interface EnrolledCourse {
@@ -79,6 +80,7 @@ export function QuestionForm({
   tags,
   context,
   existingQuestions,
+  searchSimilarQuestions,
 }: QuestionFormProps) {
   void tags;
   const t = useTranslations('AskQuestionPage.QuestionForm');
@@ -93,7 +95,7 @@ export function QuestionForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [attachments, setAttachments] = useState<File[]>([]);
-  const [similarQuestions, setSimilarQuestions] = useState<ExistingQuestion[]>(
+  const [similarQuestions, setSimilarQuestions] = useState<SimilarQuestionType[]>(
     []
   );
   const [isSimilarityLoading, setIsSimilarityLoading] = useState(false);
@@ -115,33 +117,20 @@ export function QuestionForm({
     },
   });
 
-  // Handle title changes to fetch similarity-based suggestions
-  const handleTitleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const title = e.target.value;
-    // propagate to react-hook-form
-    register("title").onChange(e);
-    if (title.length > 10) {
+  // Debounced similarity check
+  const debouncedSimilarityCheck = useCallback(
+    debounce(async (title: string) => {
+      if (title.length <= 10) {
+        setSimilarQuestions([]);
+        setSimilarityError(null);
+        return;
+      }
+
       setIsSimilarityLoading(true);
       setSimilarityError(null);
       try {
-        // Compute similarity with each existing question
-        const scored = await Promise.all(
-          allQuestions.map(async (q) => {
-            const res = await fetch("/api/similarity", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ sentence1: title, sentence2: q.title }),
-            });
-            if (!res.ok) throw new Error("Similarity API error");
-            const { similarity } = await res.json();
-            return { ...q, similarity };
-          })
-        );
-        // sort by descending similarity and pick top 5
-        const top = scored
-          .sort((a, b) => b.similarity - a.similarity)
-          .slice(0, 5);
-        setSimilarQuestions(top);
+        const results = await searchSimilarQuestions(title, 5, 0.5);
+        setSimilarQuestions(results);
       } catch (err) {
         console.error(err);
         setSimilarityError(t('similarity.error'));
@@ -149,11 +138,30 @@ export function QuestionForm({
       } finally {
         setIsSimilarityLoading(false);
       }
-    } else {
-      setSimilarQuestions([]);
-      setSimilarityError(null);
-    }
+    }, 500), // 500ms delay
+    [searchSimilarQuestions, t]
+  );
+
+  // Handle title changes to fetch similarity-based suggestions
+  const handleTitleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const title = e.target.value;
+    // propagate to react-hook-form
+    register("title").onChange(e);
+    // Use debounced similarity check
+    debouncedSimilarityCheck(title);
   };
+
+  // Debounce utility function
+  function debounce<T extends (...args: any[]) => any>(
+    func: T,
+    wait: number
+  ): (...args: Parameters<T>) => void {
+    let timeout: NodeJS.Timeout;
+    return (...args: Parameters<T>) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    };
+  }
 
   const contentValue = watch("content"); // raw Markdown/LaTeX text
   const selectedTypeValue = watch("type");

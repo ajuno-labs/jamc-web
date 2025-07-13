@@ -127,7 +127,9 @@
         "tagsRequired": "Please select at least one tag"
       },
       "similarity": {
-        "error": "Failed to fetch similar questions"
+        "error": "Failed to fetch similar questions",
+        "loading": "Searching for similar questions...",
+        "noResults": "No similar questions found"
       },
       "postSuccess": "Question posted successfully!",
       "postError": "Failed to post question",
