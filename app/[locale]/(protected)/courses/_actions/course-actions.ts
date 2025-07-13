@@ -1,7 +1,7 @@
 "use server";
 
 import { getPublicEnhancedPrisma, getEnhancedPrisma } from "@/lib/db/enhanced";
-import { getAuthUser } from "@/lib/auth/get-user";
+import { getAuthUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
 
@@ -421,58 +421,6 @@ export async function getCourseWithLessons(
     console.error("Error fetching course lessons:", error);
     return null;
   }
-}
-
-// Server action to fetch all courses the current user is enrolled in or has authored, including lessons
-export async function getMyCoursesWithLessons() {
-  const user = await getAuthUser();
-  if (!user?.id) {
-    throw new Error("You must be signed in to view your courses");
-  }
-  const db = await getEnhancedPrisma();
-
-  // Fetch courses the user is enrolled in
-  const enrollments = await db.courseEnrollment.findMany({
-    where: { user: { email: user.email } },
-    include: {
-      course: {
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          lessons: {
-            select: { id: true, title: true, slug: true, order: true },
-            orderBy: { order: "asc" },
-          },
-        },
-      },
-    },
-  });
-  const enrolledCourses = enrollments.map((e) => e.course);
-
-  // Fetch courses the user has authored
-  const authoredCourses = await db.course.findMany({
-    where: { author: { email: user.email } },
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      lessons: {
-        select: { id: true, title: true, slug: true, order: true },
-        orderBy: { order: "asc" },
-      },
-    },
-  });
-
-  // Merge and dedupe courses
-  const allCourses: typeof authoredCourses = [...enrolledCourses];
-  for (const course of authoredCourses) {
-    if (!allCourses.find((c) => c.id === course.id)) {
-      allCourses.push(course);
-    }
-  }
-
-  return allCourses;
 }
 
 /**

@@ -1,6 +1,6 @@
 "use server"
 
-import { getAuthUser } from "@/lib/auth/get-user"
+import { getAuthUser } from "@/lib/auth"
 import { getEnhancedPrisma } from "@/lib/db/enhanced"
 import { notFound } from "next/navigation"
 import type { WeeklyActivityData, ModuleProgressData, EnrollmentTrendData } from "@/lib/types/dashboard"

@@ -127,7 +127,9 @@
         "tagsRequired": "Vui lòng chọn ít nhất một thẻ"
       },
       "similarity": {
-        "error": "Không thể tải các câu hỏi tương tự"
+        "error": "Không thể tải các câu hỏi tương tự",
+        "loading": "Đang tìm kiếm câu hỏi tương tự...",
+        "noResults": "Không tìm thấy câu hỏi tương tự"
       },
       "postSuccess": "Đăng câu hỏi thành công!",
       "postError": "Không thể đăng câu hỏi",

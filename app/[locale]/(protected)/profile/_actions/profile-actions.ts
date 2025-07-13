@@ -1,7 +1,7 @@
 "use server"
 
 import { prisma } from "@/lib/db/prisma"
-import { getAuthUser } from "@/lib/auth/get-user"
+import { getAuthUser } from "@/lib/auth"
 import { questionWithRelationsInclude } from "@/lib/types/prisma"
 import { calculateUserReputationWithBreakdown } from "@/lib/utils/reputation"
 import type { ProfileData, ProfileQuestion } from "@/lib/types/profile"

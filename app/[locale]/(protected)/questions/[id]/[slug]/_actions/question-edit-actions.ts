@@ -270,7 +270,6 @@ export async function getAnswersWithReputation(questionId: string) {
     ],
   })
 
-  // Calculate reputation for each answer author and comment authors
   const answersWithReputation = await Promise.all(
     answers.map(async (answer) => {
       const authorReputation = await calculateUserReputation(answer.author.id)

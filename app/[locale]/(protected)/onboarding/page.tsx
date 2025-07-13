@@ -1,4 +1,4 @@
-import { getAuthUser } from "@/lib/auth/get-user"
+import { getAuthUser } from "@/lib/auth"
 import { redirect } from "@/i18n/navigation"
 import { OnboardingFlow } from "./_components/OnboardingFlow"
 import { triggerWelcomeNotification } from "./_actions/onboarding-actions"

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { getAuthUser } from "@/lib/auth/get-user";
+import { getAuthUser } from "@/lib/auth";
 import { getPublicEnhancedPrisma } from "@/lib/db/enhanced";
 import { getCourseDetail } from "@/lib/actions/course-actions";
 import { CourseContent } from "./_components/course-content";

@@ -1,6 +1,6 @@
 import { redirect } from '@/i18n/navigation'
 import { notFound } from 'next/navigation'
-import { getAuthUser } from '@/lib/auth/get-user'
+import { getAuthUser } from '@/lib/auth'
 import { getEnhancedPrisma } from '@/lib/db/enhanced'
 import LessonForm from '../../../_components/LessonForm'
 import { updateLesson } from './_actions/lesson-actions'

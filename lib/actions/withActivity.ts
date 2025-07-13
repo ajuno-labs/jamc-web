@@ -1,6 +1,6 @@
 "use server";
 
-import { getAuthUser } from "@/lib/auth/get-user";
+import { getAuthUser } from "@/lib/auth";
 import { activityBus } from "@/lib/events";
 import { ActivityType } from "@prisma/client";
 
