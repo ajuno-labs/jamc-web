@@ -203,7 +203,8 @@
     "dashboard": "Bảng Điều Khiển",
     "qaForum": "Diễn Đàn Hỏi Đáp",
     "students": "Học Sinh",
-    "search": "Tìm kiếm..."
+    "search": "Tìm kiếm...",
+    "searching": "Đang tìm kiếm..."
   },
   "SignInPage": {
     "welcomeBack": "Chào mừng trở lại",
