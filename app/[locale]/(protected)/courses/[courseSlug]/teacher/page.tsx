@@ -1,6 +1,6 @@
 import React from "react"
 import { notFound } from "next/navigation"
-import { getAuthUser } from "@/lib/auth/get-user"
+import { getAuthUser } from "@/lib/auth"
 import { getEnhancedPrisma } from "@/lib/db/enhanced"
 import { DashboardPage } from "./_components/DashboardPage"
 import { randomBytes } from "crypto"

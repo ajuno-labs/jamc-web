@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { ThumbsUp } from "lucide-react"
 import { addComment, voteComment } from "../_actions/question-edit-actions"
 import { MathContent } from "@/components/MathContent"
-import { ClientDate } from "@/components/ui/ClientDate"
+import { ClientDate } from "@/components/client-date"
 
 interface Comment {
   id: string

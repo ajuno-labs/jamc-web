@@ -1,5 +1,5 @@
 import LessonForm from '../_components/LessonForm'
-import { getAuthUser } from '@/lib/auth/get-user'
+import { getAuthUser } from '@/lib/auth'
 import { getEnhancedPrisma } from '@/lib/db/enhanced'
 import { notFound } from 'next/navigation'
 import { createLesson } from './_actions/lesson-actions'

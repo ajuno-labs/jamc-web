@@ -1,6 +1,6 @@
 "use server"
 
-import { getAuthUser } from "@/lib/auth/get-user"
+import { getAuthUser } from "@/lib/auth"
 import { getEnhancedPrisma } from "@/lib/db/enhanced"
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
 import { Buffer } from "buffer"

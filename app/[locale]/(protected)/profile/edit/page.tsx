@@ -1,4 +1,4 @@
-import { getAuthUser } from "@/lib/auth/get-user"
+import { getAuthUser } from "@/lib/auth"
 import { ProfileEditForm } from "./_components/ProfileEditForm"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"

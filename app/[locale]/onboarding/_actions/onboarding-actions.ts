@@ -1,6 +1,6 @@
 "use server"
 
-import { getAuthUser } from "@/lib/auth/get-user"
+import { getAuthUser } from "@/lib/auth"
 import { notifyWelcome } from "@/lib/services/notification-triggers"
 import { redirect } from "@/i18n/navigation"
 

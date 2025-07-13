@@ -13,7 +13,7 @@ import { EditButton } from "./EditButton"
 import { CommentSection } from "./CommentSection"
 import { useRouter } from "@/i18n/navigation"
 import { AttachmentList } from "./AttachmentList"
-import { ClientDate } from "@/components/ui/ClientDate"
+import { ClientDate } from "@/components/client-date"
 
 interface QuestionHeaderProps {
   question: {

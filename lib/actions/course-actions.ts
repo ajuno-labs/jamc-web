@@ -1,6 +1,7 @@
 "use server";
 
 import { getEnhancedPrisma } from "@/lib/db/enhanced";
+import { getAuthUser } from "@/lib/auth";
 
 /**
  * Fetch a single course (by slug) together with its syllabus hierarchy and
@@ -18,7 +19,6 @@ export async function getCourseDetail(courseSlug: string) {
       slug: true,
       createdAt: true,
       updatedAt: true,
-      // Hierarchical syllabus (modules -> chapters -> lessons)
       modules: {
         select: {
           id: true,
@@ -63,4 +63,52 @@ export async function getCourseDetail(courseSlug: string) {
       author: { select: { id: true, name: true, image: true } },
     },
   });
+}
+
+export async function getMyCoursesWithLessons() {
+  const user = await getAuthUser();
+  if (!user?.id) {
+    throw new Error("You must be signed in to view your courses");
+  }
+  const db = await getEnhancedPrisma();
+
+  const enrollments = await db.courseEnrollment.findMany({
+    where: { user: { email: user.email } },
+    include: {
+      course: {
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          lessons: {
+            select: { id: true, title: true, slug: true, order: true },
+            orderBy: { order: "asc" },
+          },
+        },
+      },
+    },
+  });
+  const enrolledCourses = enrollments.map((e) => e.course);
+
+  const authoredCourses = await db.course.findMany({
+    where: { author: { email: user.email } },
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      lessons: {
+        select: { id: true, title: true, slug: true, order: true },
+        orderBy: { order: "asc" },
+      },
+    },
+  });
+
+  const allCourses: typeof authoredCourses = [...enrolledCourses];
+  for (const course of authoredCourses) {
+    if (!allCourses.find((c) => c.id === course.id)) {
+      allCourses.push(course);
+    }
+  }
+
+  return allCourses;
 } 

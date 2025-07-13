@@ -1,4 +1,4 @@
-import { getAuthUser } from "@/lib/auth/get-user";
+import { getAuthUser } from "@/lib/auth";
 import CoursesClient from "./_components/CoursesClient";
 
 export default async function CoursesPage() {

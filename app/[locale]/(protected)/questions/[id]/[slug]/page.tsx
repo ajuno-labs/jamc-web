@@ -1,4 +1,4 @@
-import { getAuthUser } from "@/lib/auth/get-user"
+import { getAuthUser } from "@/lib/auth"
 import { QuestionHeader } from "./_components/question-header"
 import { AnswerList } from "./_components/answer-list"
 import { AnswerForm } from "./_components/answer-form"

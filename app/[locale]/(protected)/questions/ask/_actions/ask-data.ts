@@ -17,6 +17,7 @@ export type ExistingQuestion = {
 
 export type SimilarQuestion = {
   question_id: string
+  slug: string
   title: string
   content: string | null
   similarity_score: number
@@ -86,7 +87,26 @@ export async function searchSimilarQuestions(
     }
 
     const data = await response.json()
-    return data.results || []
+    const results = data.results || []
+    
+    if (results.length > 0) {
+      const db = getPublicEnhancedPrisma()
+      const questionIds = results.map((r: { question_id: string }) => r.question_id)
+      
+      const questionsWithSlugs = await db.question.findMany({
+        where: { id: { in: questionIds } },
+        select: { id: true, slug: true }
+      })
+      
+      const slugMap = new Map(questionsWithSlugs.map(q => [q.id, q.slug]))
+      
+      return results.map((result: { question_id: string; [key: string]: unknown }) => ({
+        ...result,
+        slug: slugMap.get(result.question_id) || result.question_id
+      }))
+    }
+    
+    return results
   } catch (error) {
     console.error("Error searching similar questions:", error)
     throw new Error("Failed to search for similar questions")
@@ -98,6 +118,7 @@ export async function searchSimilarQuestions(
  */
 export async function addQuestionToSearchIndex(question: {
   id: string
+  slug: string
   title: string
   content?: string | null
   tags?: string[]
@@ -111,6 +132,7 @@ export async function addQuestionToSearchIndex(question: {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         id: question.id,
+        slug: question.slug,
         title: question.title,
         content: question.content,
         tags: question.tags,
@@ -123,6 +145,5 @@ export async function addQuestionToSearchIndex(question: {
     }
   } catch (error) {
     console.error("Error adding question to search index:", error)
-    // Don't throw here as this is not critical for the main flow
   }
-} 
+}

@@ -1,7 +1,7 @@
 "use server"
 
 import { getEnhancedPrisma } from "@/lib/db/enhanced"
-import { getAuthUser } from "@/lib/auth/get-user"
+import { getAuthUser } from "@/lib/auth"
 import type { 
   NotificationType, 
   NotificationCreateRequest, 

@@ -2,7 +2,7 @@ import { redirect } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { getLessonSummary } from "./_actions/summary-actions";
-import { getAuthUser } from "@/lib/auth/get-user";
+import { getAuthUser } from "@/lib/auth";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getEnhancedPrisma } from "@/lib/db/enhanced";

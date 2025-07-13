@@ -1,7 +1,7 @@
 'use server'
 
 import { notFound } from 'next/navigation'
-import { getAuthUser } from '@/lib/auth/get-user'
+import { getAuthUser } from '@/lib/auth'
 import { getEnhancedPrisma } from '@/lib/db/enhanced'
 import { 
   courseBasicSelectArgs,

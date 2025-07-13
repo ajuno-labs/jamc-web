@@ -147,6 +147,7 @@ export async function createQuestion(formData: FormData) {
     try {
       await addQuestionToSearchIndex({
         id: question.id,
+        slug: question.slug,
         title: question.title,
         content: question.content,
         tags: existingTags.map(t => t.name),

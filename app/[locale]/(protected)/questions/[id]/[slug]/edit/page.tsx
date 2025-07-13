@@ -1,6 +1,6 @@
 import { redirect } from "@/i18n/navigation"
 import { notFound } from "next/navigation"
-import { getAuthUser } from "@/lib/auth/get-user"
+import { getAuthUser } from "@/lib/auth"
 import { getQuestionWithReputation } from "../_actions/question-edit-actions"
 import { EditQuestionForm } from "./_components/EditQuestionForm"
 interface EditQuestionPageProps {

@@ -11,7 +11,7 @@ import { CommentSection } from "./CommentSection"
 import { AcceptAnswerButtons } from "./AcceptAnswerButtons"
 import { updateAnswer } from "../_actions/question-edit-actions"
 import { MathContent } from "@/components/MathContent"
-import { ClientDate } from "@/components/ui/ClientDate"
+import { ClientDate } from "@/components/client-date"
 
 interface Answer {
   id: string

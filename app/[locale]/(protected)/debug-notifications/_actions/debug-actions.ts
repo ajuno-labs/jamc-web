@@ -1,6 +1,6 @@
 "use server"
 
-import { getAuthUser } from "@/lib/auth/get-user"
+import { getAuthUser } from "@/lib/auth"
 import { debugCreateTestNotification } from "@/lib/services/notification-service"
 import { notifyWelcome, notifyNewAnswer } from "@/lib/services/notification-triggers"
 

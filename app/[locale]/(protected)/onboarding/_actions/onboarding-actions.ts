@@ -1,6 +1,6 @@
 "use server"
 
-import { getAuthUser } from "@/lib/auth/get-user"
+import { getAuthUser } from "@/lib/auth"
 import { getEnhancedPrisma } from "@/lib/db/enhanced"
 import { prisma } from "@/lib/db/prisma"
 import { notifyWelcome } from "@/lib/services/notification-triggers"

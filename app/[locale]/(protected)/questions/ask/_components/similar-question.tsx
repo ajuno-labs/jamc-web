@@ -1,6 +1,7 @@
 import { AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { SimilarQuestion as SimilarQuestionType } from "../_actions/ask-data";
+import { Link } from "@/i18n/navigation";
 
 export default function SimilarQuestion({ similarQuestions }: { similarQuestions: SimilarQuestionType[] }) {
     return (
@@ -17,9 +18,9 @@ export default function SimilarQuestion({ similarQuestions }: { similarQuestions
                   <li key={index} className="flex items-start justify-between">
                     <div className="flex items-start">
                       <AlertCircle className="h-5 w-5 text-primary mr-2 mt-0.5 flex-shrink-0" />
-                      <a href={`/questions/${question.question_id}`} className="text-primary hover:underline">
+                      <Link href={`/questions/${question.question_id}/${question.slug}`} className="text-primary hover:underline">
                         {question.title}
-                      </a>
+                      </Link>
                     </div>
                     <span className="text-sm text-muted-foreground">
                       {(question.similarity_score * 100).toFixed(0)}% match
