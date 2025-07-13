@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { ThumbsUp } from "lucide-react"
 import { addComment, voteComment } from "../_actions/question-edit-actions"
 import { MathContent } from "@/components/MathContent"
-import { formatDateTime } from "@/lib/utils/date"
+import { ClientDate } from "@/components/ui/ClientDate"
 
 interface Comment {
   id: string
@@ -101,7 +101,7 @@ export function CommentSection({ comments, questionId, answerId, currentUserId, 
                     >
                       {comment.author.name}
                     </Link>
-                    <span>{formatDateTime(comment.createdAt)}</span>
+                    <span><ClientDate date={comment.createdAt} /></span>
                   </div>
                 </div>
               </div>

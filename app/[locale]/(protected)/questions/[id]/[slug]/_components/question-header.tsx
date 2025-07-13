@@ -12,8 +12,8 @@ import { UserLink } from "./UserLink"
 import { EditButton } from "./EditButton"
 import { CommentSection } from "./CommentSection"
 import { useRouter } from "@/i18n/navigation"
-import { formatDateTime } from "@/lib/utils/date"
 import { AttachmentList } from "./AttachmentList"
+import { ClientDate } from "@/components/ui/ClientDate"
 
 interface QuestionHeaderProps {
   question: {
@@ -104,7 +104,7 @@ export function QuestionHeader({ question, currentUserId }: QuestionHeaderProps)
           <div className="flex items-center space-x-2">
             <UserLink user={question.author} />
             <span className="text-sm text-muted-foreground">
-              {formatDateTime(question.createdAt)}
+              <ClientDate date={question.createdAt} />
             </span>
           </div>
           <div className="flex items-center space-x-4">

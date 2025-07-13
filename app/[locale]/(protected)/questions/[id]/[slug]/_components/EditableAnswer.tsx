@@ -11,7 +11,7 @@ import { CommentSection } from "./CommentSection"
 import { AcceptAnswerButtons } from "./AcceptAnswerButtons"
 import { updateAnswer } from "../_actions/question-edit-actions"
 import { MathContent } from "@/components/MathContent"
-import { formatDateTime } from "@/lib/utils/date"
+import { ClientDate } from "@/components/ui/ClientDate"
 
 interface Answer {
   id: string
@@ -89,7 +89,7 @@ export function EditableAnswer({ answer, currentUserId, className = "" }: Editab
           <UserLink user={answer.author} />
           <div className="flex items-center space-x-2">
             <span className="text-sm text-muted-foreground">
-              {formatDateTime(answer.createdAt)}
+              <ClientDate date={answer.createdAt} />
             </span>
             {isOwner && !isEditing && (
               <EditButton onClick={() => setIsEditing(true)} />
