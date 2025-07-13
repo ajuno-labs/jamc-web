@@ -64,15 +64,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   events: {
     async signIn(message) {
-      // This helps with browser tab synchronization
       console.log("User signed in:", message.user?.email)
     },
     async signOut(message) {
       console.log("User signed out:", message)
     },
     async createUser(message) {
-      // Send welcome notification for OAuth users
-      // Note: We'll handle this via a server action instead to avoid edge runtime issues
       console.log("New user created:", message.user.email)
     }
   },
