@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,8 +36,8 @@ import SimilarQuestion from "./similar-question";
 import { QuestionFormFields } from "../../_components/QuestionFormFields";
 import { Tag, ExistingQuestion, SimilarQuestion as SimilarQuestionType, searchSimilarQuestions } from "../_actions/ask-data";
 import { useTranslations } from "next-intl";
+import { useDebouncedCallback } from "use-debounce";
 
-// Define the form schema with zod
 const createQuestionSchema = (t: (key: string) => string) => z.object({
   title: z
     .string()
@@ -83,11 +83,11 @@ export function QuestionForm({
   searchSimilarQuestions,
 }: QuestionFormProps) {
   void tags;
+  void existingQuestions;
   const t = useTranslations('AskQuestionPage.QuestionForm');
   const questionSchema = createQuestionSchema(t);
 
   const [localContext, setLocalContext] = useState<QuestionContext>(context);
-  const [allQuestions] = useState<ExistingQuestion[]>(existingQuestions);
   const router = useRouter();
   const [courses, setCourses] = useState<EnrolledCourse[]>([]);
   const [loadingCourses, setLoadingCourses] = useState<boolean>(false);
@@ -117,9 +117,8 @@ export function QuestionForm({
     },
   });
 
-  // Debounced similarity check
-  const debouncedSimilarityCheck = useCallback(
-    debounce(async (title: string) => {
+  const debouncedSimilarityCheck = useDebouncedCallback(
+    async (title: string) => {
       if (title.length <= 10) {
         setSimilarQuestions([]);
         setSimilarityError(null);
@@ -138,32 +137,17 @@ export function QuestionForm({
       } finally {
         setIsSimilarityLoading(false);
       }
-    }, 500), // 500ms delay
-    [searchSimilarQuestions, t]
+    },
+    500
   );
 
-  // Handle title changes to fetch similarity-based suggestions
   const handleTitleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const title = e.target.value;
-    // propagate to react-hook-form
     register("title").onChange(e);
-    // Use debounced similarity check
     debouncedSimilarityCheck(title);
   };
 
-  // Debounce utility function
-  function debounce<T extends (...args: any[]) => any>(
-    func: T,
-    wait: number
-  ): (...args: Parameters<T>) => void {
-    let timeout: NodeJS.Timeout;
-    return (...args: Parameters<T>) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  }
-
-  const contentValue = watch("content"); // raw Markdown/LaTeX text
+  const contentValue = watch("content");
   const selectedTypeValue = watch("type");
 
   const onSubmit = async (data: QuestionFormValues) => {
@@ -192,7 +176,6 @@ export function QuestionForm({
 
       if (result.success) {
         toast.success(t('postSuccess'));
-        // Redirect to the new question page
         router.push(`/questions/${result.questionId}/${result.slug}`);
       } else {
         toast.error(result.error || t('postError'));
@@ -205,7 +188,6 @@ export function QuestionForm({
     }
   };
 
-  // Fetch courses the user is enrolled in or authored on mount
   useEffect(() => {
     setLoadingCourses(true);
     getMyCoursesWithLessons()
