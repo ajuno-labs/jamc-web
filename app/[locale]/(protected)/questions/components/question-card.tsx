@@ -21,7 +21,6 @@ interface QuestionCardProps {
   answerCount: number
   voteCount: number
   createdAt: string
-  onTagClick: (tagName: string) => void
 }
 
 export function QuestionCard({
@@ -35,7 +34,6 @@ export function QuestionCard({
   answerCount,
   voteCount,
   createdAt,
-  onTagClick,
 }: QuestionCardProps) {
   return (
     <div className="bg-card rounded-lg shadow p-6">
@@ -67,8 +65,7 @@ export function QuestionCard({
             <Badge 
               key={tag.name} 
               variant="outline" 
-              className="flex items-center gap-1 cursor-pointer hover:bg-secondary"
-              onClick={() => onTagClick(tag.name)}
+              className="flex items-center gap-1"
             >
               <Tag className="h-3 w-3" />
               {tag.name}

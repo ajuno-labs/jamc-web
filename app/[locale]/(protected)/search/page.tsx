@@ -47,7 +47,6 @@ export default async function SearchPage({
               <QuestionCard
                 key={q.id}
                 {...q}
-                onTagClick={() => {}}
               />
             ))}
           </div>

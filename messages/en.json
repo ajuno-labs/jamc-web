@@ -203,7 +203,8 @@
     "dashboard": "Dashboard",
     "qaForum": "Q&A Forum",
     "students": "Students",
-    "search": "Search..."
+    "search": "Search...",
+    "searching": "Searching..."
   },
   "SignInPage": {
     "welcomeBack": "Welcome back",

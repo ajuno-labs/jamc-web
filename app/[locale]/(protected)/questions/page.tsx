@@ -82,11 +82,7 @@ export default function QuestionsPage() {
     performSearch(currentPage)
   }, [performSearch, currentPage])
 
-  const handleTagClick = (tagName: string) => {
-    if (!selectedTags.includes(tagName)) {
-      setSelectedTags([...selectedTags, tagName])
-    }
-  }
+
 
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE)
 
@@ -123,7 +119,6 @@ export default function QuestionsPage() {
               <QuestionCard
                 key={question.id}
                 {...question}
-                onTagClick={handleTagClick}
               />
             ))}
 
