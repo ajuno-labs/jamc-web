@@ -15,12 +15,16 @@ import { useRouter } from "@/i18n/navigation"
 import { AttachmentList } from "./AttachmentList"
 import { ClientDate } from "@/components/client-date"
 
+import { QuestionType } from "@prisma/client"
+import { getQuestionTypeBadge } from "@/lib/utils/question-type-badges"
+
 interface QuestionHeaderProps {
   question: {
     id: string
     title: string
     content: string
     slug: string
+    type: QuestionType
     author: {
       id: string
       name: string | null
@@ -64,11 +68,18 @@ export function QuestionHeader({ question, currentUserId }: QuestionHeaderProps)
     router.push(`/questions/${question.id}/${question.slug}/edit`)
   }
 
+  const typeBadge = getQuestionTypeBadge(question.type)
+
   return (
     <Card className="mb-8">
       <CardHeader>
         <div className="flex flex-col space-y-2">
-          <h1 className="text-2xl font-bold">{question.title}</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold">{question.title}</h1>
+            <Badge variant={typeBadge.variant} className="text-sm">
+              {typeBadge.icon} {typeBadge.label}
+            </Badge>
+          </div>
           <div className="flex flex-wrap gap-2">
             {question.course && (
               <Link href={`/courses/${question.course.slug}`}>

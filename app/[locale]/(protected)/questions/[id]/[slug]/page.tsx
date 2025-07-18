@@ -44,14 +44,12 @@ export default async function QuestionPage({
     notFound()
   }
 
-  // If the slug doesn't match, redirect to the correct URL
   if (question.slug !== questionSlug) {
     return redirect(`/questions/${questionId}/${question.slug}`)
   }
 
   const isEducator = hasPermission(user, "MANAGE")
   
-  // Determine the current user's vote on this question
   let currentUserVote = null
   if (user) {
     const userVote = question.votes.find((vote: { userId?: string; value: number }) => vote.userId === user.id)
@@ -60,7 +58,6 @@ export default async function QuestionPage({
     }
   }
   
-  // Enhance question with current user's vote and normalize nulls to undefined for optional props
   const enhancedQuestion = {
     ...question,
     currentUserVote,
