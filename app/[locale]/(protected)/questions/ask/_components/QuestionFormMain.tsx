@@ -1,7 +1,6 @@
 "use client";
 
 import { Control, Controller, UseFormRegister, FieldErrors } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -11,7 +10,6 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
 import { TagFilter } from "../../components/tag-filter";
 import { AttachmentUpload } from "./AttachmentUpload";
 import { AttachmentGallery } from "./AttachmentGallery";
@@ -113,22 +111,6 @@ export function QuestionFormMain({
           </p>
         )}
       </div>
-
-      {/* Submit Button */}
-      <Button
-        type="submit"
-        className="w-full sm:w-auto"
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {t('posting')}
-          </>
-        ) : (
-          t('postQuestion')
-        )}
-      </Button>
     </div>
   );
 } 

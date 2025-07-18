@@ -18,6 +18,7 @@ import { CourseLessonSelector } from "./CourseLessonSelector";
 import { QuestionFormSidebar } from "./QuestionFormSidebar";
 import { QuestionFormMain } from "./QuestionFormMain";
 import { QuestionFormFields } from "../../_components/QuestionFormFields";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 const createQuestionSchema = (t: (key: string) => string) => z.object({
   title: z
@@ -187,6 +188,12 @@ export function QuestionForm({
             setLocalContext={setLocalContext}
             context={context}
             isSubmitting={isSubmitting}
+          />
+
+          <SubmitButton
+            isSubmitting={isSubmitting}
+            submittingText={t('posting')}
+            defaultText={t('postQuestion')}
           />
         </form>
       </div>
