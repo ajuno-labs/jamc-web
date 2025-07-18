@@ -68,8 +68,8 @@ export function QuestionFormMain({
         )}
       </div>
 
-      {/* Topic and Attachments (Formal mode only) */}
-      {selectedTypeValue === QuestionType.FORMAL && (
+      {/* Topic and Attachments (Structured mode only) */}
+      {selectedTypeValue === QuestionType.STRUCTURED && (
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="topic">{t('topic')}</Label>
