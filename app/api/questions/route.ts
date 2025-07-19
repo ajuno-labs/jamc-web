@@ -2,6 +2,7 @@ import { auth } from "@/auth"
 import { prisma } from "@/lib/db/prisma"
 import { slugify } from "@/lib/utils"
 import { NextRequest, NextResponse } from "next/server"
+import { QuestionType } from "@prisma/client"
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,7 +13,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json()
-    const { title, content, tags, courseId, lessonId, type = "FORMAL", visibility = "PUBLIC", topic } = body
+    const { title, content, tags, courseId, lessonId, type = QuestionType.STRUCTURED, visibility = "PUBLIC", topic } = body
 
     // Create a unique slug from the title
     const baseSlug = slugify(title)

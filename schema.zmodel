@@ -183,8 +183,9 @@ model Authenticator {
 }
 
 enum QuestionType {
-  YOLO
-  FORMAL
+  OBJECTIVE
+  STRUCTURED
+  OPINION
 }
 
 enum Visibility {
@@ -204,6 +205,10 @@ model Question {
   content     String         @length(min: 10)
   type        QuestionType
   visibility  Visibility     @default(PUBLIC)
+  
+  // AI Classification metadata
+  classificationConfidence Float?        @default(0.0)
+  classificationReasoning  String[]      @default([])
   
   // For formal questions
   topic       String?

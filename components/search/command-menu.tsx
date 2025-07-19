@@ -12,12 +12,13 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useDebounce } from "@/lib/hooks/use-debounce";
 import { searchQuestions } from "@/lib/actions/search-actions";
+import { QuestionType } from "@prisma/client";
 
 interface SearchResult {
   id: string;
   title: string;
   content: string;
-  type: "YOLO" | "FORMAL";
+  type: QuestionType;
   author: {
     name: string | null;
     image: string | null;
@@ -123,7 +124,9 @@ export function CommandMenu({ ...dialogProps }: DialogProps) {
                       <h3 className="font-medium">{result.title}</h3>
                       <Badge
                         variant={
-                          result.type === "YOLO" ? "secondary" : "default"
+                          result.type === QuestionType.OBJECTIVE ? "secondary" : 
+                          result.type === QuestionType.STRUCTURED ? "default" : 
+                          "outline"
                         }
                       >
                         {result.type}

@@ -99,8 +99,9 @@
     "search": {
       "placeholder": "Tìm kiếm câu hỏi...",
       "allTypes": "Tất Cả",
-      "formal": "Chính Thức",
-      "yolo": "YOLO",
+      "objective": "Khách Quan",
+      "structured": "Có Cấu Trúc",
+      "opinion": "Ý Kiến",
       "clearFilters": "Xóa Bộ Lọc",
       "selectTags": "Chọn thẻ",
       "tagsSelected": "{count} thẻ đã chọn",
@@ -134,12 +135,6 @@
       "postSuccess": "Đăng câu hỏi thành công!",
       "postError": "Không thể đăng câu hỏi",
       "unexpectedError": "Đã xảy ra lỗi không mong muốn",
-      "formalMode": "Chế độ chính thức",
-      "yoloMode": "Chế độ YOLO",
-      "formalModeTooltip": "Thêm tệp, chọn chủ đề và viết câu hỏi chi tiết để được trợ giúp toàn diện.",
-      "yoloModeTooltip": "Câu hỏi nhanh để có câu trả lời nhanh - chỉ cần nhập và gửi!",
-      "formalModeDescription": "Hỏi đáp toàn diện với tệp đính kèm và chủ đề",
-      "yoloModeDescription": "Câu hỏi nhanh và đơn giản để được trợ giúp ngay lập tức",
       "tags": "Thẻ",
       "tagsHint": "Chọn ít nhất một thẻ để phân loại câu hỏi của bạn",
       "topic": "Chủ đề",
@@ -152,7 +147,16 @@
       "lessonOptional": "Bài học (Tùy chọn)",
       "selectLesson": "Chọn một bài học",
       "posting": "Đang đăng câu hỏi...",
-      "postQuestion": "Đăng câu hỏi"
+      "postQuestion": "Đăng câu hỏi",
+      "questionType": {
+        "label": "Loại Câu Hỏi",
+        "objective": "Khách Quan",
+        "objectiveDescription": "Câu hỏi dựa trên thực tế với câu trả lời cụ thể, chính xác",
+        "structured": "Có Cấu Trúc",
+        "structuredDescription": "Giải thích và phân tích yêu cầu phản hồi chi tiết",
+        "opinion": "Ý Kiến",
+        "opinionDescription": "Câu hỏi phản ánh cá nhân và thảo luận"
+      }
     }
   },
   "SearchPage": {

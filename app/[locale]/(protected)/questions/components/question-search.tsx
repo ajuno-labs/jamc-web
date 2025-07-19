@@ -46,16 +46,22 @@ export function QuestionSearch({
             {t('allTypes')}
           </Button>
           <Button
-            variant={selectedType === "YOLO" ? "default" : "outline"}
-            onClick={() => onTypeChange("YOLO")}
+            variant={selectedType === QuestionType.OBJECTIVE ? "default" : "outline"}
+            onClick={() => onTypeChange(QuestionType.OBJECTIVE)}
           >
-            {t('yolo')}
+            {t('objective')}
           </Button>
           <Button
-            variant={selectedType === "FORMAL" ? "default" : "outline"}
-            onClick={() => onTypeChange("FORMAL")}
+            variant={selectedType === QuestionType.STRUCTURED ? "default" : "outline"}
+            onClick={() => onTypeChange(QuestionType.STRUCTURED)}
           >
-            {t('formal')}
+            {t('structured')}
+          </Button>
+          <Button
+            variant={selectedType === QuestionType.OPINION ? "default" : "outline"}
+            onClick={() => onTypeChange(QuestionType.OPINION)}
+          >
+            {t('opinion')}
           </Button>
         </div>
       </div>
@@ -67,4 +73,4 @@ export function QuestionSearch({
       />
     </div>
   )
-} 
+}

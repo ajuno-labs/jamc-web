@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client"
+import { Prisma, QuestionType } from "@prisma/client"
 
 // Question context types
 export type QuestionContext = {
@@ -17,7 +17,7 @@ export type QuestionContextBreadcrumb = {
 export type QuestionFormData = {
   title: string
   content: string
-  type: 'YOLO' | 'FORMAL'
+  type: QuestionType
   visibility: 'PUBLIC' | 'PRIVATE'
   topic?: string
   context: QuestionContext
