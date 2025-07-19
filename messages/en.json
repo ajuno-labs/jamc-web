@@ -229,5 +229,20 @@
       "passwordMinLength": "Password must be more than 8 characters",
       "passwordMaxLength": "Password must be less than 32 characters"
     }
+  },
+  "DateFormats": {
+    "default": "MMM d, yyyy 'at' HH:mm",
+    "short": "MMM d, yyyy",
+    "timeOnly": "HH:mm",
+    "full": "EEEE, MMMM d, yyyy 'at' HH:mm",
+    "relative": {
+      "justNow": "Just now",
+      "minutesAgo": "{minutes} minutes ago",
+      "hoursAgo": "{hours} hours ago",
+      "daysAgo": "{days} days ago",
+      "weeksAgo": "{weeks} weeks ago",
+      "monthsAgo": "{months} months ago",
+      "yearsAgo": "{years} years ago"
+    }
   }
 }
