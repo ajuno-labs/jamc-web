@@ -1,11 +1,11 @@
 import { Link } from "@/i18n/navigation"
-import { format } from "date-fns"
 import { MessageSquare, ThumbsUp, Tag } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { QuestionType } from "@prisma/client"
 import { MathContent } from '@/components/MathContent'
+import { ClientDate } from "@/components/client-date"
 
 interface QuestionCardProps {
   id: string
@@ -85,7 +85,7 @@ export function QuestionCard({
         </Avatar>
         <span>{author.name}</span>
         <span>•</span>
-        <span>{format(new Date(createdAt), "MMM d, yyyy")}</span>
+        <ClientDate date={createdAt} variant="short" />
       </div>
     </div>
   )
