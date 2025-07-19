@@ -11,14 +11,11 @@ import { notifyNewCourseQuestion } from "@/lib/services/notification-triggers"
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
 import { Buffer } from "buffer"
 import { addQuestionToSearchIndex } from "../ask/_actions/ask-data"
-
-// Use FormData to support file uploads for attachments
+import { questionClassificationService } from "@/lib/services/question-classification-service"
 
 /**
  * Create a new question
  * 
- * This function uses ZenStack's enhance() directly with user context
- * to enforce access policies for creation operations
  */
 export async function createQuestion(formData: FormData) {
   try {
@@ -47,7 +44,7 @@ export async function createQuestion(formData: FormData) {
     
     const title = formData.get('title')?.toString() || ''
     const content = formData.get('content')?.toString() || ''
-    const type = formData.get('type')?.toString() as QuestionType
+    const userSelectedType = formData.get('type')?.toString() as QuestionType
     const visibility = formData.get('visibility')?.toString() as Visibility
     const topic = formData.get('topic')?.toString() || undefined
     const tags = formData.getAll('tags') as string[]
@@ -55,7 +52,9 @@ export async function createQuestion(formData: FormData) {
     const lessonId = formData.get('lessonId')?.toString() || undefined
     const attachments = formData.getAll('attachments') as File[]
 
-    // Generate slug from title
+    const classification = await questionClassificationService.classifyQuestion(title, content)
+    const finalType = classification.confidence > 0.7 ? classification.type : userSelectedType
+
     const slug = slugify(title)
     
     // Resolve tags: connect existing & create new to avoid update policy
@@ -79,7 +78,7 @@ export async function createQuestion(formData: FormData) {
       data: {
         title,
         content,
-        type,
+        type: finalType,
         visibility,
         topic,
         slug,
@@ -88,6 +87,9 @@ export async function createQuestion(formData: FormData) {
         tags: {
           connect: existingTags.map(t => ({ id: t.id })),
         },
+        // Add classification metadata
+        classificationConfidence: classification.confidence,
+        classificationReasoning: classification.reasoning,
         ...(courseId ? { course: { connect: { id: courseId } } } : {}),
         ...(lessonId ? { lesson: { connect: { id: lessonId } } } : {}),
       }
@@ -140,7 +142,6 @@ export async function createQuestion(formData: FormData) {
         await notifyNewCourseQuestion(question.id, user.id)
       } catch (error) {
         console.error('Failed to send new course question notification:', error)
-        // Don't fail the question creation if notification fails
       }
     }
     

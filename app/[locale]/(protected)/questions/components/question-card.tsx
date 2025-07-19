@@ -44,7 +44,11 @@ export function QuestionCard({
         >
           {title}
         </Link>
-        <Badge variant={type === "YOLO" ? "secondary" : "default"}>
+        <Badge variant={
+          type === QuestionType.OBJECTIVE ? "secondary" : 
+          type === QuestionType.STRUCTURED ? "default" : 
+          "outline"
+        }>
           {type}
         </Badge>
       </div>

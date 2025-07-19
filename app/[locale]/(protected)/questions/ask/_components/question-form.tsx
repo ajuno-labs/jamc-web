@@ -18,6 +18,7 @@ import { CourseLessonSelector } from "./CourseLessonSelector";
 import { QuestionFormSidebar } from "./QuestionFormSidebar";
 import { QuestionFormMain } from "./QuestionFormMain";
 import { QuestionFormFields } from "../../_components/QuestionFormFields";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 const createQuestionSchema = (t: (key: string) => string) => z.object({
   title: z
@@ -76,7 +77,7 @@ export function QuestionForm({
     defaultValues: {
       title: "",
       content: "",
-      type: QuestionType.FORMAL,
+      type: QuestionType.STRUCTURED,
       visibility: Visibility.PUBLIC,
     },
   });
@@ -128,7 +129,7 @@ export function QuestionForm({
       formData.append('content', data.content);
       formData.append('type', data.type);
       formData.append('visibility', data.visibility);
-      if (data.type === 'FORMAL' && data.topic) {
+      if (data.type === QuestionType.STRUCTURED && data.topic) {
         formData.append('topic', data.topic);
       }
       selectedTags.forEach(t => formData.append('tags', t));
@@ -158,7 +159,6 @@ export function QuestionForm({
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <QuestionTypeToggle
             control={control}
-            selectedTypeValue={selectedTypeValue}
             isSubmitting={isSubmitting}
           />
 
@@ -188,6 +188,12 @@ export function QuestionForm({
             setLocalContext={setLocalContext}
             context={context}
             isSubmitting={isSubmitting}
+          />
+
+          <SubmitButton
+            isSubmitting={isSubmitting}
+            submittingText={t('posting')}
+            defaultText={t('postQuestion')}
           />
         </form>
       </div>

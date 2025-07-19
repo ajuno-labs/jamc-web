@@ -131,7 +131,7 @@ export async function seedQuestions({
         create: {
           title,
           content,
-          type: "FORMAL",
+          type: "STRUCTURED",
           topic,
           visibility: "PUBLIC",
           status: "OPEN",

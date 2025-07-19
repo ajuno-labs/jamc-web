@@ -21,8 +21,9 @@ enum PermissionType {
 }
 
 enum QuestionType {
-  YOLO
-  FORMAL
+  OBJECTIVE
+  STRUCTURED
+  OPINION
 }
 
 enum Visibility {
@@ -187,28 +188,30 @@ model Authenticator {
 }
 
 model Question {
-  id          String         @id() @default(cuid())
-  title       String
-  content     String
-  type        QuestionType
-  visibility  Visibility     @default(PUBLIC)
-  topic       String?
-  attachments Attachment[]
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt()
-  authorId    String
-  author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  answers     Answer[]
-  tags        Tag[]
-  votes       QuestionVote[]
-  comments    Comment[]
-  courseId    String?
-  course      Course?        @relation(fields: [courseId], references: [id])
-  lessonId    String?
-  lesson      Lesson?        @relation(fields: [lessonId], references: [id])
-  viewCount   Int            @default(0)
-  slug        String         @unique()
-  status      Status         @default(OPEN)
+  id                       String         @id() @default(cuid())
+  title                    String
+  content                  String
+  type                     QuestionType
+  visibility               Visibility     @default(PUBLIC)
+  classificationConfidence Float?         @default(0.0)
+  classificationReasoning  String[]       @default([])
+  topic                    String?
+  attachments              Attachment[]
+  createdAt                DateTime       @default(now())
+  updatedAt                DateTime       @updatedAt()
+  authorId                 String
+  author                   User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  answers                  Answer[]
+  tags                     Tag[]
+  votes                    QuestionVote[]
+  comments                 Comment[]
+  courseId                 String?
+  course                   Course?        @relation(fields: [courseId], references: [id])
+  lessonId                 String?
+  lesson                   Lesson?        @relation(fields: [lessonId], references: [id])
+  viewCount                Int            @default(0)
+  slug                     String         @unique()
+  status                   Status         @default(OPEN)
 
   @@index([courseId])
   @@index([lessonId])

@@ -99,8 +99,9 @@
     "search": {
       "placeholder": "Search questions...",
       "allTypes": "All Types",
-      "formal": "Formal",
-      "yolo": "YOLO",
+      "objective": "Objective",
+      "structured": "Structured",
+      "opinion": "Opinion",
       "clearFilters": "Clear Filters",
       "selectTags": "Select tags",
       "tagsSelected": "{count} tags selected",
@@ -134,12 +135,6 @@
       "postSuccess": "Question posted successfully!",
       "postError": "Failed to post question",
       "unexpectedError": "An unexpected error occurred",
-      "formalMode": "Formal Mode",
-      "yoloMode": "YOLO Mode",
-      "formalModeTooltip": "Add files, choose topics, and write detailed questions for comprehensive help.",
-      "yoloModeTooltip": "Quick questions for fast answers - just type and go!",
-      "formalModeDescription": "Comprehensive questioning with attachments and topics",
-      "yoloModeDescription": "Quick and casual questions for immediate help",
       "tags": "Tags",
       "tagsHint": "Select at least one tag to categorize your question",
       "topic": "Topic",
@@ -152,7 +147,16 @@
       "lessonOptional": "Lesson (Optional)",
       "selectLesson": "Select a lesson",
       "posting": "Posting Question...",
-      "postQuestion": "Post Question"
+      "postQuestion": "Post Question",
+      "questionType": {
+        "label": "Question Type",
+        "objective": "Objective",
+        "objectiveDescription": "Fact-based questions with specific, correct answers",
+        "structured": "Structured",
+        "structuredDescription": "Explanations and analysis requiring detailed responses",
+        "opinion": "Opinion",
+        "opinionDescription": "Personal reflection and discussion questions"
+      }
     }
   },
   "SearchPage": {
