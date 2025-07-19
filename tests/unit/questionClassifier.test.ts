@@ -1,4 +1,5 @@
-import { QuestionClassifier, QuestionType } from '../../lib/questionClassifier';
+import { QuestionClassifier } from '../../lib/questionClassifier';
+import { QuestionType } from '@prisma/client';
 
 describe('QuestionClassifier', () => {
   let classifier: QuestionClassifier;
@@ -25,7 +26,7 @@ describe('QuestionClassifier', () => {
 
     test.each(objectiveQuestions)('should classify "%s" as objective', (question) => {
       const result = classifier.classify(question);
-      expect(result.type).toBe('objective');
+      expect(result.type).toBe(QuestionType.OBJECTIVE);
       expect(result.confidence).toBeGreaterThan(0.5);
     });
   });
@@ -48,7 +49,7 @@ describe('QuestionClassifier', () => {
 
     test.each(structuredQuestions)('should classify "%s" as structured', (question) => {
       const result = classifier.classify(question);
-      expect(result.type).toBe('structured');
+      expect(result.type).toBe(QuestionType.STRUCTURED);
       expect(result.confidence).toBeGreaterThan(0.5);
     });
   });
@@ -69,9 +70,7 @@ describe('QuestionClassifier', () => {
 
     test.each(opinionQuestions)('should classify "%s" as opinion', (question) => {
       const result = classifier.classify(question);
-      // Some opinion questions might be classified as structured due to keyword overlap
-      // We'll accept either opinion or structured for these cases
-      expect(['opinion', 'structured']).toContain(result.type);
+      expect([QuestionType.OPINION, QuestionType.STRUCTURED]).toContain(result.type);
       expect(result.confidence).toBeGreaterThan(0.5);
     });
   });
@@ -79,19 +78,17 @@ describe('QuestionClassifier', () => {
   describe('Edge Cases', () => {
     test('should handle empty string', () => {
       const result = classifier.classify('');
-      expect(result.type).toBe('objective'); // Default fallback
+      expect(result.type).toBe(QuestionType.OBJECTIVE);
       expect(result.confidence).toBe(0.5);
     });
 
     test('should handle very short questions', () => {
       const result = classifier.classify('Why?');
-      expect(['objective', 'structured', 'opinion']).toContain(result.type);
+      expect([QuestionType.OBJECTIVE, QuestionType.STRUCTURED, QuestionType.OPINION]).toContain(result.type);
     });
 
     test('should handle questions with multiple patterns', () => {
-      // This question has both "explain" (structured) and "what is" (objective)
       const result = classifier.classify('Explain what is the meaning of life?');
-      // Should prioritize the stronger pattern
       expect(result.confidence).toBeGreaterThan(0.5);
     });
   });
@@ -101,11 +98,9 @@ describe('QuestionClassifier', () => {
       const question = 'Explain why NaCl is ionic';
       const analysis = classifier.analyze(question);
 
-      expect(analysis.classification.type).toBe('structured');
+      expect(analysis.classification.type).toBe(QuestionType.STRUCTURED);
       expect(analysis.classification.confidence).toBeGreaterThan(0.5);
-      expect(analysis.ruleMatches).toHaveLength(6); // Total number of rules
-      
-      // Should have at least one matching rule
+      expect(analysis.ruleMatches).toHaveLength(6);
       const matchingRules = analysis.ruleMatches.filter(rm => rm.matched);
       expect(matchingRules.length).toBeGreaterThan(0);
     });
@@ -128,8 +123,7 @@ describe('QuestionClassifier', () => {
 
     test('should provide lower confidence for ambiguous questions', () => {
       const result = classifier.classify('Why?');
-      // For very short questions, confidence might be high due to default behavior
-      expect(result.confidence).toBeLessThanOrEqual(1.0);
+      expect(result.confidence).toBeLessThanOrEqual(0.7);
     });
   });
 
@@ -137,29 +131,26 @@ describe('QuestionClassifier', () => {
     test('should prioritize pattern matches over keyword matches', () => {
       const question = 'What is the process of photosynthesis?';
       const analysis = classifier.analyze(question);
-      
-      // Should match both "what is" (objective) and "process" (structured)
-      // But pattern match should have higher weight
-      expect(analysis.classification.type).toBe('objective');
+      expect(analysis.classification.type).toBe(QuestionType.OBJECTIVE);
     });
   });
 
   describe('Specific Rule Testing', () => {
     test('should correctly identify definition questions', () => {
       const result = classifier.classify('What is the meaning of life?');
-      expect(result.type).toBe('objective');
+      expect(result.type).toBe(QuestionType.OBJECTIVE);
       expect(result.reasoning.some(reason => reason.includes('definition_question'))).toBe(true);
     });
 
     test('should correctly identify explanation questions', () => {
       const result = classifier.classify('Explain how computers work');
-      expect(result.type).toBe('structured');
+      expect(result.type).toBe(QuestionType.STRUCTURED);
       expect(result.reasoning.some(reason => reason.includes('explanation_question'))).toBe(true);
     });
 
     test('should correctly identify opinion questions', () => {
       const result = classifier.classify('What do you think about AI?');
-      expect(result.type).toBe('opinion');
+      expect(result.type).toBe(QuestionType.OPINION);
       expect(result.reasoning.some(reason => reason.includes('opinion_question'))).toBe(true);
     });
   });
@@ -173,8 +164,6 @@ describe('QuestionClassifier', () => {
       const startTime = Date.now();
       questions.forEach(q => classifier.classify(q));
       const endTime = Date.now();
-      
-      // Should process 100 questions in less than 100ms
       expect(endTime - startTime).toBeLessThan(100);
     });
   });

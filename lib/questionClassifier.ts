@@ -1,4 +1,4 @@
-export type QuestionType = 'objective' | 'structured' | 'opinion';
+import { QuestionType } from "@prisma/client";
 
 export interface QuestionClassification {
   type: QuestionType;
@@ -33,7 +33,7 @@ export class QuestionClassifier {
       // Objective/Closed questions
       {
         name: 'definition_question',
-        type: 'objective',
+        type: QuestionType.OBJECTIVE,
         patterns: [
           /what is\s+\w+/i,
           /define\s+\w+/i,
@@ -48,7 +48,7 @@ export class QuestionClassifier {
       },
       {
         name: 'factual_question',
-        type: 'objective',
+        type: QuestionType.OBJECTIVE,
         patterns: [
           /when\s+did\s+\w+/i,
           /where\s+is\s+\w+/i,
@@ -64,7 +64,7 @@ export class QuestionClassifier {
       // Structured/Open-ended questions
       {
         name: 'explanation_question',
-        type: 'structured',
+        type: QuestionType.STRUCTURED,
         patterns: [
           /explain\s+why\s+\w+/i,
           /explain\s+how\s+\w+/i,
@@ -80,7 +80,7 @@ export class QuestionClassifier {
       },
       {
         name: 'process_question',
-        type: 'structured',
+        type: QuestionType.STRUCTURED,
         patterns: [
           /how does\s+\w+/i,
           /what happens when\s+\w+/i,
@@ -95,7 +95,7 @@ export class QuestionClassifier {
       // Opinion/Exploratory questions
       {
         name: 'opinion_question',
-        type: 'opinion',
+        type: QuestionType.OPINION,
         patterns: [
           /what do you think\s+\w+/i,
           /what is your opinion\s+\w+/i,
@@ -109,7 +109,7 @@ export class QuestionClassifier {
       },
       {
         name: 'reflection_question',
-        type: 'opinion',
+        type: QuestionType.OPINION,
         patterns: [
           /how do you stay\s+\w+/i,
           /what helps you\s+\w+/i,
@@ -127,20 +127,18 @@ export class QuestionClassifier {
    */
   classify(question: string): QuestionClassification {
     const scores = {
-      objective: 0,
-      structured: 0,
-      opinion: 0
+      [QuestionType.OBJECTIVE]: 0,
+      [QuestionType.STRUCTURED]: 0,
+      [QuestionType.OPINION]: 0
     };
 
     const reasoning: string[] = [];
     const normalizedQuestion = question.toLowerCase().trim();
 
-    // Apply each rule
     for (const rule of this.rules) {
       let ruleScore = 0;
       let ruleMatched = false;
 
-      // Check patterns
       for (const pattern of rule.patterns) {
         if (pattern.test(normalizedQuestion)) {
           ruleScore += rule.weight;
@@ -166,17 +164,16 @@ export class QuestionClassifier {
     }
 
     // Determine the winning type
-    const maxScore = Math.max(scores.objective, scores.structured, scores.opinion);
-    const totalScore = scores.objective + scores.structured + scores.opinion;
+    const maxScore = Math.max(scores[QuestionType.OBJECTIVE], scores[QuestionType.STRUCTURED], scores[QuestionType.OPINION]);
+    const totalScore = scores[QuestionType.OBJECTIVE] + scores[QuestionType.STRUCTURED] + scores[QuestionType.OPINION];
     
-    let type: QuestionType = 'objective';
-    if (scores.structured > scores.objective && scores.structured > scores.opinion) {
-      type = 'structured';
-    } else if (scores.opinion > scores.objective && scores.opinion > scores.structured) {
-      type = 'opinion';
+    let type: QuestionType = QuestionType.OBJECTIVE;
+    if (scores[QuestionType.STRUCTURED] > scores[QuestionType.OBJECTIVE] && scores[QuestionType.STRUCTURED] > scores[QuestionType.OPINION]) {
+      type = QuestionType.STRUCTURED;
+    } else if (scores[QuestionType.OPINION] > scores[QuestionType.OBJECTIVE] && scores[QuestionType.OPINION] > scores[QuestionType.STRUCTURED]) {
+      type = QuestionType.OPINION;
     }
 
-    // Calculate confidence (normalized score)
     const confidence = totalScore > 0 ? maxScore / totalScore : 0.5;
 
     return {
@@ -203,7 +200,6 @@ export class QuestionClassifier {
       let score = 0;
       let matched = false;
 
-      // Check patterns
       for (const pattern of rule.patterns) {
         if (pattern.test(normalizedQuestion)) {
           score += rule.weight;
@@ -212,7 +208,6 @@ export class QuestionClassifier {
         }
       }
 
-      // Check keywords
       for (const keyword of rule.keywords) {
         if (normalizedQuestion.includes(keyword.toLowerCase())) {
           score += rule.weight * 0.5;
