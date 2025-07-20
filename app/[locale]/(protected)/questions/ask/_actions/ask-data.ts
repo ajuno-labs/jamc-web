@@ -1,35 +1,35 @@
-"use server"
+"use server";
 
-import { getPublicEnhancedPrisma } from "@/lib/db/enhanced"
+import { getEnhancedPrisma } from "@/lib/db/enhanced";
 
 export type Tag = {
-  id: string
-  name: string
-  description: string | null
-  count: number
-}
+  id: string;
+  name: string;
+  description: string | null;
+  count: number;
+};
 
 export type ExistingQuestion = {
-  id: string
-  title: string
-  slug: string
-}
+  id: string;
+  title: string;
+  slug: string;
+};
 
 export type SimilarQuestion = {
-  question_id: string
-  slug: string
-  title: string
-  content: string | null
-  similarity_score: number
-  tags: string[] | null
-  category: string | null
-}
+  question_id: string;
+  slug: string;
+  title: string;
+  content: string | null;
+  similarity_score: number;
+  tags: string[] | null;
+  category: string | null;
+};
 
 /**
  * Fetch all public tags ordered by question count
  */
 export async function getTags(): Promise<Tag[]> {
-  const db = getPublicEnhancedPrisma()
+  const db = await getEnhancedPrisma();
   const tagsRaw = await db.tag.findMany({
     select: {
       id: true,
@@ -37,14 +37,14 @@ export async function getTags(): Promise<Tag[]> {
       description: true,
       _count: { select: { questions: true } },
     },
-    orderBy: { questions: { _count: 'desc' } },
-  })
-  return tagsRaw.map(tag => ({
+    orderBy: { questions: { _count: "desc" } },
+  });
+  return tagsRaw.map((tag) => ({
     id: tag.id,
     name: tag.name,
     description: tag.description,
     count: tag._count.questions,
-  }))
+  }));
 }
 
 /**
@@ -52,13 +52,13 @@ export async function getTags(): Promise<Tag[]> {
  * Limited to most recent 100 questions for performance
  */
 export async function getExistingQuestions(): Promise<ExistingQuestion[]> {
-  const db = getPublicEnhancedPrisma()
+  const db = await getEnhancedPrisma();
   return db.question.findMany({
-    where: { visibility: 'PUBLIC' },
+    where: { visibility: "PUBLIC" },
     select: { id: true, title: true, slug: true },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
     take: 100, // Limit to 100 most recent questions
-  })
+  });
 }
 
 /**
@@ -69,8 +69,8 @@ export async function searchSimilarQuestions(
   topK: number = 5,
   threshold: number = 0.5
 ): Promise<SimilarQuestion[]> {
-  const semanticSearchUrl = process.env.SIMILARITY_API_URL || "http://localhost:8000"
-  
+  const semanticSearchUrl = process.env.SIMILARITY_API_URL || "http://localhost:8000";
+
   try {
     const response = await fetch(`${semanticSearchUrl}/search`, {
       method: "POST",
@@ -78,38 +78,38 @@ export async function searchSimilarQuestions(
       body: JSON.stringify({
         query,
         top_k: topK,
-        threshold
+        threshold,
       }),
-    })
+    });
 
     if (!response.ok) {
-      throw new Error(`Semantic search API error: ${response.status}`)
+      throw new Error(`Semantic search API error: ${response.status}`);
     }
 
-    const data = await response.json()
-    const results = data.results || []
-    
+    const data = await response.json();
+    const results = data.results || [];
+
     if (results.length > 0) {
-      const db = getPublicEnhancedPrisma()
-      const questionIds = results.map((r: { question_id: string }) => r.question_id)
-      
+      const db = await getEnhancedPrisma();
+      const questionIds = results.map((r: { question_id: string }) => r.question_id);
+
       const questionsWithSlugs = await db.question.findMany({
         where: { id: { in: questionIds } },
-        select: { id: true, slug: true }
-      })
-      
-      const slugMap = new Map(questionsWithSlugs.map(q => [q.id, q.slug]))
-      
+        select: { id: true, slug: true },
+      });
+
+      const slugMap = new Map(questionsWithSlugs.map((q) => [q.id, q.slug]));
+
       return results.map((result: { question_id: string; [key: string]: unknown }) => ({
         ...result,
-        slug: slugMap.get(result.question_id) || result.question_id
-      }))
+        slug: slugMap.get(result.question_id) || result.question_id,
+      }));
     }
-    
-    return results
+
+    return results;
   } catch (error) {
-    console.error("Error searching similar questions:", error)
-    throw new Error("Failed to search for similar questions")
+    console.error("Error searching similar questions:", error);
+    throw new Error("Failed to search for similar questions");
   }
 }
 
@@ -117,15 +117,15 @@ export async function searchSimilarQuestions(
  * Add a question to the semantic search index
  */
 export async function addQuestionToSearchIndex(question: {
-  id: string
-  slug: string
-  title: string
-  content?: string | null
-  tags?: string[]
-  category?: string | null
+  id: string;
+  slug: string;
+  title: string;
+  content?: string | null;
+  tags?: string[];
+  category?: string | null;
 }): Promise<void> {
-  const semanticSearchUrl = process.env.SIMILARITY_API_URL || "http://localhost:8000"
-  
+  const semanticSearchUrl = process.env.SIMILARITY_API_URL || "http://localhost:8000";
+
   try {
     const response = await fetch(`${semanticSearchUrl}/questions/add-single`, {
       method: "POST",
@@ -136,14 +136,14 @@ export async function addQuestionToSearchIndex(question: {
         title: question.title,
         content: question.content,
         tags: question.tags,
-        category: question.category
+        category: question.category,
       }),
-    })
+    });
 
     if (!response.ok) {
-      throw new Error(`Failed to add question to search index: ${response.status}`)
+      throw new Error(`Failed to add question to search index: ${response.status}`);
     }
   } catch (error) {
-    console.error("Error adding question to search index:", error)
+    console.error("Error adding question to search index:", error);
   }
 }

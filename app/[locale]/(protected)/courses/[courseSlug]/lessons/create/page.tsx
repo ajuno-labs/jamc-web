@@ -1,5 +1,5 @@
 import LessonForm from '../_components/LessonForm'
-import { getAuthUser } from '@/lib/auth'
+import { getCurrentUser } from '@/lib/auth/user'
 import { getEnhancedPrisma } from '@/lib/db/enhanced'
 import { notFound } from 'next/navigation'
 import { createLesson } from './_actions/lesson-actions'
@@ -10,7 +10,7 @@ interface PageProps {
 
 export default async function Page({ params }: PageProps) {
   const { courseSlug } = await params
-  const user = await getAuthUser()
+  const user = await getCurrentUser()
   if (!user) {
     notFound()
   }

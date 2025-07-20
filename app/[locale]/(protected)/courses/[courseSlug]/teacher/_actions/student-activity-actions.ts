@@ -1,37 +1,39 @@
-"use server"
+"use server";
 
-import { getAuthUser } from "@/lib/auth"
-import { getEnhancedPrisma } from "@/lib/db/enhanced"
-import { notFound } from "next/navigation"
-import type { 
-  StudentActivityMetrics, 
-  CourseActivitySummary, 
+import { getCurrentUser } from "@/lib/auth/user";
+import { getEnhancedPrisma } from "@/lib/db/enhanced";
+import { notFound } from "next/navigation";
+import type {
+  StudentActivityMetrics,
+  CourseActivitySummary,
   ActivityCalculationOptions,
-  StudentActivityState 
-} from "@/lib/types/student-activity"
+  StudentActivityState,
+} from "@/lib/types/student-activity";
 
 /**
  * Calculate student activity state based on their recent activity
  */
 function calculateActivityState(
-  lastActivityAt: Date | null, 
+  lastActivityAt: Date | null,
   options: ActivityCalculationOptions = {}
 ): StudentActivityState {
-  const { activeDays = 7, atRiskDays = 14 } = options
-  
+  const { activeDays = 7, atRiskDays = 14 } = options;
+
   if (!lastActivityAt) {
-    return 'inactive'
+    return "inactive";
   }
-  
-  const now = new Date()
-  const daysSinceActivity = Math.floor((now.getTime() - lastActivityAt.getTime()) / (1000 * 60 * 60 * 24))
-  
+
+  const now = new Date();
+  const daysSinceActivity = Math.floor(
+    (now.getTime() - lastActivityAt.getTime()) / (1000 * 60 * 60 * 24)
+  );
+
   if (daysSinceActivity <= activeDays) {
-    return 'active'
+    return "active";
   } else if (daysSinceActivity <= atRiskDays) {
-    return 'at-risk'
+    return "at-risk";
   } else {
-    return 'inactive'
+    return "inactive";
   }
 }
 
@@ -42,32 +44,32 @@ export async function getCourseStudentActivity(
   courseSlug: string,
   options: ActivityCalculationOptions = {}
 ): Promise<CourseActivitySummary> {
-  const user = await getAuthUser()
+  const user = await getCurrentUser();
   if (!user) {
-    notFound()
+    notFound();
   }
 
-  const db = await getEnhancedPrisma()
-  
+  const db = await getEnhancedPrisma();
+
   // Verify course ownership
   const course = await db.course.findUnique({
     where: { slug: courseSlug },
-    select: { 
-      id: true, 
-      title: true, 
+    select: {
+      id: true,
+      title: true,
       authorId: true,
-      lessons: { select: { id: true } }
-    }
-  })
-  
+      lessons: { select: { id: true } },
+    },
+  });
+
   if (!course || course.authorId !== user.id) {
-    notFound()
+    notFound();
   }
 
-  const { activeDays = 7 } = options
-  const sevenDaysAgo = new Date(Date.now() - activeDays * 24 * 60 * 60 * 1000)
-  const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-  
+  const { activeDays = 7 } = options;
+  const sevenDaysAgo = new Date(Date.now() - activeDays * 24 * 60 * 60 * 1000);
+  const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
   // Get all enrolled students with their activity data
   const enrollments = await db.courseEnrollment.findMany({
     where: { courseId: course.id },
@@ -81,82 +83,84 @@ export async function getCourseStudentActivity(
           // All lesson views for this course
           lessonViews: {
             where: {
-              lesson: { courseId: course.id }
+              lesson: { courseId: course.id },
             },
-            select: { lessonId: true, viewedAt: true }
+            select: { lessonId: true, viewedAt: true },
           },
           // Recent questions
           questions: {
             where: {
               courseId: course.id,
-              createdAt: { gte: sevenDaysAgo }
+              createdAt: { gte: sevenDaysAgo },
             },
-            select: { createdAt: true }
+            select: { createdAt: true },
           },
           // Recent answers
           answers: {
             where: {
               question: { courseId: course.id },
-              createdAt: { gte: sevenDaysAgo }
+              createdAt: { gte: sevenDaysAgo },
             },
-            select: { createdAt: true }
+            select: { createdAt: true },
           },
           // Recent votes
           questionVotes: {
             where: {
               question: { courseId: course.id },
-              createdAt: { gte: sevenDaysAgo }
+              createdAt: { gte: sevenDaysAgo },
             },
-            select: { createdAt: true }
+            select: { createdAt: true },
           },
           answerVotes: {
             where: {
               answer: { question: { courseId: course.id } },
-              createdAt: { gte: sevenDaysAgo }
+              createdAt: { gte: sevenDaysAgo },
             },
-            select: { createdAt: true }
+            select: { createdAt: true },
           },
           // Activity logs for comprehensive tracking
           activityLogs: {
             where: {
               createdAt: { gte: sevenDaysAgo },
               OR: [
-                { type: 'VIEW_LESSON' },
-                { type: 'ASK_QUESTION' },
-                { type: 'ANSWER_QUESTION' },
-                { type: 'UPVOTE_QUESTION' },
-                { type: 'DOWNVOTE_QUESTION' },
-                { type: 'UPVOTE_ANSWER' },
-                { type: 'DOWNVOTE_ANSWER' }
-              ]
+                { type: "VIEW_LESSON" },
+                { type: "ASK_QUESTION" },
+                { type: "ANSWER_QUESTION" },
+                { type: "UPVOTE_QUESTION" },
+                { type: "DOWNVOTE_QUESTION" },
+                { type: "UPVOTE_ANSWER" },
+                { type: "DOWNVOTE_ANSWER" },
+              ],
             },
-            select: { createdAt: true, type: true }
-          }
-        }
-      }
+            select: { createdAt: true, type: true },
+          },
+        },
+      },
     },
-    orderBy: { createdAt: 'desc' }
-  })
+    orderBy: { createdAt: "desc" },
+  });
 
-  const totalLessonsInCourse = course.lessons.length
-  const studentsMetrics: StudentActivityMetrics[] = []
-  
-  let activeCount = 0
-  let atRiskCount = 0
-  let inactiveCount = 0
-  let newThisWeekCount = 0
-  let totalProgress = 0
+  const totalLessonsInCourse = course.lessons.length;
+  const studentsMetrics: StudentActivityMetrics[] = [];
+
+  let activeCount = 0;
+  let atRiskCount = 0;
+  let inactiveCount = 0;
+  let newThisWeekCount = 0;
+  let totalProgress = 0;
 
   for (const enrollment of enrollments) {
-    const enrollmentUser = enrollment.user
-    
+    const enrollmentUser = enrollment.user;
+
     // Count new enrollments this week
     if (enrollment.createdAt >= oneWeekAgo) {
-      newThisWeekCount++
+      newThisWeekCount++;
     }
 
     // Filter recent lesson views
-    const recentLessonViews = enrollmentUser.lessonViews.filter((v: { viewedAt: Date }) => v.viewedAt >= sevenDaysAgo)
+    const recentLessonViews = enrollmentUser.lessonViews.filter(
+      (v: { viewedAt: Date }) => v.viewedAt >= sevenDaysAgo
+    );
 
     // Calculate last activity date from multiple sources
     const allActivityDates = [
@@ -165,35 +169,43 @@ export async function getCourseStudentActivity(
       ...enrollmentUser.answers.map((a: { createdAt: Date }) => a.createdAt),
       ...enrollmentUser.questionVotes.map((v: { createdAt: Date }) => v.createdAt),
       ...enrollmentUser.answerVotes.map((v: { createdAt: Date }) => v.createdAt),
-      ...enrollmentUser.activityLogs.map((a: { createdAt: Date }) => a.createdAt)
-    ]
-    
-    const lastActivityAt = allActivityDates.length > 0 
-      ? new Date(Math.max(...allActivityDates.map(d => d.getTime())))
-      : null
+      ...enrollmentUser.activityLogs.map((a: { createdAt: Date }) => a.createdAt),
+    ];
+
+    const lastActivityAt =
+      allActivityDates.length > 0
+        ? new Date(Math.max(...allActivityDates.map((d) => d.getTime())))
+        : null;
 
     // Calculate activity state
-    const activityState = calculateActivityState(lastActivityAt, options)
-    
+    const activityState = calculateActivityState(lastActivityAt, options);
+
     // Count by state
     switch (activityState) {
-      case 'active': activeCount++; break
-      case 'at-risk': atRiskCount++; break
-      case 'inactive': inactiveCount++; break
+      case "active":
+        activeCount++;
+        break;
+      case "at-risk":
+        atRiskCount++;
+        break;
+      case "inactive":
+        inactiveCount++;
+        break;
     }
 
     // Calculate progress
-    const uniqueLessonsViewed = new Set(enrollmentUser.lessonViews.map((v: { lessonId: string }) => v.lessonId)).size
-    const progressPercentage = totalLessonsInCourse > 0 
-      ? Math.round((uniqueLessonsViewed / totalLessonsInCourse) * 100)
-      : 0
-    
-    totalProgress += progressPercentage
+    const uniqueLessonsViewed = new Set(
+      enrollmentUser.lessonViews.map((v: { lessonId: string }) => v.lessonId)
+    ).size;
+    const progressPercentage =
+      totalLessonsInCourse > 0 ? Math.round((uniqueLessonsViewed / totalLessonsInCourse) * 100) : 0;
+
+    totalProgress += progressPercentage;
 
     // Create student metrics
     const studentMetrics: StudentActivityMetrics = {
       id: enrollmentUser.id,
-      name: enrollmentUser.name || 'Unknown',
+      name: enrollmentUser.name || "Unknown",
       email: enrollmentUser.email,
       image: enrollmentUser.image,
       enrolledAt: enrollment.createdAt,
@@ -205,20 +217,19 @@ export async function getCourseStudentActivity(
       votesGivenCount: enrollmentUser.questionVotes.length + enrollmentUser.answerVotes.length,
       totalLessonsInCourse,
       lessonsViewedTotal: uniqueLessonsViewed,
-      progressPercentage
-    }
-    
-    studentsMetrics.push(studentMetrics)
+      progressPercentage,
+    };
+
+    studentsMetrics.push(studentMetrics);
   }
 
   // Students needing attention (at-risk + inactive)
   const studentsNeedingAttention = studentsMetrics.filter(
-    s => s.activityState === 'at-risk' || s.activityState === 'inactive'
-  )
+    (s) => s.activityState === "at-risk" || s.activityState === "inactive"
+  );
 
-  const averageProgressPercentage = enrollments.length > 0 
-    ? Math.round(totalProgress / enrollments.length)
-    : 0
+  const averageProgressPercentage =
+    enrollments.length > 0 ? Math.round(totalProgress / enrollments.length) : 0;
 
   return {
     courseId: course.id,
@@ -229,25 +240,25 @@ export async function getCourseStudentActivity(
     inactiveStudents: inactiveCount,
     newStudentsThisWeek: newThisWeekCount,
     averageProgressPercentage,
-    studentsNeedingAttention
-  }
+    studentsNeedingAttention,
+  };
 }
 
 /**
  * Get simplified student list with activity states for the dashboard
  */
 export async function getCourseStudentsList(courseSlug: string) {
-  const summary = await getCourseStudentActivity(courseSlug)
-  
+  const summary = await getCourseStudentActivity(courseSlug);
+
   // Get all students with their metrics
-  const db = await getEnhancedPrisma()
+  const db = await getEnhancedPrisma();
   const course = await db.course.findUnique({
     where: { slug: courseSlug },
-    select: { id: true }
-  })
-  
+    select: { id: true },
+  });
+
   if (!course) {
-    notFound()
+    notFound();
   }
 
   const enrollments = await db.courseEnrollment.findMany({
@@ -261,48 +272,51 @@ export async function getCourseStudentsList(courseSlug: string) {
           image: true,
           lessonViews: {
             where: { lesson: { courseId: course.id } },
-            select: { lessonId: true, viewedAt: true }
+            select: { lessonId: true, viewedAt: true },
           },
           questions: {
             where: { courseId: course.id },
-            select: { createdAt: true }
+            select: { createdAt: true },
           },
           activityLogs: {
             where: {
-              createdAt: { gte: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000) }
+              createdAt: { gte: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000) },
             },
-            select: { createdAt: true }
-          }
-        }
-      }
-    }
-  })
+            select: { createdAt: true },
+          },
+        },
+      },
+    },
+  });
 
-  return enrollments.map(enrollment => {
-    const enrollmentUser = enrollment.user
-    
+  return enrollments.map((enrollment) => {
+    const enrollmentUser = enrollment.user;
+
     // Calculate last activity
     const allActivityDates = [
       ...enrollmentUser.lessonViews.map((v: { viewedAt: Date }) => v.viewedAt),
       ...enrollmentUser.questions.map((q: { createdAt: Date }) => q.createdAt),
-      ...enrollmentUser.activityLogs.map((a: { createdAt: Date }) => a.createdAt)
-    ]
-    
-    const lastActivityAt = allActivityDates.length > 0 
-      ? new Date(Math.max(...allActivityDates.map(d => d.getTime())))
-      : null
+      ...enrollmentUser.activityLogs.map((a: { createdAt: Date }) => a.createdAt),
+    ];
 
-    const activityState = calculateActivityState(lastActivityAt)
-    
+    const lastActivityAt =
+      allActivityDates.length > 0
+        ? new Date(Math.max(...allActivityDates.map((d) => d.getTime())))
+        : null;
+
+    const activityState = calculateActivityState(lastActivityAt);
+
     return {
       id: enrollmentUser.id,
-      name: enrollmentUser.name || 'Unknown',
+      name: enrollmentUser.name || "Unknown",
       email: enrollmentUser.email,
       image: enrollmentUser.image,
       lastActivityAt,
       activityState,
       questionsAsked: enrollmentUser.questions.length,
-      progress: summary.studentsNeedingAttention.find(s => s.id === enrollmentUser.id)?.progressPercentage || 0
-    }
-  })
-} 
+      progress:
+        summary.studentsNeedingAttention.find((s) => s.id === enrollmentUser.id)
+          ?.progressPercentage || 0,
+    };
+  });
+}

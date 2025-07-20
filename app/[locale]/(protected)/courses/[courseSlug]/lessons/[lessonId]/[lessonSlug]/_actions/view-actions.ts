@@ -1,6 +1,6 @@
 "use server";
 
-import { getAuthUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth/user";
 import { getEnhancedPrisma } from "@/lib/db/enhanced";
 import { Prisma } from "@prisma/client";
 
@@ -12,7 +12,7 @@ export async function markLessonViewed(lessonId: string) {
     throw new Error("Lesson ID is required");
   }
 
-  const user = await getAuthUser();
+  const user = await getCurrentUser();
   if (!user?.id) {
     throw new Error("Unauthorized");
   }
@@ -35,7 +35,7 @@ export async function unmarkLessonViewed(lessonId: string) {
     throw new Error("Lesson ID is required");
   }
 
-  const user = await getAuthUser();
+  const user = await getCurrentUser();
   if (!user?.id) {
     throw new Error("Unauthorized");
   }
@@ -47,8 +47,8 @@ export async function unmarkLessonViewed(lessonId: string) {
     });
   } catch (error) {
     // Ignore if no record to delete
-    if (!(error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025')) {
+    if (!(error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025")) {
       throw error;
     }
   }
-} 
+}

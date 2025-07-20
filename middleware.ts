@@ -1,49 +1,21 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
-import createMiddleware from 'next-intl/middleware';
-import { routing } from './i18n/routing';
+import createMiddleware from "next-intl/middleware";
+import { routing } from "./i18n/routing";
+import { isPublicRoute } from "@/lib/config/routes";
 
 const intlMiddleware = createMiddleware(routing);
 
-export default auth((req) => {
+export default auth(async (req) => {
   const response = intlMiddleware(req);
-  
-  if (response) {
-    return response;
+
+  if (!req.auth && !isPublicRoute(req.nextUrl.pathname)) {
+    const signinUrl = new URL("/signin", req.url);
+    signinUrl.searchParams.set("callbackUrl", req.nextUrl.pathname);
+    return NextResponse.redirect(signinUrl.toString());
   }
 
-  const pathname = req.nextUrl.pathname;
-  const pathnameHasLocale = routing.locales.some(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-  );
-  
-  const pathWithoutLocale = pathnameHasLocale 
-    ? pathname.replace(/^\/[^\/]+/, '') || '/'
-    : pathname;
-
-  if (pathWithoutLocale === "/") {
-    return NextResponse.next();
-  }
-
-  // Auth pages - redirect to home if already authenticated
-  if (pathWithoutLocale.startsWith("/signin") || pathWithoutLocale.startsWith("/signup")) {
-    if (req.auth) {
-      // Redirect to localized home page
-      const locale = pathnameHasLocale ? pathname.split('/')[1] : routing.defaultLocale;
-      return NextResponse.redirect(new URL(`/${locale}`, req.url));
-    } else {
-      return NextResponse.next();
-    }
-  }
-
-  if (!req.auth) {
-    const locale = pathnameHasLocale ? pathname.split('/')[1] : routing.defaultLocale;
-    const signInUrl = new URL(`/${locale}/signin`, req.url);
-    signInUrl.searchParams.set("callbackUrl", pathname + req.nextUrl.search);
-    return NextResponse.redirect(signInUrl);
-  }
-  
-  return NextResponse.next();
+  return response;
 });
 
 export const config = {

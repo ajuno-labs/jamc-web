@@ -1,36 +1,36 @@
-'use server'
+"use server";
 
-import { getAuthUser } from '@/lib/auth'
-import { getEnhancedPrisma } from '@/lib/db/enhanced'
+import { getCurrentUser } from "@/lib/auth/user";
+import { getEnhancedPrisma } from "@/lib/db/enhanced";
 
 export async function updateLesson(formData: FormData) {
-  const user = await getAuthUser()
+  const user = await getCurrentUser();
   if (!user) {
-    throw new Error('Authentication required')
+    throw new Error("Authentication required");
   }
 
-  const lessonId = formData.get('lessonId')?.toString()
+  const lessonId = formData.get("lessonId")?.toString();
   if (!lessonId) {
-    throw new Error('Lesson ID is required')
+    throw new Error("Lesson ID is required");
   }
 
-  const db = await getEnhancedPrisma()
+  const db = await getEnhancedPrisma();
 
   const lesson = await db.lesson.findUnique({
     where: { id: lessonId },
     include: { course: true },
-  })
+  });
   if (!lesson) {
-    throw new Error('Lesson not found')
+    throw new Error("Lesson not found");
   }
   if (lesson.course.authorId !== user.id) {
-    throw new Error('Unauthorized')
+    throw new Error("Unauthorized");
   }
 
-  const title = formData.get('title')?.toString() || lesson.title
-  const summary = formData.get('summary')?.toString() || lesson.summary
-  const metadataRaw = formData.get('metadata')?.toString() || '{}'
-  const metadata = JSON.parse(metadataRaw)
+  const title = formData.get("title")?.toString() || lesson.title;
+  const summary = formData.get("summary")?.toString() || lesson.summary;
+  const metadataRaw = formData.get("metadata")?.toString() || "{}";
+  const metadata = JSON.parse(metadataRaw);
 
   // TODO: Handle modules, chapters, and file uploads as needed
 
@@ -41,5 +41,5 @@ export async function updateLesson(formData: FormData) {
       summary,
       metadata,
     },
-  })
-} 
+  });
+}

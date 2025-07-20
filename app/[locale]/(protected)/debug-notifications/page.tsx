@@ -1,13 +1,8 @@
-import { getAuthUser } from "@/lib/auth"
-import { redirect } from "@/i18n/navigation"
-import { DebugNotificationActions } from "./_components/DebugNotificationActions"
+import { getCurrentUser } from "@/lib/auth/user";
+import { DebugNotificationActions } from "./_components/DebugNotificationActions";
 
 export default async function DebugNotificationsPage() {
-  const user = await getAuthUser()
-  
-  if (!user) {
-    return redirect("/signin");
-  }
+  const user = await getCurrentUser();
 
   return (
     <div className="container max-w-4xl py-8">
@@ -17,5 +12,5 @@ export default async function DebugNotificationsPage() {
       </div>
       <DebugNotificationActions userId={user.id} />
     </div>
-  )
-} 
+  );
+}

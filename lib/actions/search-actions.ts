@@ -1,29 +1,29 @@
-"use server"
+"use server";
 
-import { prisma } from "@/lib/db/prisma"
-import { QuestionType, Prisma } from "@prisma/client"
-import { auth } from "@/auth"
-import { questionWithRelationsInclude } from "@/lib/types/prisma"
-import { getPublicEnhancedPrisma } from "@/lib/db/enhanced"
+import { prisma } from "@/lib/db/prisma";
+import { QuestionType, Prisma } from "@prisma/client";
+import { auth } from "@/auth";
+import { questionWithRelationsInclude } from "@/lib/types/prisma";
+import { getEnhancedPrisma } from "@/lib/db/enhanced";
 
 interface SearchQuestionsResult {
   items: Array<{
-    id: string
-    slug: string
-    title: string
-    content: string
-    type: QuestionType
+    id: string;
+    slug: string;
+    title: string;
+    content: string;
+    type: QuestionType;
     author: {
-      name: string | null
-      image: string | null
-    }
-    tags: Array<{ name: string }>
-    answerCount: number
-    voteCount: number
-    createdAt: string
-  }>
-  total: number
-  hasMore: boolean
+      name: string | null;
+      image: string | null;
+    };
+    tags: Array<{ name: string }>;
+    answerCount: number;
+    voteCount: number;
+    createdAt: string;
+  }>;
+  total: number;
+  hasMore: boolean;
 }
 
 export interface Course {
@@ -59,7 +59,7 @@ export interface PaginatedResult<T> {
 
 /**
  * Search for questions with pagination
- * 
+ *
  * This function uses the original Prisma client for public questions
  * and handles its own access control with the visibility filter
  */
@@ -73,67 +73,71 @@ export async function searchQuestions(
   try {
     // For public question listing, we use the original prisma client
     // with explicit filtering rather than relying on ZenStack's policies
-    const db = prisma
-    const skip = (page - 1) * pageSize
-    const session = await auth()
+    const db = prisma;
+    const skip = (page - 1) * pageSize;
+    const session = await auth();
 
     // Debug logging
-    console.log('Current session:', {
+    console.log("Current session:", {
       user: session?.user,
-      email: session?.user?.email
-    })
+      email: session?.user?.email,
+    });
 
     // Build the where clause
     const where: Prisma.QuestionWhereInput = {
       AND: [
         // Only apply search conditions if query is not empty
-        query ? {
-          OR: [
-            { title: { contains: query, mode: "insensitive" as Prisma.QueryMode } },
-            { content: { contains: query, mode: "insensitive" as Prisma.QueryMode } },
-            {
-              tags: {
-                some: {
-                  name: { contains: query, mode: "insensitive" as Prisma.QueryMode }
-                }
-              }
+        query
+          ? {
+              OR: [
+                { title: { contains: query, mode: "insensitive" as Prisma.QueryMode } },
+                { content: { contains: query, mode: "insensitive" as Prisma.QueryMode } },
+                {
+                  tags: {
+                    some: {
+                      name: { contains: query, mode: "insensitive" as Prisma.QueryMode },
+                    },
+                  },
+                },
+              ],
             }
-          ]
-        } : {},
+          : {},
         // Always apply type filter if not "all"
         type === "all" ? {} : { type },
         // Apply tags filter if any tags are selected
-        tags.length > 0 ? {
-          tags: {
-            some: {
-              name: { in: tags }
+        tags.length > 0
+          ? {
+              tags: {
+                some: {
+                  name: { in: tags },
+                },
+              },
             }
-          }
-        } : {},
+          : {},
         // Only show public questions to maintain some access control
-        { visibility: "PUBLIC" }
-      ]
-    }
+        { visibility: "PUBLIC" },
+      ],
+    };
 
     // Get total count for pagination
-    const total = await db.question.count({ where })
+    const total = await db.question.count({ where });
 
     // Get paginated questions
     const questions = await db.question.findMany({
       where,
       include: questionWithRelationsInclude,
       orderBy: {
-        createdAt: "desc"
+        createdAt: "desc",
       },
       skip,
-      take: pageSize
-    })
+      take: pageSize,
+    });
 
     // Debug logging
-    console.log('Found questions:', questions.length)
-    console.log('Total questions:', total)
+    console.log("Found questions:", questions.length);
+    console.log("Total questions:", total);
     if (tags.length > 0) {
-      console.log('Filtering by tags:', tags)
+      console.log("Filtering by tags:", tags);
     }
 
     return {
@@ -147,14 +151,14 @@ export async function searchQuestions(
         tags: question.tags,
         answerCount: question._count.answers,
         voteCount: question._count.votes,
-        createdAt: question.createdAt.toISOString()
+        createdAt: question.createdAt.toISOString(),
       })),
       total,
-      hasMore: skip + questions.length < total
-    }
+      hasMore: skip + questions.length < total,
+    };
   } catch (error) {
-    console.error("Search error:", error)
-    return { items: [], total: 0, hasMore: false }
+    console.error("Search error:", error);
+    return { items: [], total: 0, hasMore: false };
   }
 }
 
@@ -195,11 +199,11 @@ export async function getCourses(options?: {
     }
 
     // Fetch courses with related data
-    const db = getPublicEnhancedPrisma();
-    
+    const db = await getEnhancedPrisma();
+
     // Get total count for pagination
     const total = await db.course.count({ where });
-    
+
     const courses = await db.course.findMany({
       where,
       select: {
@@ -283,4 +287,4 @@ export async function getCourses(options?: {
       },
     };
   }
-} 
+}

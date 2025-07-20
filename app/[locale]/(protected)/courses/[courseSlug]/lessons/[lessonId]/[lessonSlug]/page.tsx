@@ -1,8 +1,10 @@
 import { redirect } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
+import { getLocale } from "next-intl/server";
 import { getLessonSummary } from "./_actions/summary-actions";
-import { getAuthUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth/user";
+
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getEnhancedPrisma } from "@/lib/db/enhanced";
@@ -19,6 +21,7 @@ interface PageProps {
 
 export default async function LessonSummaryPage({ params }: PageProps) {
   const { courseSlug, lessonId, lessonSlug } = await params;
+  const locale = await getLocale();
 
   const lesson = await getLessonSummary(lessonId);
   if (!lesson) {
@@ -26,10 +29,13 @@ export default async function LessonSummaryPage({ params }: PageProps) {
   }
 
   if (lesson.course.slug !== courseSlug || lesson.slug !== lessonSlug) {
-    return redirect(`/courses/${lesson.course.slug}/lessons/${lessonId}/${lesson.slug}`);
+    return redirect({
+      href: `/courses/${lesson.course.slug}/lessons/${lessonId}/${lesson.slug}`,
+      locale,
+    });
   }
 
-  const user = await getAuthUser();
+  const user = await getCurrentUser();
   const db = await getEnhancedPrisma();
   const viewRecord = user
     ? await db.lessonView.findUnique({
@@ -41,7 +47,7 @@ export default async function LessonSummaryPage({ params }: PageProps) {
   const hasAccess = Boolean(
     user &&
       (lesson.course.author.id === user.id ||
-        lesson.course.enrollments.some(e => e.userId === user.id))
+        lesson.course.enrollments.some((e) => e.userId === user.id))
   );
 
   if (!hasAccess) {
@@ -61,20 +67,21 @@ export default async function LessonSummaryPage({ params }: PageProps) {
   }
 
   const currentOrder = lesson.order;
-  const previousLesson = lesson.course.lessons.find(l => l.order === currentOrder - 1);
-  const nextLesson = lesson.course.lessons.find(l => l.order === currentOrder + 1);
-  
-  const previousUrl = previousLesson ? `/courses/${courseSlug}/lessons/${previousLesson.id}/${previousLesson.slug}` : undefined;
-  const nextUrl = nextLesson ? `/courses/${courseSlug}/lessons/${nextLesson.id}/${nextLesson.slug}` : undefined;
+  const previousLesson = lesson.course.lessons.find((l) => l.order === currentOrder - 1);
+  const nextLesson = lesson.course.lessons.find((l) => l.order === currentOrder + 1);
+
+  const previousUrl = previousLesson
+    ? `/courses/${courseSlug}/lessons/${previousLesson.id}/${previousLesson.slug}`
+    : undefined;
+  const nextUrl = nextLesson
+    ? `/courses/${courseSlug}/lessons/${nextLesson.id}/${nextLesson.slug}`
+    : undefined;
 
   return (
     <div className="container mx-auto px-4 max-w-5xl py-8 space-y-8">
       <LessonSummaryHeader lesson={lesson} nextLessonUrl={nextUrl} />
 
-      <LessonNavigation 
-        previousLessonUrl={previousUrl}
-        nextLessonUrl={nextUrl}
-      />
+      <LessonNavigation previousLessonUrl={previousUrl} nextLessonUrl={nextUrl} />
 
       {/* Teacher or Student Action */}
       <div className="flex justify-end space-x-2 mb-4">
@@ -85,11 +92,11 @@ export default async function LessonSummaryPage({ params }: PageProps) {
             </Link>
           </Button>
         ) : (
-          <ViewToggle 
-            lessonId={lessonId} 
+          <ViewToggle
+            lessonId={lessonId}
             lessonTitle={lesson.title}
             courseId={lesson.course.id}
-            initiallyViewed={viewed} 
+            initiallyViewed={viewed}
             nextLessonUrl={nextUrl}
           />
         )}

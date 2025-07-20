@@ -5,20 +5,29 @@ import { AnswersSection } from "./_components/AnswersSection";
 import { BadgesSection } from "./_components/BadgesSection";
 import { SubscriptionsSection } from "./_components/SubscriptionsSection";
 import { NotificationsSection } from "./_components/NotificationsSection";
-import { getTranslations } from 'next-intl/server';
-
-// Force this page to be dynamic since it uses authentication
-export const dynamic = 'force-dynamic'
+import { getTranslations } from "next-intl/server";
+import { auth } from "@/auth";
+import { redirect } from "@/i18n/navigation";
+import { getLocale } from "next-intl/server";
 
 export default async function ProfilePage() {
-  const t = await getTranslations('ProfilePage')
+  const t = await getTranslations("ProfilePage");
+  const session = await auth();
+  const locale = await getLocale();
+  if (!session) {
+    return redirect({
+      href: { pathname: "/signin", query: { callbackUrl: "/profile" } },
+      locale,
+    });
+  }
+
   const profileData = await getUserProfile();
 
   if (!profileData) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <p className="text-muted-foreground">{t('unableToLoad')}</p>
+          <p className="text-muted-foreground">{t("unableToLoad")}</p>
         </div>
       </div>
     );
