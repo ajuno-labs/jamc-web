@@ -1,35 +1,15 @@
 "use server";
 
-import { auth } from "@/auth";
-import { userWithRolesInclude } from "@/lib/types/prisma";
+import { UserWithRoles, userWithRolesInclude } from "@/lib/types/prisma";
 import { getEnhancedPrisma } from "@/lib/db/enhanced";
-import { prisma } from "@/lib/db/prisma";
 import { notifyWelcome } from "@/lib/services/notification-triggers";
-import { redirect } from "@/i18n/navigation";
+import { getCurrentUser } from "@/lib/auth/user";
 
 export async function assignUserRole(role: "teacher" | "student") {
-  const session = await auth();
-  const user = await prisma.user.findUnique({
-    where: {
-      email: session!.user!.email!,
-    },
-    include: userWithRolesInclude,
-  });
-
-  if (!user) {
-    return {
-      success: false,
-      error: "User not authenticated",
-    };
-  }
-
-  const db = prisma;
-
-  // Map role to database role names
+  const user = await getCurrentUser(userWithRolesInclude);
+  const enhancedPrisma = await getEnhancedPrisma();
   const roleName = role === "teacher" ? "TEACHER" : "STUDENT";
-
-  // Find the role in the database
-  const roleRecord = await db.role.findFirst({
+  const roleRecord = await enhancedPrisma.role.findFirst({
     where: { name: roleName },
   });
 
@@ -40,8 +20,7 @@ export async function assignUserRole(role: "teacher" | "student") {
     };
   }
 
-  // Assign role to user
-  await db.user.update({
+  await enhancedPrisma.user.update({
     where: { id: user.id },
     data: {
       roles: {
@@ -50,11 +29,10 @@ export async function assignUserRole(role: "teacher" | "student") {
     },
   });
 
-  // Create default notification preferences for the user
   try {
-    await db.notificationPreferences.upsert({
+    await enhancedPrisma.notificationPreferences.upsert({
       where: { userId: user.id },
-      update: {}, // Don't update existing preferences
+      update: {},
       create: {
         userId: user.id,
         newAnswer: ["IN_APP", "EMAIL"],
@@ -76,7 +54,6 @@ export async function assignUserRole(role: "teacher" | "student") {
     });
   } catch (preferencesError) {
     console.warn("Failed to create notification preferences (non-critical):", preferencesError);
-    // Don't fail the entire onboarding if notification preferences fail
   }
 
   return {
@@ -86,24 +63,10 @@ export async function assignUserRole(role: "teacher" | "student") {
 }
 
 export async function joinCourseWithCode(joinCode: string) {
-  const session = await auth();
-  const user = await prisma.user.findUnique({
-    where: {
-      email: session!.user!.email!,
-    },
-  });
+  const user = await getCurrentUser(userWithRolesInclude);
+  const enhancedPrisma = await getEnhancedPrisma();
 
-  if (!user) {
-    return {
-      success: false,
-      error: "User not authenticated",
-    };
-  }
-
-  const db = await getEnhancedPrisma();
-
-  // Find course by join code
-  const course = await db.course.findUnique({
+  const course = await enhancedPrisma.course.findUnique({
     where: { joinCode: joinCode.toUpperCase() },
     select: { id: true, slug: true, title: true },
   });
@@ -115,8 +78,7 @@ export async function joinCourseWithCode(joinCode: string) {
     };
   }
 
-  // Check if user is already enrolled
-  const existingEnrollment = await db.courseEnrollment.findUnique({
+  const existingEnrollment = await enhancedPrisma.courseEnrollment.findUnique({
     where: {
       userId_courseId: {
         userId: user.id,
@@ -132,8 +94,7 @@ export async function joinCourseWithCode(joinCode: string) {
     };
   }
 
-  // Create enrollment
-  await db.courseEnrollment.create({
+  await enhancedPrisma.courseEnrollment.create({
     data: {
       userId: user.id,
       courseId: course.id,
@@ -147,17 +108,10 @@ export async function joinCourseWithCode(joinCode: string) {
   };
 }
 
-export async function triggerWelcomeNotification() {
-  const session = await auth();
-  const user = await prisma.user.findUnique({
-    where: {
-      email: session!.user!.email!,
-    },
-  });
+export async function triggerWelcomeNotification(user: UserWithRoles) {
   if (!user) {
-    return redirect("/signin");
+    throw new Error("User not found");
   }
-
   await notifyWelcome(user.id);
   return { success: true };
 }
