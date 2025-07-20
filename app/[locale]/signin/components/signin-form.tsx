@@ -38,13 +38,13 @@ export function SignInForm() {
     },
   });
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleAuth = async () => {
     setIsGoogleLoading(true);
     setError(null);
     try {
       await signIn("google", { callbackUrl, redirect: true });
     } catch (error) {
-      console.error("Google sign-in error:", error);
+      console.error("Google auth error:", error);
       setError(t("unexpectedError"));
       setIsGoogleLoading(false);
     }
@@ -68,9 +68,7 @@ export function SignInForm() {
         setError(message);
       } else if (result?.url) {
         markJustAuthenticated();
-
         await update();
-
         window.location.href = result.url;
       }
     } catch (error) {
@@ -98,11 +96,11 @@ export function SignInForm() {
         type="button"
         variant="outline"
         className="w-full"
-        onClick={handleGoogleSignIn}
+        onClick={handleGoogleAuth}
         disabled={isGoogleLoading || isLoading}
       >
         {isGoogleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}
-        {t("signInWithGoogle")}
+        {t("continueWithGoogle")}
       </Button>
 
       {/* Separator */}

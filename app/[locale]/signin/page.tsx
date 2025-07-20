@@ -1,6 +1,5 @@
-import { SignInForm } from "./_components/signin-form";
+import { SignInForm } from "./components/signin-form";
 import { GraduationCap } from "lucide-react";
-import { Link } from "@/i18n/navigation";
 import {
   Card,
   CardContent,
@@ -9,9 +8,8 @@ import {
   CardDescription,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Suspense } from "react";
-import { SignupSuccessMessage } from "./_components/signup-success-message";
+import { SignupSuccessMessage } from "./components/signup-success-message";
 import { useTranslations } from "next-intl";
 
 function SignInFormFallback() {
@@ -49,12 +47,6 @@ export default function SignInPage() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <p className="text-xs text-muted-foreground">{t("termsOfService")}</p>
-          <div className="text-center text-sm text-muted-foreground">
-            {t("dontHaveAccount")}
-            <Button variant="link" className="px-2 h-auto font-medium" asChild>
-              <Link href="/signup"> {t("signUp")} </Link>
-            </Button>
-          </div>
         </CardFooter>
       </Card>
     </div>

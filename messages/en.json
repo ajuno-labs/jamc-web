@@ -213,14 +213,12 @@
   "SignInPage": {
     "welcomeBack": "Welcome back",
     "workHardPlayHard": "Work hard, play hard",
-    "signInWithGoogle": "Sign in with Google",
+    "continueWithGoogle": "Continue with Google",
     "or": "or",
     "forgotPassword": "Forgot your password?",
     "signIn": "Sign in",
     "signingIn": "Signing in...",
     "termsOfService": "By continuing, you agree to JAMC's Terms of Service",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
     "invalidCredentials": "Invalid email or password",
     "unexpectedError": "An unexpected error occurred",
     "pleaseSignInWithOAuth": "Please sign in with OAuth provider",
@@ -234,29 +232,7 @@
       "passwordMaxLength": "Password must be less than 32 characters"
     }
   },
-  "SignUpPage": {
-    "createAccount": "Create an account",
-    "joinCommunity": "Join our community of learners",
-    "signUpWithGoogle": "Sign up with Google",
-    "or": "or",
-    "fullName": "Full Name",
-    "createAccountButton": "Create account",
-    "creatingAccount": "Creating account...",
-    "termsOfService": "By continuing, you agree to JAMC's Terms of Service",
-    "alreadyHaveAccount": "Already have an account?",
-    "signIn": "Sign in",
-    "unexpectedError": "An error occurred during sign up. Please try again.",
-    "validation": {
-      "nameRequired": "Full name is required",
-      "nameMinLength": "Full name must be at least 2 characters",
-      "nameMaxLength": "Full name must be less than 50 characters",
-      "emailRequired": "Email is required",
-      "invalidEmail": "Invalid email",
-      "passwordRequired": "Password is required",
-      "passwordMinLength": "Password must be more than 8 characters",
-      "passwordMaxLength": "Password must be less than 32 characters"
-    }
-  },
+
   "DateFormats": {
     "default": "MMM d, yyyy 'at' HH:mm",
     "short": "MMM d, yyyy",
