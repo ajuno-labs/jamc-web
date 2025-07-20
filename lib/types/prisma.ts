@@ -1,6 +1,5 @@
 import { Prisma } from "@prisma/client"
 
-// Common user select object for consistent querying
 export const userWithRolesInclude = {
   roles: {
     include: {
@@ -9,12 +8,10 @@ export const userWithRolesInclude = {
   }
 } satisfies Prisma.UserInclude
 
-// Type for user with roles and permissions
 export type UserWithRoles = Prisma.UserGetPayload<{
   include: typeof userWithRolesInclude
 }>
 
-// Common question select object for consistent querying
 export const questionWithRelationsInclude = {
   author: {
     select: {
