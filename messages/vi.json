@@ -234,6 +234,29 @@
       "passwordMaxLength": "Mật khẩu phải có ít hơn 32 ký tự"
     }
   },
+  "SignUpPage": {
+    "createAccount": "Tạo tài khoản",
+    "joinCommunity": "Tham gia cộng đồng người học của chúng tôi",
+    "signUpWithGoogle": "Đăng ký bằng Google",
+    "or": "hoặc",
+    "fullName": "Họ và tên",
+    "createAccountButton": "Tạo tài khoản",
+    "creatingAccount": "Đang tạo tài khoản...",
+    "termsOfService": "Bằng việc tiếp tục, bạn đồng ý với Điều Khoản Dịch Vụ của JAMC",
+    "alreadyHaveAccount": "Đã có tài khoản?",
+    "signIn": "Đăng nhập",
+    "unexpectedError": "Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại.",
+    "validation": {
+      "nameRequired": "Họ và tên là bắt buộc",
+      "nameMinLength": "Họ và tên phải có ít nhất 2 ký tự",
+      "nameMaxLength": "Họ và tên phải có ít hơn 50 ký tự",
+      "emailRequired": "Email là bắt buộc",
+      "invalidEmail": "Email không hợp lệ",
+      "passwordRequired": "Mật khẩu là bắt buộc",
+      "passwordMinLength": "Mật khẩu phải có ít nhất 8 ký tự",
+      "passwordMaxLength": "Mật khẩu phải có ít hơn 32 ký tự"
+    }
+  },
   "DateFormats": {
     "default": "d MMM, yyyy 'lúc' HH:mm",
     "short": "d MMM, yyyy",
