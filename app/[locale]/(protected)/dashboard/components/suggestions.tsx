@@ -2,20 +2,23 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Target, ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface SuggestionsProps {
   suggestions: string[];
 }
 
 export default function Suggestions({ suggestions }: SuggestionsProps) {
+  const t = useTranslations("Dashboard.suggestions");
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Target className="h-5 w-5" />
-          Suggested for You
+          {t("title")}
         </CardTitle>
-        <CardDescription>Topics and questions you might find interesting</CardDescription>
+        <CardDescription>{t("description")}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">

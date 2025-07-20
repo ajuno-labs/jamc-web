@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bell } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Notification {
   type: "answer" | "deadline" | "badge";
@@ -15,12 +16,14 @@ interface NotificationsProps {
 }
 
 export default function Notifications({ notifications }: NotificationsProps) {
+  const t = useTranslations("Dashboard.notifications");
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Bell className="h-5 w-5" />
-          Notifications
+          {t("title")}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -33,7 +36,7 @@ export default function Notifications({ notifications }: NotificationsProps) {
           ))}
         </div>
         <Button variant="outline" size="sm" className="w-full mt-4 bg-transparent">
-          View All
+          {t("viewAll")}
         </Button>
       </CardContent>
     </Card>

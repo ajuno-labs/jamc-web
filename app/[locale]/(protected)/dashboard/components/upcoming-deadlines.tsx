@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Deadline {
   title: string;
@@ -14,6 +15,8 @@ interface UpcomingDeadlinesProps {
 }
 
 export default function UpcomingDeadlines({ deadlines }: UpcomingDeadlinesProps) {
+  const t = useTranslations("Dashboard.deadlines");
+
   const getDeadlineStyles = (urgency: string) => {
     switch (urgency) {
       case "high":
@@ -58,7 +61,7 @@ export default function UpcomingDeadlines({ deadlines }: UpcomingDeadlinesProps)
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Calendar className="h-5 w-5" />
-          Upcoming Deadlines
+          {t("title")}
         </CardTitle>
       </CardHeader>
       <CardContent>

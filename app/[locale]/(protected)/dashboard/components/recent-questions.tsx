@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessageCircle, Clock } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Question {
   id: string;
@@ -18,14 +19,16 @@ interface RecentQuestionsProps {
 }
 
 export default function RecentQuestions({ questions }: RecentQuestionsProps) {
+  const t = useTranslations("Dashboard.questions");
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <MessageCircle className="h-5 w-5" />
-          Your Recent Questions
+          {t("title")}
         </CardTitle>
-        <CardDescription>Questions you&apos;ve asked recently</CardDescription>
+        <CardDescription>{t("description")}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -41,15 +44,17 @@ export default function RecentQuestions({ questions }: RecentQuestionsProps) {
                     <Clock className="h-3 w-3" />
                     {q.timestamp}
                   </span>
-                  <span>{q.answers} answers</span>
+                  <span>{t("answers", { count: q.answers })}</span>
                 </div>
               </div>
-              <Badge variant={q.status === "Answered" ? "default" : "secondary"}>{q.status}</Badge>
+              <Badge variant={q.status === "Answered" ? "default" : "secondary"}>
+                {q.status === "Answered" ? t("answered") : t("unanswered")}
+              </Badge>
             </div>
           ))}
         </div>
         <Button variant="outline" className="w-full mt-4 bg-transparent">
-          View All Questions
+          {t("viewAll")}
         </Button>
       </CardContent>
     </Card>

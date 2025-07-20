@@ -3,6 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { useTranslations } from "next-intl";
 
 interface StudentHeaderProps {
   name: string;
@@ -11,6 +12,8 @@ interface StudentHeaderProps {
 }
 
 export default function StudentHeader({ name, level, avatar }: StudentHeaderProps) {
+  const t = useTranslations("Dashboard.header");
+
   return (
     <div className="mb-8">
       <Card className="bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0">
@@ -27,17 +30,15 @@ export default function StudentHeader({ name, level, avatar }: StudentHeaderProp
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h1 className="text-2xl font-bold">Hello, {name} 👋</h1>
+                <h1 className="text-2xl font-bold">{t("greeting", { name })}</h1>
                 <Badge variant="secondary" className="mt-1 bg-white/20 text-white border-white/20">
                   {level}
                 </Badge>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-lg italic opacity-90">
-                &ldquo;The only way to learn mathematics is to do mathematics.&rdquo;
-              </p>
-              <p className="text-sm opacity-75 mt-1">- Paul Halmos</p>
+              <p className="text-lg italic opacity-90" dangerouslySetInnerHTML={{ __html: t("quote") }} />
+              <p className="text-sm opacity-75 mt-1">{t("author")}</p>
             </div>
           </div>
         </CardContent>
