@@ -170,6 +170,11 @@
   "ProfilePage": {
     "unableToLoad": "Unable to load profile data."
   },
+  "ProfileEditPage": {
+    "backToProfile": "Back to Profile",
+    "title": "Edit Profile",
+    "description": "Update your profile information and avatar"
+  },
   "CoursesPage": {
     "title": "Courses",
     "createNewCourse": "Create New Course",

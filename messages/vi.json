@@ -170,6 +170,11 @@
   "ProfilePage": {
     "unableToLoad": "Không thể tải dữ liệu hồ sơ."
   },
+  "ProfileEditPage": {
+    "backToProfile": "Quay Lại Hồ Sơ",
+    "title": "Chỉnh Sửa Hồ Sơ",
+    "description": "Cập nhật thông tin hồ sơ và ảnh đại diện của bạn"
+  },
   "CoursesPage": {
     "title": "Khóa Học",
     "createNewCourse": "Tạo Khóa Học Mới",
