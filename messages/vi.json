@@ -248,5 +248,52 @@
       "monthsAgo": "{months} tháng trước",
       "yearsAgo": "{years} năm trước"
     }
+  },
+  "Dashboard": {
+    "header": {
+      "greeting": "Xin chào, {name} 👋",
+      "level": "Cấp 2: Người Học Tò Mò",
+      "quote": "&ldquo;Cách duy nhất để học toán là làm toán.&rdquo;",
+      "author": "- Paul Halmos"
+    },
+    "stats": {
+      "questionsAsked": "Câu Hỏi Đã Đặt",
+      "answersReceived": "Câu Trả Lời Nhận Được",
+      "badgesEarned": "Huy Hiệu Đã Kiếm",
+      "studyStreak": "Chuỗi Học Tập",
+      "days": "ngày"
+    },
+    "courses": {
+      "title": "Khóa Học Đang Tham Gia",
+      "description": "Tiến độ khóa học hiện tại của bạn",
+      "progress": "{progress}%"
+    },
+    "questions": {
+      "title": "Câu Hỏi Gần Đây Của Bạn",
+      "description": "Những câu hỏi bạn đã đặt gần đây",
+      "answers": "{count} câu trả lời",
+      "viewAll": "Xem Tất Cả Câu Hỏi",
+      "answered": "Đã Trả Lời",
+      "unanswered": "Chưa Trả Lời"
+    },
+    "suggestions": {
+      "title": "Đề Xuất Cho Bạn",
+      "description": "Chủ đề và câu hỏi bạn có thể quan tâm"
+    },
+    "notifications": {
+      "title": "Thông Báo",
+      "viewAll": "Xem Tất Cả"
+    },
+    "quickActions": {
+      "title": "Thao Tác Nhanh",
+      "askQuestion": "Đặt Câu Hỏi",
+      "browseCourses": "Duyệt Khóa Học",
+      "viewProgress": "Xem Tiến Độ"
+    },
+    "deadlines": {
+      "title": "Hạn Chót Sắp Tới",
+      "dueTomorrow": "Hạn chót ngày mai",
+      "dueInDays": "Hạn chót trong {days} ngày"
+    }
   }
 }

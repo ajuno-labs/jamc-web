@@ -248,5 +248,52 @@
       "monthsAgo": "{months} months ago",
       "yearsAgo": "{years} years ago"
     }
+  },
+  "Dashboard": {
+    "header": {
+      "greeting": "Hello, {name} 👋",
+      "level": "Level 2: Curious Learner",
+      "quote": "&ldquo;The only way to learn mathematics is to do mathematics.&rdquo;",
+      "author": "- Paul Halmos"
+    },
+    "stats": {
+      "questionsAsked": "Questions Asked",
+      "answersReceived": "Answers Received",
+      "badgesEarned": "Badges Earned",
+      "studyStreak": "Study Streak",
+      "days": "days"
+    },
+    "courses": {
+      "title": "Active Courses",
+      "description": "Your current course progress",
+      "progress": "{progress}%"
+    },
+    "questions": {
+      "title": "Your Recent Questions",
+      "description": "Questions you&apos;ve asked recently",
+      "answers": "{count} answers",
+      "viewAll": "View All Questions",
+      "answered": "Answered",
+      "unanswered": "Unanswered"
+    },
+    "suggestions": {
+      "title": "Suggested for You",
+      "description": "Topics and questions you might find interesting"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "viewAll": "View All"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "askQuestion": "Ask a Question",
+      "browseCourses": "Browse Courses",
+      "viewProgress": "View Progress"
+    },
+    "deadlines": {
+      "title": "Upcoming Deadlines",
+      "dueTomorrow": "Due tomorrow",
+      "dueInDays": "Due in {days} days"
+    }
   }
 }
