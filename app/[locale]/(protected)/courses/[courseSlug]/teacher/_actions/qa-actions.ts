@@ -1,7 +1,7 @@
 'use server'
 
 import { notFound } from 'next/navigation'
-import { getAuthUser } from '@/lib/auth'
+import { getCurrentUser } from '@/lib/auth/user'
 import { getEnhancedPrisma } from '@/lib/db/enhanced'
 import { 
   courseBasicSelectArgs,
@@ -21,7 +21,7 @@ type TeacherCourseData = {
  */
 export async function getTeacherCourseData(courseSlug: string): Promise<TeacherCourseData> {
   // Authenticate user
-  const user = await getAuthUser()
+  const user = await getCurrentUser()
   if (!user) {
     notFound()
   }

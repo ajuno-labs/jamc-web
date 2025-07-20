@@ -1,6 +1,6 @@
 "use server";
 
-import { getAuthUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth/user";
 import { activityBus } from "@/lib/events";
 import { ActivityType } from "@prisma/client";
 
@@ -15,7 +15,7 @@ export async function withActivity<T>(
   fn: (userId: string, entityId: string) => Promise<T>
 ) {
   return async (entityId: string): Promise<T> => {
-    const user = await getAuthUser();
+    const user = await getCurrentUser();
     if (!user?.id) throw new Error("Authentication required");
     // Perform the business logic
     const result = await fn(user.id, entityId);

@@ -1,15 +1,20 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { getAuthUser } from "@/lib/auth";
-import { getPublicEnhancedPrisma } from "@/lib/db/enhanced";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/db/prisma";
+import { getEnhancedPrisma } from "@/lib/db/enhanced";
 import { getCourseDetail } from "@/lib/actions/course-actions";
 import { CourseContent } from "./_components/course-content";
 import { CourseStats } from "./_components/course-stats";
 import { CourseSidebar } from "./_components/course-sidebar";
 
-export async function generateMetadata({ params }: { params: Promise<{ courseSlug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ courseSlug: string }>;
+}): Promise<Metadata> {
   const { courseSlug } = await params;
-  const db = getPublicEnhancedPrisma();
+  const db = await getEnhancedPrisma();
   const course = await db.course.findUnique({
     where: { slug: courseSlug },
     select: { title: true, description: true },
@@ -35,7 +40,12 @@ export default async function CourseDetailPage({
 }) {
   const { courseSlug } = await params;
   // Retrieve current user and user ID for context
-  const user = await getAuthUser();
+  const session = await auth();
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session!.user!.email!,
+    },
+  });
   const userId = user?.id;
 
   const course = await getCourseDetail(courseSlug);
@@ -45,14 +55,11 @@ export default async function CourseDetailPage({
   }
 
   // Check if user is enrolled
-  const isEnrolled = userId
-    ? course.enrollments.some((e) => e.userId === userId)
-    : false;
+  const isEnrolled = userId ? course.enrollments.some((e) => e.userId === userId) : false;
 
   // Total lesson count (hierarchical + top-level)
   const lessonsInHierarchy = course.modules.reduce(
-    (total, mod) =>
-      total + mod.chapters.reduce((ctotal, chap) => ctotal + chap.lessons.length, 0),
+    (total, mod) => total + mod.chapters.reduce((ctotal, chap) => ctotal + chap.lessons.length, 0),
     0
   );
   const lessonCount = lessonsInHierarchy + (course.lessons?.length ?? 0);
@@ -62,8 +69,8 @@ export default async function CourseDetailPage({
   const firstLesson = firstNestedLesson
     ? { id: firstNestedLesson.id, slug: firstNestedLesson.slug }
     : course.lessons?.[0]
-      ? { id: course.lessons[0].id, slug: course.lessons[0].slug }
-      : null;
+    ? { id: course.lessons[0].id, slug: course.lessons[0].slug }
+    : null;
 
   // Detect if the current user is the course instructor
   const isInstructor = userId === course.author.id;

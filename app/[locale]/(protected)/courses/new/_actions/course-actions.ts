@@ -1,13 +1,19 @@
 "use server";
 
+import { auth } from "@/auth";
+import { prisma } from "@/lib/db/prisma";
 import { getEnhancedPrisma } from "@/lib/db/enhanced";
-import { getAuthUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { slugify } from "@/lib/utils";
 import type { TreeNode } from "@/lib/types/course-structure";
 
 export async function createCourse(formData: FormData) {
-  const user = await getAuthUser();
+  const session = await auth();
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session!.user!.email!,
+    },
+  });
   if (!user?.id) {
     throw new Error("Authentication required to create a course");
   }
@@ -56,71 +62,72 @@ export async function createCourse(formData: FormData) {
     normalizedStructure = normalizeNodes(parsedStructure as TreeNode[]);
   }
   const tags = formData.getAll("tags").map((tag) => tag as string);
-  try {
-    // First, create the base course
-    const course = await db.course.create({
-      data: {
-        title,
-        description,
-        slug,
-        authorId: user.id,
-        tags: {
-          connectOrCreate: tags.map((name) => ({
-            where: { name },
-            create: { name },
-          })),
-        },
-      },
-    });
 
-    // Then sequentially create modules, chapters, and lessons
-    if (normalizedStructure) {
-      for (const [moduleIndex, moduleNode] of normalizedStructure.entries()) {
-        const courseModule = await db.courseModule.create({
+  // First, create the base course
+  const course = await db.course.create({
+    data: {
+      title,
+      description,
+      slug,
+      authorId: user.id,
+      tags: {
+        connectOrCreate: tags.map((name) => ({
+          where: { name },
+          create: { name },
+        })),
+      },
+    },
+  });
+
+  // Then sequentially create modules, chapters, and lessons
+  if (normalizedStructure) {
+    for (const [moduleIndex, moduleNode] of normalizedStructure.entries()) {
+      const courseModule = await db.courseModule.create({
+        data: {
+          title: moduleNode.title,
+          slug: moduleNode.id,
+          order: moduleIndex + 1,
+          courseId: course.id,
+        },
+      });
+      for (const [chapterIndex, chapterNode] of moduleNode.children.entries()) {
+        const chapter = await db.courseChapter.create({
           data: {
-            title: moduleNode.title,
-            slug: moduleNode.id,
-            order: moduleIndex + 1,
-            courseId: course.id,
+            title: chapterNode.title,
+            slug: chapterNode.id,
+            order: chapterIndex + 1,
+            moduleId: courseModule.id,
           },
         });
-        for (const [chapterIndex, chapterNode] of moduleNode.children.entries()) {
-          const chapter = await db.courseChapter.create({
+        for (const [lessonIndex, lessonNode] of chapterNode.children.entries()) {
+          await db.lesson.create({
             data: {
-              title: chapterNode.title,
-              slug: chapterNode.id,
-              order: chapterIndex + 1,
-              moduleId: courseModule.id,
+              title: lessonNode.title,
+              slug: lessonNode.id,
+              summary: null,
+              order: lessonIndex + 1,
+              chapterId: chapter.id,
+              courseId: course.id,
             },
           });
-          for (const [lessonIndex, lessonNode] of chapterNode.children.entries()) {
-            await db.lesson.create({
-              data: {
-                title: lessonNode.title,
-                slug: lessonNode.id,
-                summary: null,
-                order: lessonIndex + 1,
-                chapterId: chapter.id,
-                courseId: course.id,
-              },
-            });
-          }
         }
       }
     }
-
-    // Revalidate both list and detail pages
-    revalidatePath("/courses");
-    revalidatePath(`/courses/${course.id}`);
-    return { success: true, slug };
-  } catch (error) {
-    console.error("Error creating course:", error);
-    throw error;
   }
+
+  // Revalidate both list and detail pages
+  revalidatePath("/courses");
+  revalidatePath(`/courses/${course.id}`);
+  return { success: true, slug };
 }
 
 export async function createLesson(formData: FormData) {
-  const user = await getAuthUser();
+  const session = await auth();
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session!.user!.email!,
+    },
+  });
   if (!user?.id) {
     throw new Error("Authentication required to create a lesson");
   }
@@ -149,20 +156,16 @@ export async function createLesson(formData: FormData) {
     select: { order: true },
   });
   const order = lastLesson ? lastLesson.order + 1 : 1;
-  try {
-    await db.lesson.create({
-      data: {
-        title,
-        slug: lessonSlug,
-        summary,
-        courseId,
-        order,
-      },
-    });
-    revalidatePath(`/courses/${courseId}`);
-    return { success: true };
-  } catch (error) {
-    console.error("Error creating lesson:", error);
-    throw error;
-  }
+  
+  await db.lesson.create({
+    data: {
+      title,
+      slug: lessonSlug,
+      summary,
+      courseId,
+      order,
+    },
+  });
+  revalidatePath(`/courses/${courseId}`);
+  return { success: true };
 }

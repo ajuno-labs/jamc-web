@@ -1,16 +1,13 @@
 "use server";
 
+import { getCurrentUser } from "@/lib/auth/user";
 import { getEnhancedPrisma } from "@/lib/db/enhanced";
-import { getAuthUser } from "@/lib/auth";
 
 /**
  * Get student dashboard statistics
  */
 export async function getStudentStats() {
-  const user = await getAuthUser();
-  if (!user?.id) {
-    throw new Error("You must be signed in to view dashboard stats");
-  }
+  const user = await getCurrentUser();
 
   const db = await getEnhancedPrisma();
 
@@ -38,10 +35,7 @@ export async function getStudentStats() {
  * Get enrolled courses with progress
  */
 export async function getEnrolledCourses() {
-  const user = await getAuthUser();
-  if (!user?.id) {
-    throw new Error("You must be signed in to view enrolled courses");
-  }
+  const user = await getCurrentUser();
 
   const db = await getEnhancedPrisma();
 
@@ -94,10 +88,7 @@ export async function getEnrolledCourses() {
  * Get recent questions by the user
  */
 export async function getRecentQuestions(limit = 5) {
-  const user = await getAuthUser();
-  if (!user?.id) {
-    throw new Error("You must be signed in to view recent questions");
-  }
+  const user = await getCurrentUser();
 
   const db = await getEnhancedPrisma();
 
@@ -129,10 +120,7 @@ export async function getRecentQuestions(limit = 5) {
  * Get recent notifications for the user
  */
 export async function getRecentNotifications(limit = 5) {
-  const user = await getAuthUser();
-  if (!user?.id) {
-    throw new Error("You must be signed in to view notifications");
-  }
+  const user = await getCurrentUser();
 
   const db = await getEnhancedPrisma();
 
@@ -160,14 +148,10 @@ export async function getRecentNotifications(limit = 5) {
  * Get suggested topics/questions for the user
  */
 export async function getSuggestions(limit = 3) {
-  const user = await getAuthUser();
-  if (!user?.id) {
-    throw new Error("You must be signed in to view suggestions");
-  }
+  const user = await getCurrentUser();
 
   const db = await getEnhancedPrisma();
 
-  // Get user's recent activity to suggest related topics
   const recentQuestions = await db.question.findMany({
     where: { authorId: user.id },
     select: { tags: { select: { name: true } } },
@@ -175,17 +159,15 @@ export async function getSuggestions(limit = 3) {
     take: 5,
   });
 
-  // Extract tags from recent questions
   const userTags = new Set<string>();
   recentQuestions.forEach((q) => {
     q.tags.forEach((tag) => userTags.add(tag.name));
   });
 
-  // Get popular questions in user's areas of interest
   const suggestions = await db.question.findMany({
     where: {
       tags: { some: { name: { in: Array.from(userTags) } } },
-      authorId: { not: user.id }, // Don't suggest user's own questions
+      authorId: { not: user.id },
     },
     select: { title: true },
     orderBy: { viewCount: "desc" },
@@ -204,8 +186,6 @@ export async function getUpcomingDeadlines() {
   // For now, return empty array
   return [];
 }
-
-// Helper functions
 
 async function calculateStudyStreak(userId: string): Promise<number> {
   const db = await getEnhancedPrisma();

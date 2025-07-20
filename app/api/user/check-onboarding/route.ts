@@ -1,23 +1,22 @@
-import { getAuthUser } from "@/lib/auth"
-import { NextResponse } from "next/server"
+import { auth } from "@/auth";
+import { prisma } from "@/lib/db/prisma";
+import { userWithRolesInclude } from "@/lib/types/prisma";
+import { NextResponse } from "next/server";
 
 export async function GET() {
-  try {
-    const user = await getAuthUser()
-    
-    if (!user) {
-      return NextResponse.json({ needsOnboarding: false }, { status: 401 })
-    }
-    
-    // Check if user has any roles assigned
-    const needsOnboarding = user.roles.length === 0
-    
-    return NextResponse.json({ needsOnboarding })
-  } catch (error) {
-    console.error("Error checking onboarding status:", error)
-    return NextResponse.json(
-      { error: "Failed to check onboarding status" },
-      { status: 500 }
-    )
+  const session = await auth();
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session!.user!.email!,
+    },
+    include: userWithRolesInclude,
+  });
+
+  if (!user) {
+    return NextResponse.json({ needsOnboarding: false }, { status: 401 });
   }
-} 
+
+  const needsOnboarding = user.roles.length === 0;
+
+  return NextResponse.json({ needsOnboarding });
+}

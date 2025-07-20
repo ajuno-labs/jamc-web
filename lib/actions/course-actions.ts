@@ -1,7 +1,7 @@
 "use server";
 
 import { getEnhancedPrisma } from "@/lib/db/enhanced";
-import { getAuthUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth/user";
 
 /**
  * Fetch a single course (by slug) together with its syllabus hierarchy and
@@ -66,7 +66,7 @@ export async function getCourseDetail(courseSlug: string) {
 }
 
 export async function getMyCoursesWithLessons() {
-  const user = await getAuthUser();
+  const user = await getCurrentUser();
   if (!user?.id) {
     throw new Error("You must be signed in to view your courses");
   }
@@ -111,4 +111,4 @@ export async function getMyCoursesWithLessons() {
   }
 
   return allCourses;
-} 
+}

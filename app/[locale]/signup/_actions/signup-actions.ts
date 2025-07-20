@@ -1,6 +1,6 @@
 "use server"
 
-import { getPublicEnhancedPrisma } from "@/lib/db/enhanced"
+import { getEnhancedPrisma } from "@/lib/db/enhanced"
 import { signUpSchema, type SignUpInput } from "@/lib/types/auth"
 import { signIn } from "@/auth"
 import { z } from "zod"
@@ -11,7 +11,7 @@ export async function signUpUser(data: SignUpInput) {
     // Validate the input data
     const validatedData = signUpSchema.parse(data)
     
-    const prisma = getPublicEnhancedPrisma()
+    const prisma = await getEnhancedPrisma()
     
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({

@@ -1,16 +1,17 @@
-import { redirect } from '@/i18n/navigation'
-import { notFound } from 'next/navigation'
-import { getAuthUser } from '@/lib/auth'
-import { getEnhancedPrisma } from '@/lib/db/enhanced'
-import LessonForm from '../../../_components/LessonForm'
-import { updateLesson } from './_actions/lesson-actions'
-import type { LessonFormValues } from '../../../_components/LessonForm.types'
+import { redirect } from "@/i18n/navigation";
+import { notFound } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth/user";
+import { getLocale } from "next-intl/server";
+import { getEnhancedPrisma } from "@/lib/db/enhanced";
+import LessonForm from "../../../_components/LessonForm";
+import { updateLesson } from "./_actions/lesson-actions";
+import type { LessonFormValues } from "../../../_components/LessonForm.types";
 interface EditPageProps {
   params: Promise<{
-    courseSlug: string
-    lessonId: string
-    lessonSlug: string
-  }>
+    courseSlug: string;
+    lessonId: string;
+    lessonSlug: string;
+  }>;
 }
 
 interface LessonMetadata {
@@ -19,19 +20,20 @@ interface LessonMetadata {
 }
 
 export default async function EditPage({ params }: EditPageProps) {
-  const { courseSlug, lessonId, lessonSlug } = await params
-  const user = await getAuthUser()
+  const { courseSlug, lessonId, lessonSlug } = await params;
+  const locale = await getLocale();
+  const user = await getCurrentUser();
   if (!user) {
-    notFound()
+    notFound();
   }
 
-  const db = await getEnhancedPrisma()
+  const db = await getEnhancedPrisma();
   const course = await db.course.findUnique({
     where: { slug: courseSlug },
     select: {
       id: true,
       modules: {
-        orderBy: { order: 'asc' },
+        orderBy: { order: "asc" },
         select: {
           id: true,
           title: true,
@@ -41,9 +43,9 @@ export default async function EditPage({ params }: EditPageProps) {
       },
       authorId: true,
     },
-  })
+  });
   if (!course || course.authorId !== user.id) {
-    notFound()
+    notFound();
   }
 
   const lesson = await db.lesson.findUnique({
@@ -53,34 +55,36 @@ export default async function EditPage({ params }: EditPageProps) {
       files: true,
       course: true,
     },
-  })
+  });
   if (!lesson) {
-    notFound()
+    notFound();
   }
 
   if (lesson.course.slug !== courseSlug || lesson.slug !== lessonSlug) {
-    return redirect(`/courses/${courseSlug}/lessons/${lessonId}/${lesson.slug}/edit`)
+    return redirect({
+      href: `/courses/${courseSlug}/lessons/${lessonId}/${lesson.slug}/edit`,
+      locale,
+    });
   }
 
   if (!lesson.chapter) {
-    notFound()
+    notFound();
   }
 
-  // Safely extract metadata fields (tags may be null)
-  const metadataObj = lesson.metadata as LessonMetadata
+  const metadataObj = lesson.metadata as LessonMetadata;
 
   const initialValues: LessonFormValues = {
     title: lesson.title,
-    summary: lesson.summary ?? '',
+    summary: lesson.summary ?? "",
     moduleId: lesson.chapter.module.id,
     chapterId: lesson.chapter.id,
-    newModuleTitle: '',
-    newChapterTitle: '',
-  }
-  const tagsRaw = metadataObj?.tags
-  const initialTags = Array.isArray(tagsRaw) ? (tagsRaw as string[]).join(',') : ''
-  const readingTimeRaw = metadataObj?.readingTime
-  const initialReadingTime = typeof readingTimeRaw === 'number' ? readingTimeRaw.toString() : ''
+    newModuleTitle: "",
+    newChapterTitle: "",
+  };
+  const tagsRaw = metadataObj?.tags;
+  const initialTags = Array.isArray(tagsRaw) ? (tagsRaw as string[]).join(",") : "";
+  const readingTimeRaw = metadataObj?.readingTime;
+  const initialReadingTime = typeof readingTimeRaw === "number" ? readingTimeRaw.toString() : "";
 
   return (
     <LessonForm
@@ -94,5 +98,5 @@ export default async function EditPage({ params }: EditPageProps) {
       redirectUrl={`/courses/${courseSlug}/lessons/${lessonId}/${lessonSlug}`}
       lessonId={lessonId}
     />
-  )
-} 
+  );
+}
