@@ -3,11 +3,15 @@ import { notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/user";
 import { getQuestionWithReputation } from "../_actions/question-edit-actions";
 import { EditQuestionForm } from "./_components/EditQuestionForm";
+import { getLocale } from "next-intl/server";
+
 interface EditQuestionPageProps {
   params: Promise<{ id: string; slug: string }>;
 }
 
 export default async function EditQuestionPage({ params }: EditQuestionPageProps) {
+
+  const locale = await getLocale();
   const { id: questionId, slug: questionSlug } = await params;
 
   if (!questionId || typeof questionId !== "string") {
@@ -30,14 +34,14 @@ export default async function EditQuestionPage({ params }: EditQuestionPageProps
   if (question.slug !== questionSlug) {
     return redirect({
       href: `/questions/${questionId}/${question.slug}/edit`,
-      locale: "en",
+      locale
     });
   }
 
   if (!user || user.id !== question.author.id) {
     return redirect({
       href: `/questions/${questionId}/${question.slug}`,
-      locale: "en",
+      locale
     });
   }
 
