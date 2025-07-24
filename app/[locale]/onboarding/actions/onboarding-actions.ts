@@ -1,17 +1,20 @@
 "use server";
 
-import { UserWithRoles, userWithRolesInclude } from "@/lib/types/prisma";
+import { userWithRolesInclude } from "@/lib/types/prisma";
 import { getEnhancedPrisma } from "@/lib/db/enhanced";
-import { notifyWelcome } from "@/lib/services/notification-triggers";
 import { getCurrentUser } from "@/lib/auth/user";
+import { getDatabaseRole, Role } from "@/lib/types/roles";
 
-export async function assignUserRole(role: "teacher" | "student") {
+
+export async function handleRoleSelect(role: Role) {
+  return await assignUserRole(role);
+}
+
+export async function assignUserRole(role: Role) {
   const user = await getCurrentUser(userWithRolesInclude);
-  const enhancedPrisma = await getEnhancedPrisma();
-  const roleName = role === "teacher" ? "TEACHER" : "STUDENT";
-  const roleRecord = await enhancedPrisma.role.findFirst({
-    where: { name: roleName },
-  });
+  console.log("user", user);
+  const enhancedPrisma = await getEnhancedPrisma(user);
+  const roleRecord = await getDatabaseRole(role);
 
   if (!roleRecord) {
     return {
@@ -58,7 +61,7 @@ export async function assignUserRole(role: "teacher" | "student") {
 
   return {
     success: true,
-    role: roleName,
+    role: role,
   };
 }
 
@@ -108,10 +111,3 @@ export async function joinCourseWithCode(joinCode: string) {
   };
 }
 
-export async function triggerWelcomeNotification(user: UserWithRoles) {
-  if (!user) {
-    throw new Error("User not found");
-  }
-  await notifyWelcome(user.id);
-  return { success: true };
-}

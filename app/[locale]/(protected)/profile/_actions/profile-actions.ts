@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/lib/db/prisma";
+import { prisma } from "@/prisma";
 import { auth } from "@/auth";
 import { userWithRolesInclude } from "@/lib/types/prisma";
 import { questionWithRelationsInclude } from "@/lib/types/prisma";
@@ -221,17 +221,17 @@ export async function getAllUserQuestions(page = 1, limit = 10) {
       status: q.status,
       course: q.course
         ? {
-            id: q.course.id,
-            title: q.course.title,
-            slug: q.course.slug,
-          }
+          id: q.course.id,
+          title: q.course.title,
+          slug: q.course.slug,
+        }
         : null,
       lesson: q.lesson
         ? {
-            id: q.lesson.id,
-            title: q.lesson.title,
-            slug: q.lesson.slug,
-          }
+          id: q.lesson.id,
+          title: q.lesson.title,
+          slug: q.lesson.slug,
+        }
         : null,
     })) as ProfileQuestion[],
     pagination: {

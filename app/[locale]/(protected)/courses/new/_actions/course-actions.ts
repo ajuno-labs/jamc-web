@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/auth";
-import { prisma } from "@/lib/db/prisma";
+import { prisma } from "@/prisma";
 import { getEnhancedPrisma } from "@/lib/db/enhanced";
 import { revalidatePath } from "next/cache";
 import { slugify } from "@/lib/utils";
@@ -156,7 +156,7 @@ export async function createLesson(formData: FormData) {
     select: { order: true },
   });
   const order = lastLesson ? lastLesson.order + 1 : 1;
-  
+
   await db.lesson.create({
     data: {
       title,

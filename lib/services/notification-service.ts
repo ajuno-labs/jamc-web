@@ -10,7 +10,6 @@ import type {
 } from "@/lib/types/notification";
 import { Prisma } from "@prisma/client";
 
-// Default notification templates
 const NOTIFICATION_TEMPLATES: Record<
   NotificationType,
   {
@@ -20,7 +19,6 @@ const NOTIFICATION_TEMPLATES: Record<
     priority: "LOW" | "MEDIUM" | "HIGH" | "URGENT";
   }
 > = {
-  // Q&A Notifications
   NEW_ANSWER: {
     title: "New answer to your question",
     message: "{{userName}} answered your question '{{questionTitle}}'",
@@ -75,8 +73,6 @@ const NOTIFICATION_TEMPLATES: Record<
     defaultChannels: ["IN_APP"],
     priority: "LOW",
   },
-
-  // Course/Lesson Notifications
   NEW_COURSE_QUESTION: {
     title: "New question in your course",
     message: "{{userName}} asked a question in {{courseTitle}}",
@@ -95,8 +91,6 @@ const NOTIFICATION_TEMPLATES: Record<
     defaultChannels: ["IN_APP", "EMAIL"],
     priority: "MEDIUM",
   },
-
-  // Subscription Notifications
   FOLLOWED_USER_QUESTION: {
     title: "{{userName}} asked a question",
     message: "{{userName}} asked '{{questionTitle}}'",
@@ -121,8 +115,6 @@ const NOTIFICATION_TEMPLATES: Record<
     defaultChannels: ["IN_APP"],
     priority: "MEDIUM",
   },
-
-  // Engagement Notifications
   STUDENT_AT_RISK: {
     title: "Student needs attention",
     message: "{{userName}} hasn't been active in {{courseTitle}} for over a week",
@@ -141,8 +133,6 @@ const NOTIFICATION_TEMPLATES: Record<
     defaultChannels: ["EMAIL"],
     priority: "MEDIUM",
   },
-
-  // System Notifications
   WELCOME: {
     title: "Welcome to our platform!",
     message: "Welcome {{userName}}! Get started by exploring courses and asking questions.",
@@ -169,29 +159,22 @@ const NOTIFICATION_TEMPLATES: Record<
   },
 };
 
-// Template variable replacement
 function replaceTemplateVariables(template: string, metadata: NotificationMetadata): string {
   let result = template;
-
-  // Replace all variables in the format {{variableName}}
   const variables = template.match(/\{\{(\w+)\}\}/g) || [];
-
   for (const variable of variables) {
     const key = variable.replace(/[{}]/g, "");
     const value = metadata[key] || "";
     result = result.replace(variable, String(value));
   }
-
   return result;
 }
 
-// Helper function to create default notification preferences for a user
 export async function createDefaultNotificationPreferences(userId: string) {
   const db = await getEnhancedPrisma();
-
   return await db.notificationPreferences.upsert({
     where: { userId },
-    update: {}, // Don't update existing preferences
+    update: {},
     create: {
       userId,
       newAnswer: ["IN_APP", "EMAIL"],
@@ -213,18 +196,12 @@ export async function createDefaultNotificationPreferences(userId: string) {
   });
 }
 
-// Get user's notification preferences
 async function getUserNotificationPreferences(userId: string) {
-  // Use public client to read preferences for any user (needed for notifications)
-      const publicDb = await getEnhancedPrisma();
-
+  const publicDb = await getEnhancedPrisma();
   const preferences = await publicDb.notificationPreferences.findUnique({
     where: { userId },
   });
-
-  // If no preferences exist, return default values instead of trying to create them
   if (!preferences) {
-    // Return a default preferences object that matches the expected type
     return {
       id: `default-${userId}`,
       userId,
@@ -250,20 +227,16 @@ async function getUserNotificationPreferences(userId: string) {
       user: { id: userId },
     } as const;
   }
-
   return preferences;
 }
 
-// Type for the actual database preferences object
 type UserPreferences = NonNullable<Awaited<ReturnType<typeof getUserNotificationPreferences>>>;
 
-// Get effective channels based on preferences and notification type
 function getEffectiveChannels(
   type: NotificationType,
   preferences: UserPreferences,
   defaultChannels: NotificationChannel[]
 ): NotificationChannel[] {
-  // Map notification types to preference fields
   const preferenceMap: Record<string, keyof UserPreferences> = {
     NEW_ANSWER: "newAnswer",
     ANSWER_ACCEPTED_USER: "answerAccepted",
@@ -289,35 +262,25 @@ function getEffectiveChannels(
     WEEKLY_DIGEST: "systemNotifications",
     ACCOUNT_UPDATE: "systemNotifications",
   };
-
   const preferenceKey = preferenceMap[type];
   if (preferenceKey && preferences[preferenceKey]) {
     return preferences[preferenceKey] as NotificationChannel[];
   }
-
   return defaultChannels;
 }
 
-// Create a single notification
 export async function createNotification(request: NotificationCreateRequest): Promise<string> {
   const db = await getEnhancedPrisma();
-
   const template = NOTIFICATION_TEMPLATES[request.type];
   if (!template) {
     throw new Error(`No template found for notification type: ${request.type}`);
   }
-
-  // Get user preferences to determine channels
   const preferences = await getUserNotificationPreferences(request.userId);
   const effectiveChannels =
     request.channels || getEffectiveChannels(request.type, preferences, template.defaultChannels);
-
-  // Replace template variables
   const title = request.customTitle || replaceTemplateVariables(template.title, request.metadata);
   const message =
     request.customMessage || replaceTemplateVariables(template.message, request.metadata);
-
-  // Create the notification
   const notification = await db.notification.create({
     data: {
       type: request.type,
@@ -345,16 +308,13 @@ export async function createNotification(request: NotificationCreateRequest): Pr
         undefined,
     },
   });
-
   return notification.id;
 }
 
-// Create multiple notifications (batch)
 export async function createNotifications(
   requests: NotificationCreateRequest[]
 ): Promise<string[]> {
   const notificationIds: string[] = [];
-
   for (const request of requests) {
     try {
       const id = await createNotification(request);
@@ -363,11 +323,9 @@ export async function createNotifications(
       console.error(`Failed to create notification for user ${request.userId}:`, error);
     }
   }
-
   return notificationIds;
 }
 
-// Get user's notifications with pagination
 export async function getUserNotifications(
   userId?: string,
   options: {
@@ -380,15 +338,12 @@ export async function getUserNotifications(
   if (!user?.id) {
     throw new Error("Authentication required");
   }
-
   const db = await getEnhancedPrisma();
   const { status, limit = 20, cursor } = options;
-
   const where: Prisma.NotificationWhereInput = {
     userId: user.id,
     ...(status && { status }),
   };
-
   const notifications = await db.notification.findMany({
     where,
     include: {
@@ -403,25 +358,22 @@ export async function getUserNotifications(
     orderBy: {
       createdAt: "desc",
     },
-    take: limit + 1, // Take one extra to check if there are more
+    take: limit + 1,
     ...(cursor && {
       cursor: { id: cursor },
       skip: 1,
     }),
   });
-
   const hasMore = notifications.length > limit;
   if (hasMore) {
-    notifications.pop(); // Remove the extra notification
+    notifications.pop();
   }
-
   const unreadCount = await db.notification.count({
     where: {
       userId: user.id,
       status: "UNREAD",
     },
   });
-
   return {
     notifications,
     unreadCount,
@@ -431,19 +383,16 @@ export async function getUserNotifications(
   };
 }
 
-// Mark notifications as read
 export async function markNotificationsAsRead(notificationIds: string[]): Promise<number> {
   const user = await getCurrentUser();
   if (!user?.id) {
     throw new Error("Authentication required");
   }
-
   const db = await getEnhancedPrisma();
-
   const result = await db.notification.updateMany({
     where: {
       id: { in: notificationIds },
-      userId: user.id, // Ensure user can only update their own notifications
+      userId: user.id,
       status: "UNREAD",
     },
     data: {
@@ -451,19 +400,15 @@ export async function markNotificationsAsRead(notificationIds: string[]): Promis
       readAt: new Date(),
     },
   });
-
   return result.count;
 }
 
-// Archive notifications
 export async function archiveNotifications(notificationIds: string[]): Promise<number> {
   const user = await getCurrentUser();
   if (!user?.id) {
     throw new Error("Authentication required");
   }
-
   const db = await getEnhancedPrisma();
-
   const result = await db.notification.updateMany({
     where: {
       id: { in: notificationIds },
@@ -474,19 +419,15 @@ export async function archiveNotifications(notificationIds: string[]): Promise<n
       archivedAt: new Date(),
     },
   });
-
   return result.count;
 }
 
-// Get unread count for a user
 export async function getUnreadNotificationCount(userId?: string): Promise<number> {
   const user = userId ? { id: userId } : await getCurrentUser();
   if (!user?.id) {
     return 0;
   }
-
   const db = await getEnhancedPrisma();
-
   return await db.notification.count({
     where: {
       userId: user.id,
@@ -495,10 +436,8 @@ export async function getUnreadNotificationCount(userId?: string): Promise<numbe
   });
 }
 
-// Debug function to test notifications
 export async function debugCreateTestNotification(userId: string) {
   const db = await getEnhancedPrisma();
-
   try {
     const notification = await db.notification.create({
       data: {
@@ -511,7 +450,6 @@ export async function debugCreateTestNotification(userId: string) {
         userId: userId,
       },
     });
-
     console.log("Test notification created:", notification.id);
     return notification;
   } catch (error) {

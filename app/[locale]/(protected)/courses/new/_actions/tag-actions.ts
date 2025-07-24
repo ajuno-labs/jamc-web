@@ -1,6 +1,6 @@
 "use server"
 
-import { prisma } from "@/lib/db/prisma"
+import { prisma } from "@/prisma"
 
 export interface CourseTag {
   id: string

@@ -1,7 +1,7 @@
 "use server"
 
 import { auth } from "@/auth"
-import { prisma } from "@/lib/db/prisma"
+import { prisma } from "@/prisma"
 import { revalidatePath } from "next/cache"
 
 /**
@@ -10,16 +10,16 @@ import { revalidatePath } from "next/cache"
 export async function enrollInCourse(courseId: string) {
   try {
     const session = await auth()
-    
+
     if (!session?.user?.id) {
       return {
         success: false,
         message: "You must be logged in to enroll in a course"
       }
     }
-    
+
     const userId = session.user.id
-    
+
     // Check if the user is already enrolled
     const existingEnrollment = await prisma.courseEnrollment.findFirst({
       where: {
@@ -27,14 +27,14 @@ export async function enrollInCourse(courseId: string) {
         courseId
       }
     })
-    
+
     if (existingEnrollment) {
       return {
         success: false,
         message: "You are already enrolled in this course"
       }
     }
-    
+
     // Create the enrollment
     await prisma.courseEnrollment.create({
       data: {
@@ -42,10 +42,10 @@ export async function enrollInCourse(courseId: string) {
         courseId
       }
     })
-    
+
     // Revalidate the course page
     revalidatePath(`/courses/[slug]`)
-    
+
     return {
       success: true,
       message: "Successfully enrolled in the course"
@@ -65,16 +65,16 @@ export async function enrollInCourse(courseId: string) {
 export async function unenrollFromCourse(courseId: string) {
   try {
     const session = await auth()
-    
+
     if (!session?.user?.id) {
       return {
         success: false,
         message: "You must be logged in to unenroll from a course"
       }
     }
-    
+
     const userId = session.user.id
-    
+
     // Check if the user is enrolled
     const existingEnrollment = await prisma.courseEnrollment.findFirst({
       where: {
@@ -82,24 +82,24 @@ export async function unenrollFromCourse(courseId: string) {
         courseId
       }
     })
-    
+
     if (!existingEnrollment) {
       return {
         success: false,
         message: "You are not enrolled in this course"
       }
     }
-    
+
     // Delete the enrollment
     await prisma.courseEnrollment.delete({
       where: {
         id: existingEnrollment.id
       }
     })
-    
+
     // Revalidate the course page
     revalidatePath(`/courses/[slug]`)
-    
+
     return {
       success: true,
       message: "Successfully unenrolled from the course"
@@ -119,15 +119,15 @@ export async function unenrollFromCourse(courseId: string) {
 export async function checkEnrollmentStatus(courseId: string) {
   try {
     const session = await auth()
-    
+
     if (!session?.user?.id) {
       return {
         isEnrolled: false
       }
     }
-    
+
     const userId = session.user.id
-    
+
     // Check if the user is enrolled
     const existingEnrollment = await prisma.courseEnrollment.findFirst({
       where: {
@@ -135,7 +135,7 @@ export async function checkEnrollmentStatus(courseId: string) {
         courseId
       }
     })
-    
+
     return {
       isEnrolled: !!existingEnrollment,
       enrolledAt: existingEnrollment?.createdAt || null

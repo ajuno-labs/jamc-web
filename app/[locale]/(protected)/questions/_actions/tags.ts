@@ -1,6 +1,6 @@
 "use server"
 
-import { prisma } from "@/lib/db/prisma"
+import { prisma } from "@/prisma"
 
 /**
  * Get all available tags with their usage count

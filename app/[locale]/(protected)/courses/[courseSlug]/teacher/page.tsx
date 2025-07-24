@@ -1,7 +1,7 @@
 import React from "react";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
-import { prisma } from "@/lib/db/prisma";
+import { prisma } from "@/prisma";
 import { getEnhancedPrisma } from "@/lib/db/enhanced";
 import { DashboardPage } from "./_components/DashboardPage";
 import { randomBytes } from "crypto";
@@ -25,7 +25,6 @@ interface TeacherDashboardPageProps {
 export default async function TeacherDashboardPage({ params }: TeacherDashboardPageProps) {
   const { courseSlug } = await params;
 
-  // Ensure user is authenticated
   const session = await auth();
   const user = await prisma.user.findUnique({
     where: {
@@ -36,10 +35,8 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
     notFound();
   }
 
-  // Initialize enhanced Prisma client with access policies
   const db = await getEnhancedPrisma();
 
-  // Verify that the current user is the course instructor
   let course = await db.course.findUnique({
     where: { slug: courseSlug },
     select: courseWithJoinCodeSelectArgs,
@@ -48,7 +45,6 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
     notFound();
   }
 
-  // Generate a unique join code if not already set
   if (!course!.joinCode) {
     const code = randomBytes(4).toString("hex").toUpperCase();
     await db.course.update({
@@ -58,16 +54,13 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
     course = { ...course, joinCode: code };
   }
 
-  // Get comprehensive student activity data
   const activitySummary = await getCourseStudentActivity(courseSlug);
 
-  // Fetch the instructor's courses for the sidebar
   const courses = await db.course.findMany({
     where: { authorId: user.id },
     select: courseListSelectArgs,
   });
 
-  // Fetch questions for this course using the shared include args
   const rawQuestions = await db.question.findMany({
     where: { courseId: course.id },
     include: questionWithVotesIncludeArgs,
@@ -75,17 +68,14 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
     take: 3,
   });
 
-  // Get total question count for stats
   const openQuestionsCount = await db.question.count({
     where: { courseId: course.id },
   });
 
-  // Get unanswered questions count for stats
   const unansweredCount = await db.question.count({
     where: { courseId: course.id, answers: { none: {} } },
   });
 
-  // Serialize dates for client component, defaulting null author names to 'Unknown'
   const questions = rawQuestions.map((q: QuestionWithVotes) => ({
     id: q.id,
     content: q.content,
@@ -96,7 +86,6 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
     votes: q.votes,
   }));
 
-  // Fetch dashboard data for charts
   const [weeklyActivityData, moduleCompletionData, enrollmentTrendData] = await Promise.all([
     getWeeklyActivityData(courseSlug),
     getModuleCompletionData(courseSlug),

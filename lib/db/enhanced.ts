@@ -1,10 +1,15 @@
 import { enhance } from "@zenstackhq/runtime";
-import { prisma } from "./prisma";
+import { prisma } from "../../prisma";
 import { auth } from "@/auth";
+import { UserWithRoles } from "../types/prisma";
 
-export async function getEnhancedPrisma() {
+export async function getEnhancedPrisma(user?: UserWithRoles) {
+  if (user) {
+    return enhance(prisma, { user });
+  }
+
   const session = await auth();
-  const user = await prisma.user.findUnique({
+  const fetchedUser = await prisma.user.findUnique({
     where: {
       email: session?.user?.email ?? "",
     },
@@ -17,9 +22,9 @@ export async function getEnhancedPrisma() {
     },
   });
 
-  if (!user) {
+  if (!fetchedUser) {
     return enhance(prisma);
   }
 
-  return enhance(prisma, { user });
+  return enhance(prisma, { user: fetchedUser });
 }

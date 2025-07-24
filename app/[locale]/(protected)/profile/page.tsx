@@ -16,7 +16,7 @@ export default async function ProfilePage() {
   const locale = await getLocale();
   if (!session) {
     return redirect({
-      href: { pathname: "/signin", query: { callbackUrl: "/profile" } },
+      href: { pathname: "/api/auth/signin", query: { callbackUrl: "/profile" } },
       locale,
     });
   }

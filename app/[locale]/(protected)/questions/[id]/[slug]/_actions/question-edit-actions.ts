@@ -1,7 +1,7 @@
 "use server"
 
 import { auth } from "@/auth"
-import { prisma } from "@/lib/db/prisma"
+import { prisma } from "@/prisma"
 import { revalidatePath } from "next/cache"
 import { calculateUserReputation } from "@/lib/utils/reputation"
 import { notifyComment } from "@/lib/services/notification-triggers"
@@ -40,8 +40,8 @@ export async function updateAnswer(answerId: string, content: string) {
   // Check if user owns the answer
   const answer = await prisma.answer.findUnique({
     where: { id: answerId },
-    select: { 
-      authorId: true, 
+    select: {
+      authorId: true,
       questionId: true,
       question: {
         select: { slug: true }
@@ -105,7 +105,7 @@ export async function addComment(content: string, questionId?: string, answerId?
   } else if (answerId) {
     const answer = await prisma.answer.findUnique({
       where: { id: answerId },
-      select: { 
+      select: {
         questionId: true,
         question: { select: { slug: true } }
       }
@@ -273,7 +273,7 @@ export async function getAnswersWithReputation(questionId: string) {
   const answersWithReputation = await Promise.all(
     answers.map(async (answer) => {
       const authorReputation = await calculateUserReputation(answer.author.id)
-      
+
       const commentsWithReputation = await Promise.all(
         answer.comments.map(async (comment) => {
           const commentAuthorReputation = await calculateUserReputation(comment.author.id)
@@ -351,8 +351,8 @@ export async function voteComment(commentId: string, value: number) {
       questionId: true,
       answerId: true,
       question: { select: { slug: true } },
-      answer: { 
-        select: { 
+      answer: {
+        select: {
           questionId: true,
           question: { select: { slug: true } }
         }

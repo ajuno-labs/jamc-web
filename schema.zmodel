@@ -14,80 +14,73 @@ datasource db {
 }
 
 model User {
-  id              String             @id @default(cuid())
-  name            String?
-  email           String             @unique @email
-  password        String?            @password @omit @length(min: 8, max: 32)
-  emailVerified   DateTime?
-  image           String?
-  accounts        Account[]
-  sessions        Session[]
-  // Optional for WebAuthn support
-  Authenticator   Authenticator[]
+  id                        String                     @id @default(cuid())
+  name                      String?
+  email                     String                     @unique
+  emailVerified             DateTime?
+  image                     String?
+  accounts                  Account[]
+  sessions                  Session[]
 
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
 
-  roles           Role[]
-  
-  // Add access policies
-  @@allow('create', true) // Allow signups
-  @@allow('read', true)
-  @@allow('update', auth() == this) // Users can update their own profile
-  @@deny('delete', true) // Prevent direct deletions
+  roles                     Role[]
 
-  questions       Question[]
-  answers         Answer[]
-  questionVotes   QuestionVote[]
-  answerVotes     AnswerVote[]
-  comments        Comment[]
-  commentVotes    CommentVote[]
+  questions                 Question[]
+  answers                   Answer[]
+  questionVotes             QuestionVote[]
+  answerVotes               AnswerVote[]
+  comments                  Comment[]
+  commentVotes              CommentVote[]
   
   // Course relations
-  createdCourses  Course[]           @relation("CourseCreator")
-  enrolledCourses CourseEnrollment[]
-  lessonViews     LessonView[]
-  activityLogs    ActivityLog[]
+  createdCourses            Course[]                   @relation("CourseCreator")
+  enrolledCourses           CourseEnrollment[]
+  lessonViews               LessonView[]
+  activityLogs              ActivityLog[]
   
   // Teacher accepted answers relation
-  teacherAcceptedAnswers Answer[]    @relation("TeacherAcceptedAnswers")
+  teacherAcceptedAnswers    Answer[]                   @relation("TeacherAcceptedAnswers")
   
   // Notification system relations
-  notifications              Notification[]          @relation("UserNotifications")
-  notificationsAsActor       Notification[]          @relation("NotificationActor")
-  notificationPreferences    NotificationPreferences?
-  notificationSubscriptions  NotificationSubscription[]
-  notificationAnalytics      NotificationAnalytics[]
+  notifications             Notification[]             @relation("UserNotifications")
+  notificationsAsActor      Notification[]             @relation("NotificationActor")
+  notificationPreferences   NotificationPreferences?
+  notificationSubscriptions NotificationSubscription[]
+  notificationAnalytics     NotificationAnalytics[]
+
+  @@allow('create', true)
+  @@allow('read', true)
+  @@allow('update', auth() == this)
+  @@deny('delete', true)
 }
 
 model Role {
   id          Int          @id @default(autoincrement())
   name        String
-  users       User[] // users belonging to the role
-  permissions Permission[] // permissions assigned to the role
-  
-  // Access control - roles can be read by anyone authenticated (needed for onboarding)
+  users       User[]
+  permissions Permission[]
+
   @@allow('read', true)
-  // Only admins can create/update/delete roles
-  @@allow('all', auth().roles?[permissions?[name == MANAGE]])
+  @@allow('update', auth() != null)
+  @@allow('create,delete', auth().roles?[permissions?[name == 'MANAGE']])
 }
 
 enum PermissionType {
-  READ    // Basic read/view access
-  CREATE  // Ability to create new resources
-  UPDATE  // Ability to modify existing resources
-  DELETE  // Ability to remove resources
-  MANAGE  // Full control (typically includes all above permissions)
+  READ
+  CREATE
+  UPDATE
+  DELETE
+  MANAGE
 }
 
 model Permission {
   id    Int            @id @default(autoincrement())
   name  PermissionType
   roles Role[]
-  
-  // Access control - permissions can be read by anyone authenticated
+
   @@allow('read', true)
-  // Only admins can create/update/delete permissions
   @@allow('all', auth().roles?[permissions?[name == MANAGE]])
 }
 
@@ -111,22 +104,9 @@ model Account {
 
   @@id([provider, providerAccountId])
 
-  // Allow creation if it's the user's own account
   @@allow('create', auth() == user)
-  
-  // Allow read if:
-  // 1. It's the user's own account OR
-  // 2. The authenticated user has READ permission
   @@allow('read', auth() == user || auth().roles?[permissions?[name == READ]])
-  
-  // Allow update if:
-  // 1. It's the user's own account OR
-  // 2. The authenticated user has UPDATE permission
   @@allow('update', auth() == user || auth().roles?[permissions?[name == UPDATE]])
-  
-  // Allow delete if:
-  // 1. It's the user's own account OR
-  // 2. The authenticated user has DELETE permission
   @@allow('delete', auth() == user || auth().roles?[permissions?[name == DELETE]])
 }
 
@@ -139,22 +119,9 @@ model Session {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  // Allow creation for authenticated users (when they log in)
   @@allow('create', auth() != null)
-
-  // Allow read if:
-  // 1. It's the user's own session OR
-  // 2. The authenticated user has READ permission
   @@allow('read', auth() == user || auth().roles?[permissions?[name == READ]])
-
-  // Allow update if:
-  // 1. It's the user's own session OR
-  // 2. The authenticated user has UPDATE permission
   @@allow('update', auth() == user || auth().roles?[permissions?[name == UPDATE]])
-
-  // Allow delete if:
-  // 1. It's the user's own session (logout) OR
-  // 2. The authenticated user has DELETE permission
   @@allow('delete', auth() == user || auth().roles?[permissions?[name == DELETE]])
 }
 
@@ -164,22 +131,6 @@ model VerificationToken {
   expires    DateTime
 
   @@id([identifier, token])
-}
- 
-// Optional for WebAuthn support
-model Authenticator {
-  credentialID         String  @unique
-  userId               String
-  providerAccountId    String
-  credentialPublicKey  String
-  counter              Int
-  credentialDeviceType String
-  credentialBackedUp   Boolean
-  transports           String?
-
-  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@id([userId, credentialID])
 }
 
 enum QuestionType {
@@ -200,40 +151,40 @@ enum Status {
 }
 
 model Question {
-  id          String         @id @default(cuid())
-  title       String         @length(min: 3, max: 300)
-  content     String         @length(min: 10)
-  type        QuestionType
-  visibility  Visibility     @default(PUBLIC)
+  id                       String         @id @default(cuid())
+  title                    String         @length(min: 3, max: 300)
+  content                  String         @length(min: 10)
+  type                     QuestionType
+  visibility               Visibility     @default(PUBLIC)
   
   // AI Classification metadata
-  classificationConfidence Float?        @default(0.0)
-  classificationReasoning  String[]      @default([])
+  classificationConfidence Float?         @default(0.0)
+  classificationReasoning  String[]       @default([])
   
   // For formal questions
-  topic       String?
-  attachments Attachment[]
+  topic                    String?
+  attachments              Attachment[]
   
   // Metadata
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  createdAt                DateTime       @default(now())
+  updatedAt                DateTime       @updatedAt
   
   // Relations
-  authorId    String
-  author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  answers     Answer[]
-  tags        Tag[]
-  votes       QuestionVote[]
-  comments    Comment[]
+  authorId                 String
+  author                   User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  answers                  Answer[]
+  tags                     Tag[]
+  votes                    QuestionVote[]
+  comments                 Comment[]
   
   // Course structure relations
-  courseId    String?
-  course      Course?        @relation(fields: [courseId], references: [id])
-  lessonId    String?
-  lesson      Lesson?        @relation(fields: [lessonId], references: [id])
+  courseId                 String?
+  course                   Course?        @relation(fields: [courseId], references: [id])
+  lessonId                 String?
+  lesson                   Lesson?        @relation(fields: [lessonId], references: [id])
   
   // Engagement metrics
-  viewCount   Int            @default(0)
+  viewCount                Int            @default(0)
   
   // Access control
   @@allow('create', auth() != null)
@@ -241,8 +192,8 @@ model Question {
   @@allow('update', auth() == author)
   @@allow('delete', auth() == author || auth().roles?[permissions?[name == DELETE]])
 
-  slug        String         @unique
-  status      Status         @default(OPEN)
+  slug                     String         @unique
+  status                   Status         @default(OPEN)
   
   // Add reverse relations for easy querying
   @@index([courseId])
@@ -250,37 +201,28 @@ model Question {
 }
 
 model Answer {
-  id         String       @id @default(cuid())
-  content    String       @length(min: 10)
-  
-  isAcceptedByUser    Boolean @default(false) @allow('update', auth() == question.author)
-  isAcceptedByTeacher Boolean @default(false) @allow('update', auth() == question.course.author && question.courseId != null)
-  acceptedByUserAt    DateTime? @allow('update', auth() == question.author)
-  acceptedByTeacherId String? @allow('update', auth() == question.course.author && question.courseId != null)
-  acceptedByTeacher   User?    @relation("TeacherAcceptedAnswers", fields: [acceptedByTeacherId], references: [id])
-  
-  // Metadata
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  
-  // Relations
-  authorId   String
-  author     User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  questionId String
-  question   Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  votes      AnswerVote[]
-  comments   Comment[]
-  
-  // Access control
+  id                  String       @id @default(cuid())
+  content             String       @length(min: 10)
+
+  isAcceptedByUser    Boolean      @default(false) @allow('update', auth() == question.author)
+  isAcceptedByTeacher Boolean      @default(false) @allow('update', auth() == question.course.author && question.courseId != null)
+  acceptedByUserAt    DateTime?    @allow('update', auth() == question.author)
+  acceptedByTeacherId String?      @allow('update', auth() == question.course.author && question.courseId != null)
+  acceptedByTeacher   User?        @relation("TeacherAcceptedAnswers", fields: [acceptedByTeacherId], references: [id])
+
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  authorId            String
+  author              User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  questionId          String
+  question            Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  votes               AnswerVote[]
+  comments            Comment[]
+
   @@allow('create', auth() != null)
   @@allow('read', question.visibility == PUBLIC || auth() == author || auth() == question.author || auth().roles?[name == "TEACHER"])
-  
-  // Allow updates by:
-  // 1. Answer author (can update content and all fields)
-  // 2. Question author (can update acceptance fields)
-  // 3. Course teacher (can update teacher acceptance fields)
   @@allow('update', auth() == author || auth() == question.author || (auth() == question.course.author && question.courseId != null))
-  
   @@allow('delete', auth() == author || auth().roles?[permissions?[name == DELETE]])
 }
 
@@ -289,12 +231,10 @@ model Tag {
   name        String     @unique
   description String?
   questions   Question[]
-  
-  // For AI-suggested tags
+
   aiGenerated Boolean    @default(false)
   verified    Boolean    @default(false)
-  
-  // Course relation
+
   courses     Course[]
 
   @@allow('create', auth() != null)
@@ -306,7 +246,7 @@ model Tag {
 model Attachment {
   id         String   @id @default(cuid())
   url        String
-  type       String      // e.g., "image", "document", etc.
+  type       String
   questionId String
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
@@ -317,7 +257,7 @@ model Attachment {
 
 model QuestionVote {
   id         String   @id @default(cuid())
-  value      Int         // 1 for upvote, -1 for downvote
+  value      Int
   questionId String
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
   userId     String
@@ -331,12 +271,12 @@ model QuestionVote {
 }
 
 model AnswerVote {
-  id       String @id @default(cuid())
-  value    Int         // 1 for upvote, -1 for downvote
-  answerId String
-  answer   Answer @relation(fields: [answerId], references: [id], onDelete: Cascade)
-  userId   String
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  value     Int
+  answerId  String
+  answer    Answer   @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 
   @@unique([answerId, userId])
@@ -346,25 +286,21 @@ model AnswerVote {
 }
 
 model Comment {
-  id         String   @id @default(cuid())
-  content    String   @length(min: 1, max: 1000)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  
-  // Relations
+  id         String        @id @default(cuid())
+  content    String        @length(min: 1, max: 1000)
+
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
   authorId   String
-  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  
-  // Polymorphic relation - can comment on either question or answer
+  author     User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
   questionId String?
-  question   Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  question   Question?     @relation(fields: [questionId], references: [id], onDelete: Cascade)
   answerId   String?
-  answer     Answer?   @relation(fields: [answerId], references: [id], onDelete: Cascade)
-  
-  // Comment voting
+  answer     Answer?       @relation(fields: [answerId], references: [id], onDelete: Cascade)
+
   votes      CommentVote[]
-  
-  // Access control
+
   @@allow('create', auth() != null)
   @@allow('read', true)
   @@allow('update', auth() == author)
@@ -373,7 +309,7 @@ model Comment {
 
 model CommentVote {
   id        String  @id @default(cuid())
-  value     Int     // 1 for useful, -1 for not useful (if we implement it)
+  value     Int
   commentId String
   comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
   userId    String
@@ -391,23 +327,20 @@ model Course {
   title       String             @length(min: 3, max: 100)
   description String             @length(min: 10, max: 1000)
   slug        String             @unique
-  joinCode    String?            @unique  // Unique code for students to join the course
-  
+  joinCode    String?            @unique
+
   modules     CourseModule[]
-  
-  // Metadata
+
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
-  
-  // Relations
+
   authorId    String
   author      User               @relation("CourseCreator", fields: [authorId], references: [id])
-  lessons     Lesson[]           // Direct relation to lessons
+  lessons     Lesson[]
   tags        Tag[]
   questions   Question[]
   enrollments CourseEnrollment[]
-  
-  // Access control
+
   @@allow('create', auth() != null && auth().roles?[name == "TEACHER"])
   @@allow('read', true)
   @@allow('update', auth() == author || auth().roles?[permissions?[name == UPDATE]])
@@ -429,8 +362,7 @@ model CourseEnrollment {
   
   // Unique constraint to prevent duplicate enrollments
   @@unique([userId, courseId])
-  
-  // Access control
+
   @@allow('create', auth() == user)
   @@allow('read', auth() == user || auth() == course.author)
   @@allow('delete', auth() == user || auth() == course.author)
@@ -438,15 +370,15 @@ model CourseEnrollment {
 
 // New model for Lesson
 model Lesson {
-  id        String       @id @default(cuid())
-  title     String       @length(min: 1, max: 100)
+  id        String         @id @default(cuid())
+  title     String         @length(min: 1, max: 100)
   slug      String
   summary   String?      // Optional summary or resource link
   order     Int
   
   // Metadata
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
   
   // New relations for module/chapter
   chapterId String?
@@ -454,13 +386,13 @@ model Lesson {
   
   // Existing course relation retained
   courseId  String
-  course    Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course    Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
   questions Question[]  // Questions linked to this lesson
   views     LessonView[]
   files     LessonFile[]
   
   // Arbitrary metadata storage for lessons
-  metadata   Json?       @default("{}")
+  metadata  Json?          @default("{}")
 
   // Unique constraint for slug within a course
   @@unique([courseId, slug])
@@ -486,7 +418,6 @@ model LessonFile {
   @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
 }
 
-// Activity logging schema
 enum ActivityType {
   VIEW_LESSON
   UNVIEW_LESSON
@@ -529,17 +460,16 @@ model ActivityLog {
   @@index([entityType, entityId])
 }
 
-// New model for course modules
 model CourseModule {
-  id         String        @id @default(cuid())
-  title      String        @length(min: 1, max: 100)
-  slug       String
-  order      Int
-  courseId   String
-  course     Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  chapters   CourseChapter[]
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @default(now())
+  id        String          @id @default(cuid())
+  title     String          @length(min: 1, max: 100)
+  slug      String
+  order     Int
+  courseId  String
+  course    Course          @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  chapters  CourseChapter[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @default(now())
 
   @@unique([courseId, slug])
   @@allow('create', auth() != null)
@@ -548,17 +478,16 @@ model CourseModule {
   @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
 }
 
-// New model for course chapters
 model CourseChapter {
-  id         String        @id @default(cuid())
-  title      String        @length(min: 1, max: 100)
-  slug       String
-  order      Int
-  moduleId   String
-  module     CourseModule  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  lessons    Lesson[]
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @default(now())
+  id        String       @id @default(cuid())
+  title     String       @length(min: 1, max: 100)
+  slug      String
+  order     Int
+  moduleId  String
+  module    CourseModule @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  lessons   Lesson[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @default(now())
 
   @@unique([moduleId, slug])
   @@allow('create', auth() != null)
@@ -567,10 +496,7 @@ model CourseChapter {
   @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
 }
 
-// Notification System Models
-
 enum NotificationType {
-  // Q&A Notifications
   NEW_ANSWER
   ANSWER_ACCEPTED_USER
   ANSWER_ACCEPTED_TEACHER
@@ -580,24 +506,20 @@ enum NotificationType {
   QUESTION_DOWNVOTE
   ANSWER_UPVOTE
   ANSWER_DOWNVOTE
-  
-  // Course/Lesson Notifications
+
   NEW_COURSE_QUESTION
   NEW_LESSON
   COURSE_UPDATE
-  
-  // Subscription Notifications
+
   FOLLOWED_USER_QUESTION
   FOLLOWED_USER_ANSWER
   FOLLOWED_QUESTION_ANSWER
   FOLLOWED_TOPIC_QUESTION
-  
-  // Engagement Notifications
+
   STUDENT_AT_RISK
   STUDENT_INACTIVE
   DAILY_ACTIVITY_SUMMARY
-  
-  // System Notifications
+
   WELCOME
   REPUTATION_MILESTONE
   WEEKLY_DIGEST
@@ -624,70 +546,64 @@ enum NotificationChannel {
 }
 
 model Notification {
-  id              String               @id @default(cuid())
-  type            NotificationType
-  title           String               @length(min: 1, max: 200)
-  message         String               @length(min: 1, max: 1000)
-  priority        NotificationPriority @default(MEDIUM)
-  status          NotificationStatus   @default(UNREAD)
-  channels        NotificationChannel[]
-  metadata        Json?                @default("{}")
-  createdAt       DateTime             @default(now())
-  readAt          DateTime?
-  archivedAt      DateTime?
-  
-  // Relations
-  userId          String
-  user            User                 @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
-  actorId         String?
-  actor           User?                @relation("NotificationActor", fields: [actorId], references: [id])
-  
-  // Polymorphic relations for the entity this notification is about
+  id                String                  @id @default(cuid())
+  type              NotificationType
+  title             String                  @length(min: 1, max: 200)
+  message           String                  @length(min: 1, max: 1000)
+  priority          NotificationPriority    @default(MEDIUM)
+  status            NotificationStatus      @default(UNREAD)
+  channels          NotificationChannel[]
+  metadata          Json?                   @default("{}")
+  createdAt         DateTime                @default(now())
+  readAt            DateTime?
+  archivedAt        DateTime?
+
+  userId            String
+  user              User                    @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  actorId           String?
+  actor             User?                   @relation("NotificationActor", fields: [actorId], references: [id])
+
   relatedEntityType String?
   relatedEntityId   String?
-  
-  // Analytics relation
-  analytics       NotificationAnalytics[]
-  
-  // Access control - users can only see their own notifications
+
+  analytics         NotificationAnalytics[]
+
   @@allow('create', auth() != null)
   @@allow('read', auth() == user)
   @@allow('update', auth() == user)
   @@allow('delete', auth() == user)
-  
+
   @@index([userId, status])
   @@index([userId, createdAt])
   @@index([relatedEntityType, relatedEntityId])
 }
 
 model NotificationPreferences {
-  id                     String               @id @default(cuid())
-  userId                 String               @unique
-  user                   User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  // Channel preferences for each notification category
-  newAnswer              NotificationChannel[] @default([IN_APP, EMAIL])
-  answerAccepted         NotificationChannel[] @default([IN_APP, EMAIL])
-  questionComment        NotificationChannel[] @default([IN_APP, EMAIL])
-  answerComment          NotificationChannel[] @default([IN_APP, EMAIL])
-  questionVote           NotificationChannel[] @default([IN_APP])
-  answerVote             NotificationChannel[] @default([IN_APP])
-  newCourseQuestion      NotificationChannel[] @default([IN_APP, EMAIL])
-  newLesson              NotificationChannel[] @default([IN_APP, EMAIL])
-  courseUpdate           NotificationChannel[] @default([IN_APP, EMAIL])
-  followedUserActivity   NotificationChannel[] @default([IN_APP])
+  id                       String                @id @default(cuid())
+  userId                   String                @unique
+  user                     User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  newAnswer                NotificationChannel[] @default([IN_APP, EMAIL])
+  answerAccepted           NotificationChannel[] @default([IN_APP, EMAIL])
+  questionComment          NotificationChannel[] @default([IN_APP, EMAIL])
+  answerComment            NotificationChannel[] @default([IN_APP, EMAIL])
+  questionVote             NotificationChannel[] @default([IN_APP])
+  answerVote               NotificationChannel[] @default([IN_APP])
+  newCourseQuestion        NotificationChannel[] @default([IN_APP, EMAIL])
+  newLesson                NotificationChannel[] @default([IN_APP, EMAIL])
+  courseUpdate             NotificationChannel[] @default([IN_APP, EMAIL])
+  followedUserActivity     NotificationChannel[] @default([IN_APP])
   followedQuestionActivity NotificationChannel[] @default([IN_APP])
-  studentEngagement      NotificationChannel[] @default([IN_APP, EMAIL])
-  systemNotifications    NotificationChannel[] @default([IN_APP, EMAIL])
-  
-  // General preferences
-  emailDigestFrequency   String               @default("WEEKLY") // DAILY, WEEKLY, MONTHLY, NEVER
-  quietHoursStart        String?              // HH:mm format
-  quietHoursEnd          String?              // HH:mm format
-  timezone               String?              @default("UTC")
-  
-  createdAt              DateTime             @default(now())
-  updatedAt              DateTime             @updatedAt
+  studentEngagement        NotificationChannel[] @default([IN_APP, EMAIL])
+  systemNotifications      NotificationChannel[] @default([IN_APP, EMAIL])
+
+  emailDigestFrequency     String                @default("WEEKLY") // DAILY, WEEKLY, MONTHLY, NEVER
+  quietHoursStart          String?              // HH:mm format
+  quietHoursEnd            String?              // HH:mm format
+  timezone                 String?               @default("UTC")
+
+  createdAt                DateTime              @default(now())
+  updatedAt                DateTime              @updatedAt
   
   // Allow anyone authenticated to create notification preferences for any user (needed for system operations)
   @@allow('create', auth() != null)
@@ -699,35 +615,35 @@ model NotificationPreferences {
 }
 
 model NotificationSubscription {
-  id               String              @id @default(cuid())
+  id               String                @id @default(cuid())
   userId           String
-  user             User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   subscriptionType String              // USER, QUESTION, COURSE, TAG, LESSON
   entityId         String              // ID of the entity being followed
   channels         NotificationChannel[] @default([IN_APP])
-  createdAt        DateTime            @default(now())
-  
+  createdAt        DateTime              @default(now())
+
   @@unique([userId, subscriptionType, entityId])
   @@allow('create', auth() != null)
   @@allow('read', auth() == user)
   @@allow('update', auth() == user)
   @@allow('delete', auth() == user)
-  
+
   @@index([subscriptionType, entityId])
 }
 
 model NotificationTemplate {
-  id              String               @id @default(cuid())
-  type            NotificationType     @unique
-  titleTemplate   String               @length(min: 1, max: 200)
-  messageTemplate String               @length(min: 1, max: 1000)
-  defaultPriority NotificationPriority @default(MEDIUM)
+  id              String                @id @default(cuid())
+  type            NotificationType      @unique
+  titleTemplate   String                @length(min: 1, max: 200)
+  messageTemplate String                @length(min: 1, max: 1000)
+  defaultPriority NotificationPriority  @default(MEDIUM)
   defaultChannels NotificationChannel[]
   variables       String[]             // JSON array of variable names that can be replaced
-  isActive        Boolean              @default(true)
-  createdAt       DateTime             @default(now())
-  updatedAt       DateTime             @updatedAt
-  
+  isActive        Boolean               @default(true)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
   @@allow('create', auth() != null && auth().roles?[permissions?[name == MANAGE]])
   @@allow('read', true)
   @@allow('update', auth() != null && auth().roles?[permissions?[name == MANAGE]])
@@ -735,20 +651,20 @@ model NotificationTemplate {
 }
 
 model NotificationBatch {
-  id                     String              @id @default(cuid())
-  batchData              Json                // Array of notification data
-  scheduledFor           DateTime?
-  processingStartedAt    DateTime?
-  processingCompletedAt  DateTime?
-  status                 String              @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
-  errorMessage           String?
-  createdAt              DateTime            @default(now())
-  
+  id                    String    @id @default(cuid())
+  batchData             Json                // Array of notification data
+  scheduledFor          DateTime?
+  processingStartedAt   DateTime?
+  processingCompletedAt DateTime?
+  status                String    @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
+  errorMessage          String?
+  createdAt             DateTime  @default(now())
+
   @@allow('create', auth() != null)
   @@allow('read', auth() != null && auth().roles?[permissions?[name == READ]])
   @@allow('update', auth() != null && auth().roles?[permissions?[name == UPDATE]])
   @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
-  
+
   @@index([status, scheduledFor])
 }
 
@@ -762,11 +678,11 @@ model NotificationAnalytics {
   channel        NotificationChannel
   timestamp      DateTime            @default(now())
   metadata       Json?               @default("{}")
-  
+
   @@allow('create', auth() != null)
   @@allow('read', auth() != null && auth().roles?[permissions?[name == READ]])
   @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
-  
+
   @@index([notificationId])
   @@index([userId, eventType])
   @@index([timestamp])

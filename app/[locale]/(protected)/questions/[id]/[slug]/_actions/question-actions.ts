@@ -1,7 +1,7 @@
 "use server"
 
 import { auth } from "@/auth"
-import { prisma } from "@/lib/db/prisma"
+import { prisma } from "@/prisma"
 import { revalidatePath } from "next/cache"
 import { calculateUserReputation, checkReputationMilestone } from "@/lib/utils/reputation"
 import { notifyNewAnswer, notifyVote, notifyComment } from "@/lib/services/notification-triggers"
@@ -188,7 +188,7 @@ export async function voteQuestion(questionId: string, value: 1 | -1) {
           value,
         },
       })
-      
+
       // Send notification for vote change
       try {
         await notifyVote('question', questionId, value, session.user.id)
@@ -204,7 +204,7 @@ export async function voteQuestion(questionId: string, value: 1 | -1) {
         value,
       },
     })
-    
+
     // Send notification for new vote
     try {
       await notifyVote('question', questionId, value, session.user.id)
@@ -262,8 +262,8 @@ export async function updateAnswer(answerId: string, content: string) {
   // Check if user owns the answer
   const answer = await prisma.answer.findUnique({
     where: { id: answerId },
-    select: { 
-      authorId: true, 
+    select: {
+      authorId: true,
       questionId: true,
       question: {
         select: { slug: true }
@@ -327,7 +327,7 @@ export async function addComment(content: string, questionId?: string, answerId?
   } else if (answerId) {
     const answer = await prisma.answer.findUnique({
       where: { id: answerId },
-      select: { 
+      select: {
         questionId: true,
         question: { select: { slug: true } }
       }
@@ -358,7 +358,7 @@ export async function voteAnswer(answerId: string, value: 1 | -1) {
   // Get answer author for milestone check
   const answer = await prisma.answer.findUnique({
     where: { id: answerId },
-    select: { 
+    select: {
       authorId: true,
       questionId: true,
       question: {
@@ -385,7 +385,7 @@ export async function voteAnswer(answerId: string, value: 1 | -1) {
           value,
         },
       })
-      
+
       // Send notification for vote change
       try {
         await notifyVote('answer', answerId, value, session.user.id)
@@ -401,7 +401,7 @@ export async function voteAnswer(answerId: string, value: 1 | -1) {
         value,
       },
     })
-    
+
     // Send notification for new vote
     try {
       await notifyVote('answer', answerId, value, session.user.id)

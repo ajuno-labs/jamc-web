@@ -8,10 +8,8 @@ interface EditQuestionPageProps {
 }
 
 export default async function EditQuestionPage({ params }: EditQuestionPageProps) {
-  // Await params for Next.js async dynamic APIx
   const { id: questionId, slug: questionSlug } = await params;
 
-  // Validate params before using them
   if (!questionId || typeof questionId !== "string") {
     notFound();
   }
@@ -30,11 +28,17 @@ export default async function EditQuestionPage({ params }: EditQuestionPageProps
   }
 
   if (question.slug !== questionSlug) {
-    return redirect(`/questions/${questionId}/${question.slug}/edit`);
+    return redirect({
+      href: `/questions/${questionId}/${question.slug}/edit`,
+      locale: "en",
+    });
   }
 
   if (!user || user.id !== question.author.id) {
-    return redirect(`/questions/${questionId}/${question.slug}`);
+    return redirect({
+      href: `/questions/${questionId}/${question.slug}`,
+      locale: "en",
+    });
   }
 
   return (

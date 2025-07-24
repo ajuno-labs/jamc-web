@@ -1,6 +1,7 @@
 "use client"
 
-import { Link } from "@/i18n/navigation"
+import { Link as IntlLink } from "@/i18n/navigation"
+import Link from "next/link"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { GraduationCap, Menu, X } from "lucide-react"
@@ -22,29 +23,24 @@ export function Header() {
           <GraduationCap className="h-8 w-8 text-primary" />
           <span className="text-2xl font-bold">JAMC</span>
         </div>
-        
+
         {/* Desktop Navigation */}
         <nav className="hidden md:flex md:gap-6">
           <a href="#features" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t('features')}</a>
           <a href="#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t('howItWorks')}</a>
         </nav>
-        
+
         <div className="hidden md:flex items-center gap-2">
           <LanguageSwitcher />
           {session ? (
             <UserNav user={session.user} />
           ) : (
-            <> 
-              <Button variant="outline" asChild>
-                <Link href="/signin">{t('signIn')}</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/signup">{t('signUp')}</Link>
-              </Button>
-            </>
+            <Button asChild>
+              <Link href="/api/auth/signin">Sign in</Link>
+            </Button>
           )}
         </div>
-        
+
         {/* Mobile Navigation */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild className="md:hidden">
@@ -65,7 +61,7 @@ export function Header() {
                   <span className="sr-only">Close menu</span>
                 </Button>
               </div>
-              
+
               <nav className="flex flex-col gap-4 py-8">
                 <a
                   href="#features"
@@ -82,7 +78,7 @@ export function Header() {
                   {t('howItWorks')}
                 </a>
               </nav>
-              
+
               <div className="mt-auto flex flex-col gap-3 py-6">
                 <div className="mb-3">
                   <LanguageSwitcher />
@@ -90,21 +86,16 @@ export function Header() {
                 {session ? (
                   <div className="flex flex-col gap-3">
                     <Button variant="outline" asChild className="w-full">
-                      <Link href="/questions">{t('qa')}</Link>
+                      <IntlLink href="/questions">{t('qa')}</IntlLink>
                     </Button>
                     <Button variant="outline" asChild className="w-full">
-                      <Link href="/courses">{t('courses')}</Link>
+                      <IntlLink href="/courses">{t('courses')}</IntlLink>
                     </Button>
                   </div>
                 ) : (
-                  <>
-                    <Button variant="outline" asChild className="w-full">
-                      <Link href="/signin">{t('signIn')}</Link>
-                    </Button>
-                    <Button asChild className="w-full">
-                      <Link href="/signup">{t('signUp')}</Link>
-                    </Button>
-                  </>
+                  <Button asChild>
+                    <Link href="/api/auth/signin">Sign in</Link>
+                  </Button>
                 )}
               </div>
             </div>

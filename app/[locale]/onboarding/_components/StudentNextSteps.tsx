@@ -1,53 +1,53 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "@/i18n/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Users, ArrowRight, Search } from "lucide-react"
-import { type UserWithRoles } from "@/lib/types/prisma"
-import { joinCourseWithCode } from "../_actions/onboarding-actions"
+import { useState } from "react";
+import { useRouter } from "@/i18n/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Users, ArrowRight, Search } from "lucide-react";
+import { type UserWithRoles } from "@/lib/types/prisma";
+import { joinCourseWithCode } from "../actions/onboarding-actions";
 
 interface StudentNextStepsProps {
-  user: UserWithRoles
-  onComplete: () => void
-  onSkip: () => void
+  user: UserWithRoles;
+  onComplete: () => void;
+  onSkip: () => void;
 }
 
 export function StudentNextSteps({ onSkip }: StudentNextStepsProps) {
-  const router = useRouter()
-  const [joinCode, setJoinCode] = useState("")
-  const [isJoining, setIsJoining] = useState(false)
-  const [joinError, setJoinError] = useState<string | null>(null)
+  const router = useRouter();
+  const [joinCode, setJoinCode] = useState("");
+  const [isJoining, setIsJoining] = useState(false);
+  const [joinError, setJoinError] = useState<string | null>(null);
 
   const handleJoinCourse = async () => {
-    if (!joinCode.trim()) return
+    if (!joinCode.trim()) return;
 
-    setIsJoining(true)
-    setJoinError(null)
+    setIsJoining(true);
+    setJoinError(null);
 
     try {
-      const result = await joinCourseWithCode(joinCode.trim().toUpperCase())
-      
+      const result = await joinCourseWithCode(joinCode.trim().toUpperCase());
+
       if (result.success) {
         // Redirect to the course
-        router.push(`/courses/${result.courseSlug}`)
+        router.push(`/courses/${result.courseSlug}`);
       } else {
-        setJoinError(result.error || "Failed to join course")
+        setJoinError(result.error || "Failed to join course");
       }
     } catch (error) {
-      console.error("Error joining course:", error)
-      setJoinError("An error occurred while joining the course")
+      console.error("Error joining course:", error);
+      setJoinError("An error occurred while joining the course");
     } finally {
-      setIsJoining(false)
+      setIsJoining(false);
     }
-  }
+  };
 
   const handleBrowseCourses = () => {
-    router.push("/courses")
-  }
+    router.push("/courses");
+  };
 
   return (
     <Card>
@@ -57,7 +57,7 @@ export function StudentNextSteps({ onSkip }: StudentNextStepsProps) {
           You&apos;re all set up as a student. Ready to start learning?
         </p>
       </CardHeader>
-      
+
       <CardContent className="space-y-6">
         <div className="grid gap-4">
           {/* Join Course with Code */}
@@ -72,7 +72,7 @@ export function StudentNextSteps({ onSkip }: StudentNextStepsProps) {
                   Have a course code from your teacher? Enter it below to join the class
                 </p>
               </div>
-              
+
               <div className="space-y-3">
                 <div className="space-y-2">
                   <Label htmlFor="joinCode">Course Code</Label>
@@ -85,12 +85,10 @@ export function StudentNextSteps({ onSkip }: StudentNextStepsProps) {
                     maxLength={8}
                   />
                 </div>
-                
-                {joinError && (
-                  <p className="text-sm text-red-500">{joinError}</p>
-                )}
-                
-                <Button 
+
+                {joinError && <p className="text-sm text-red-500">{joinError}</p>}
+
+                <Button
                   onClick={handleJoinCourse}
                   disabled={!joinCode.trim() || isJoining}
                   className="w-full"
@@ -120,11 +118,7 @@ export function StudentNextSteps({ onSkip }: StudentNextStepsProps) {
                   Browse and discover courses that interest you
                 </p>
               </div>
-              <Button 
-                variant="outline"
-                onClick={handleBrowseCourses}
-                className="w-full"
-              >
+              <Button variant="outline" onClick={handleBrowseCourses} className="w-full">
                 Browse Courses
               </Button>
             </CardContent>
@@ -141,5 +135,5 @@ export function StudentNextSteps({ onSkip }: StudentNextStepsProps) {
         </div>
       </CardContent>
     </Card>
-  )
-} 
+  );
+}
