@@ -7,7 +7,7 @@ import { getCurrentUser } from "@/lib/auth/user";
 import { getTranslations } from "next-intl/server";
 
 export default async function EditProfilePage() {
-  const user = (await getCurrentUser(userWithRolesInclude)) as unknown as UserWithRoles;
+  const user = (await getCurrentUser(userWithRolesInclude))
   const t = await getTranslations("ProfileEditPage");
 
   return (
