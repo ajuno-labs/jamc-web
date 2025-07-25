@@ -1,12 +1,7 @@
 import createMiddleware from "next-intl/middleware";
-import { auth } from "@/auth";
 import { routing } from "@/i18n/routing";
 
-const intlMiddleware = createMiddleware(routing);
-
-export default auth((request) => {
-  return intlMiddleware(request);
-})
+export default createMiddleware(routing);
 
 export const config = {
   matcher: [
