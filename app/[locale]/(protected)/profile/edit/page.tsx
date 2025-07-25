@@ -2,7 +2,7 @@ import { ProfileEditForm } from "./components/ProfileEditForm";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { userWithRolesInclude, UserWithRoles } from "@/lib/types/prisma";
+import { userWithRolesInclude } from "@/lib/types/prisma";
 import { getCurrentUser } from "@/lib/auth/user";
 import { getTranslations } from "next-intl/server";
 
