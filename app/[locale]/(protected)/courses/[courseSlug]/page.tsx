@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { auth } from "@/auth";
-import { prisma } from "@/lib/db/prisma";
+import { prisma } from "@/prisma";
 import { getEnhancedPrisma } from "@/lib/db/enhanced";
 import { getCourseDetail } from "@/lib/actions/course-actions";
 import { CourseContent } from "./_components/course-content";
@@ -39,7 +39,6 @@ export default async function CourseDetailPage({
   params: Promise<{ courseSlug: string }>;
 }) {
   const { courseSlug } = await params;
-  // Retrieve current user and user ID for context
   const session = await auth();
   const user = await prisma.user.findUnique({
     where: {
@@ -54,25 +53,21 @@ export default async function CourseDetailPage({
     notFound();
   }
 
-  // Check if user is enrolled
   const isEnrolled = userId ? course.enrollments.some((e) => e.userId === userId) : false;
 
-  // Total lesson count (hierarchical + top-level)
   const lessonsInHierarchy = course.modules.reduce(
     (total, mod) => total + mod.chapters.reduce((ctotal, chap) => ctotal + chap.lessons.length, 0),
     0
   );
   const lessonCount = lessonsInHierarchy + (course.lessons?.length ?? 0);
 
-  // Determine first lesson to link to (hierarchical first, else top-level)
   const firstNestedLesson = course.modules[0]?.chapters[0]?.lessons[0];
   const firstLesson = firstNestedLesson
     ? { id: firstNestedLesson.id, slug: firstNestedLesson.slug }
     : course.lessons?.[0]
-    ? { id: course.lessons[0].id, slug: course.lessons[0].slug }
-    : null;
+      ? { id: course.lessons[0].id, slug: course.lessons[0].slug }
+      : null;
 
-  // Detect if the current user is the course instructor
   const isInstructor = userId === course.author.id;
 
   return (

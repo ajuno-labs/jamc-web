@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/auth";
-import { prisma } from "@/lib/db/prisma";
+import { prisma } from "@/prisma";
 import { Prisma } from "@prisma/client";
 
 type UserWithInclude<T extends Prisma.UserInclude | undefined> = T extends Prisma.UserInclude

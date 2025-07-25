@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/lib/db/prisma";
+import { prisma } from "@/prisma";
 import { QuestionType, Prisma } from "@prisma/client";
 import { auth } from "@/auth";
 import { questionWithRelationsInclude } from "@/lib/types/prisma";
@@ -89,30 +89,30 @@ export async function searchQuestions(
         // Only apply search conditions if query is not empty
         query
           ? {
-              OR: [
-                { title: { contains: query, mode: "insensitive" as Prisma.QueryMode } },
-                { content: { contains: query, mode: "insensitive" as Prisma.QueryMode } },
-                {
-                  tags: {
-                    some: {
-                      name: { contains: query, mode: "insensitive" as Prisma.QueryMode },
-                    },
+            OR: [
+              { title: { contains: query, mode: "insensitive" as Prisma.QueryMode } },
+              { content: { contains: query, mode: "insensitive" as Prisma.QueryMode } },
+              {
+                tags: {
+                  some: {
+                    name: { contains: query, mode: "insensitive" as Prisma.QueryMode },
                   },
                 },
-              ],
-            }
+              },
+            ],
+          }
           : {},
         // Always apply type filter if not "all"
         type === "all" ? {} : { type },
         // Apply tags filter if any tags are selected
         tags.length > 0
           ? {
-              tags: {
-                some: {
-                  name: { in: tags },
-                },
+            tags: {
+              some: {
+                name: { in: tags },
               },
-            }
+            },
+          }
           : {},
         // Only show public questions to maintain some access control
         { visibility: "PUBLIC" },

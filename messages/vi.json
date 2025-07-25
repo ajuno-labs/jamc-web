@@ -170,6 +170,11 @@
   "ProfilePage": {
     "unableToLoad": "Không thể tải dữ liệu hồ sơ."
   },
+  "ProfileEditPage": {
+    "backToProfile": "Quay Lại Hồ Sơ",
+    "title": "Chỉnh Sửa Hồ Sơ",
+    "description": "Cập nhật thông tin hồ sơ và ảnh đại diện của bạn"
+  },
   "CoursesPage": {
     "title": "Khóa Học",
     "createNewCourse": "Tạo Khóa Học Mới",
@@ -213,14 +218,12 @@
   "SignInPage": {
     "welcomeBack": "Chào mừng trở lại",
     "workHardPlayHard": "Học chăm chỉ, chơi hết mình",
-    "signInWithGoogle": "Đăng nhập bằng Google",
+    "continueWithGoogle": "Tiếp tục với Google",
     "or": "hoặc",
     "forgotPassword": "Quên mật khẩu?",
     "signIn": "Đăng nhập",
     "signingIn": "Đang đăng nhập...",
     "termsOfService": "Bằng việc tiếp tục, bạn đồng ý với Điều Khoản Dịch Vụ của JAMC",
-    "dontHaveAccount": "Chưa có tài khoản?",
-    "signUp": "Đăng ký",
     "invalidCredentials": "Email hoặc mật khẩu không hợp lệ",
     "unexpectedError": "Đã xảy ra lỗi không mong muốn",
     "pleaseSignInWithOAuth": "Vui lòng đăng nhập bằng nhà cung cấp OAuth",
@@ -234,6 +237,7 @@
       "passwordMaxLength": "Mật khẩu phải có ít hơn 32 ký tự"
     }
   },
+
   "DateFormats": {
     "default": "d MMM, yyyy 'lúc' HH:mm",
     "short": "d MMM, yyyy",

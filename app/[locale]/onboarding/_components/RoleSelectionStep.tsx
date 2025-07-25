@@ -1,41 +1,46 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { GraduationCap, BookOpen, ChevronRight } from "lucide-react"
-import { assignUserRole } from "../_actions/onboarding-actions"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { GraduationCap, BookOpen, ChevronRight } from "lucide-react";
+import { assignUserRole } from "../actions/onboarding-actions";
+import { Role } from "@/lib/types/roles";
 
 interface RoleSelectionStepProps {
-  onRoleSelect: (role: "teacher" | "student") => void
-  onSkip: () => void
-  isSkipping?: boolean
+  onRoleSelect: (role: Role) => void;
+  onSkip: () => void;
+  isSkipping?: boolean;
 }
 
-export function RoleSelectionStep({ onRoleSelect, onSkip, isSkipping = false }: RoleSelectionStepProps) {
-  const [isLoading, setIsLoading] = useState<string | null>(null)
+export function RoleSelectionStep({
+  onRoleSelect,
+  onSkip,
+  isSkipping = false,
+}: RoleSelectionStepProps) {
+  const [isLoading, setIsLoading] = useState<string | null>(null);
 
-  const handleRoleSelect = async (role: "teacher" | "student") => {
-    setIsLoading(role)
-    
+  const handleRoleSelect = async (role: Role) => {
+    setIsLoading(role);
+
     try {
-      const result = await assignUserRole(role)
-      
+      const result = await assignUserRole(role);
+
       if (result.success) {
-        onRoleSelect(role)
+        onRoleSelect(role);
       } else {
-        console.error("Failed to assign role:", result.error)
+        console.error("Failed to assign role:", result.error);
         // Still proceed to next step even if role assignment fails
-        onRoleSelect(role)
+        onRoleSelect(role);
       }
     } catch (error) {
-      console.error("Error assigning role:", error)
+      console.error("Error assigning role:", error);
       // Still proceed to next step
-      onRoleSelect(role)
+      onRoleSelect(role);
     } finally {
-      setIsLoading(null)
+      setIsLoading(null);
     }
-  }
+  };
 
   return (
     <Card>
@@ -45,13 +50,13 @@ export function RoleSelectionStep({ onRoleSelect, onSkip, isSkipping = false }: 
           How would you like to use JAMC? You can always change this later.
         </p>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         <div className="grid gap-4 md:grid-cols-2">
           {/* Student Option */}
-          <Card 
+          <Card
             className="cursor-pointer border-2 transition-all hover:border-primary hover:shadow-md"
-            onClick={() => !isLoading && !isSkipping && handleRoleSelect("student")}
+            onClick={() => !isLoading && !isSkipping && handleRoleSelect(Role.STUDENT)}
           >
             <CardContent className="p-6 text-center space-y-4">
               <div className="flex justify-center">
@@ -63,16 +68,16 @@ export function RoleSelectionStep({ onRoleSelect, onSkip, isSkipping = false }: 
                   Join courses, participate in Q&A, and track your learning progress
                 </p>
               </div>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full"
                 disabled={isLoading !== null || isSkipping}
                 onClick={(e) => {
-                  e.stopPropagation()
-                  handleRoleSelect("student")
+                  e.stopPropagation();
+                  handleRoleSelect(Role.STUDENT);
                 }}
               >
-                {isLoading === "student" ? (
+                {isLoading === Role.STUDENT ? (
                   "Setting up..."
                 ) : (
                   <>
@@ -85,9 +90,9 @@ export function RoleSelectionStep({ onRoleSelect, onSkip, isSkipping = false }: 
           </Card>
 
           {/* Teacher Option */}
-          <Card 
+          <Card
             className="cursor-pointer border-2 transition-all hover:border-primary hover:shadow-md"
-            onClick={() => !isLoading && !isSkipping && handleRoleSelect("teacher")}
+            onClick={() => !isLoading && !isSkipping && handleRoleSelect(Role.TEACHER)}
           >
             <CardContent className="p-6 text-center space-y-4">
               <div className="flex justify-center">
@@ -99,16 +104,16 @@ export function RoleSelectionStep({ onRoleSelect, onSkip, isSkipping = false }: 
                   Create courses, manage students, and engage with your classroom
                 </p>
               </div>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full"
                 disabled={isLoading !== null || isSkipping}
                 onClick={(e) => {
-                  e.stopPropagation()
-                  handleRoleSelect("teacher")
+                  e.stopPropagation();
+                  handleRoleSelect(Role.TEACHER);
                 }}
               >
-                {isLoading === "teacher" ? (
+                {isLoading === Role.TEACHER ? (
                   "Setting up..."
                 ) : (
                   <>
@@ -128,5 +133,5 @@ export function RoleSelectionStep({ onRoleSelect, onSkip, isSkipping = false }: 
         </div>
       </CardContent>
     </Card>
-  )
-} 
+  );
+}

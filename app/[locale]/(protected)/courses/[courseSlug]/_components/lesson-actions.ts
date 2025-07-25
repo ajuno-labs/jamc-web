@@ -1,6 +1,6 @@
 "use server"
 
-import { prisma } from "@/lib/db/prisma"
+import { prisma } from "@/prisma"
 import { auth } from "@/auth"
 import { Prisma } from "@prisma/client"
 
@@ -143,10 +143,10 @@ export async function canAccessLesson(lesson: LessonWithCourse): Promise<boolean
   if (!session?.user?.id) return false
 
   const userId = session.user.id
-  
+
   // Author can always access
   if (lesson.course.author.id === userId) return true
-  
+
   // Check if user is enrolled
   return lesson.course.enrollments.some(e => e.userId === userId)
 }

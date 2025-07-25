@@ -1,26 +1,9 @@
 import { prisma } from "./seed/utils";
-import { seedUsersAndRoles } from "./seed/users-roles";
-import { seedCourses } from "./seed/courses";
-import { seedQuestions } from "./seed/questions";
-import { seedEnrollments } from "./seed/enrollments";
+import { seedRolesAndPermissions } from "./seed/roles-permissions";
 
 async function main() {
   try {
-    const { vietnameseTeacher, vietnameseStudents } = await seedUsersAndRoles();
-    const { vietnameseMath } = await seedCourses(vietnameseTeacher.id);
-    for (const student of vietnameseStudents) {
-      await seedEnrollments(student.id, [vietnameseMath]);
-    }
-    const lessons = await prisma.lesson.findMany({
-      where: { courseId: vietnameseMath.id },
-      select: { id: true, title: true },
-      orderBy: { order: "asc" }
-    });
-    await seedQuestions({
-      students: vietnameseStudents.map(s => ({ id: s.id, name: s.name ?? "" })),
-      course: vietnameseMath,
-      lessons
-    });
+    await seedRolesAndPermissions();
     
     console.log("Database seeded successfully");
   } catch (error) {

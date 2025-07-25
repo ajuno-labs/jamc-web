@@ -1,6 +1,6 @@
 "use server"
 
-import { prisma } from "@/lib/db/prisma"
+import { prisma } from "@/prisma"
 import { enhance } from "@zenstackhq/runtime"
 import { auth } from "@/auth"
 import { questionWithRelationsInclude, userWithRolesInclude } from "@/lib/types/prisma"
@@ -14,13 +14,13 @@ import { questionWithRelationsInclude, userWithRolesInclude } from "@/lib/types/
 export async function getUserQuestions() {
   try {
     const session = await auth()
-    
+
     // If no authenticated user, return empty array
     if (!session?.user?.email) {
       console.log('No authenticated user')
       return { items: [], total: 0 }
     }
-    
+
     // Get user with roles for proper authorization
     const user = await prisma.user.findUnique({
       where: {
@@ -28,16 +28,16 @@ export async function getUserQuestions() {
       },
       include: userWithRolesInclude
     })
-    
+
     if (!user) {
       console.log('User not found in database')
       return { items: [], total: 0 }
     }
-    
+
     // Create enhanced client with user context for this specific operation
     // This applies ZenStack's access policies for the current user
     const enhancedPrisma = enhance(prisma, { user }, { logPrismaQuery: true })
-    
+
     // Use the enhanced client to get questions according to access policies
     const [questions, total] = await Promise.all([
       enhancedPrisma.question.findMany({
@@ -48,9 +48,9 @@ export async function getUserQuestions() {
       }),
       enhancedPrisma.question.count()
     ])
-    
+
     console.log(`Found ${questions.length} questions for user ${user.email}`)
-    
+
     return {
       items: questions.map((question) => ({
         id: question.id,

@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db/prisma"
+import { prisma } from "@/prisma"
 import { notifyReputationMilestone } from "@/lib/services/notification-triggers"
 
 // Reputation calculation constants
@@ -111,12 +111,12 @@ export async function calculateUserReputationWithBreakdown(userId: string): Prom
     })
 
     // Calculate reputation components
-    const fromQuestionVotes = 
-      (questionUpvotes * REPUTATION_WEIGHTS.QUESTION_UPVOTE) + 
+    const fromQuestionVotes =
+      (questionUpvotes * REPUTATION_WEIGHTS.QUESTION_UPVOTE) +
       (questionDownvotes * REPUTATION_WEIGHTS.QUESTION_DOWNVOTE)
 
-    const fromAnswerVotes = 
-      (answerUpvotes * REPUTATION_WEIGHTS.ANSWER_UPVOTE) + 
+    const fromAnswerVotes =
+      (answerUpvotes * REPUTATION_WEIGHTS.ANSWER_UPVOTE) +
       (answerDownvotes * REPUTATION_WEIGHTS.ANSWER_DOWNVOTE)
 
     const fromAcceptedAnswers = acceptedAnswersCount * REPUTATION_WEIGHTS.ACCEPTED_ANSWER_BONUS
@@ -126,10 +126,10 @@ export async function calculateUserReputationWithBreakdown(userId: string): Prom
     const fromAnswersPosted = answersCount * REPUTATION_WEIGHTS.ANSWER_POSTED
 
     const total = Math.max(0, // Ensure reputation never goes below 0
-      fromQuestionVotes + 
-      fromAnswerVotes + 
-      fromAcceptedAnswers + 
-      fromQuestionsPosted + 
+      fromQuestionVotes +
+      fromAnswerVotes +
+      fromAcceptedAnswers +
+      fromQuestionsPosted +
       fromAnswersPosted
     )
 
@@ -175,10 +175,10 @@ export async function calculateUserReputationWithBreakdown(userId: string): Prom
 export async function checkReputationMilestone(userId: string): Promise<void> {
   try {
     const currentReputation = await calculateUserReputation(userId)
-    
+
     // Define milestone thresholds (same as in notification service)
     const milestones = [10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000]
-    
+
     // For simplicity, we'll notify on any milestone the user has reached
     // In a production app, you might want to track which milestones were already notified
     const achievedMilestone = milestones

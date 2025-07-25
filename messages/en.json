@@ -170,6 +170,11 @@
   "ProfilePage": {
     "unableToLoad": "Unable to load profile data."
   },
+  "ProfileEditPage": {
+    "backToProfile": "Back to Profile",
+    "title": "Edit Profile",
+    "description": "Update your profile information and avatar"
+  },
   "CoursesPage": {
     "title": "Courses",
     "createNewCourse": "Create New Course",
@@ -213,14 +218,12 @@
   "SignInPage": {
     "welcomeBack": "Welcome back",
     "workHardPlayHard": "Work hard, play hard",
-    "signInWithGoogle": "Sign in with Google",
+    "continueWithGoogle": "Continue with Google",
     "or": "or",
     "forgotPassword": "Forgot your password?",
     "signIn": "Sign in",
     "signingIn": "Signing in...",
     "termsOfService": "By continuing, you agree to JAMC's Terms of Service",
-    "dontHaveAccount": "Don't have an account?",
-    "signUp": "Sign up",
     "invalidCredentials": "Invalid email or password",
     "unexpectedError": "An unexpected error occurred",
     "pleaseSignInWithOAuth": "Please sign in with OAuth provider",
@@ -234,6 +237,7 @@
       "passwordMaxLength": "Password must be less than 32 characters"
     }
   },
+
   "DateFormats": {
     "default": "MMM d, yyyy 'at' HH:mm",
     "short": "MMM d, yyyy",

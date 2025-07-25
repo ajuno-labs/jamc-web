@@ -1,6 +1,6 @@
 "use server"
 
-import { prisma } from "@/lib/db/prisma"
+import { prisma } from "@/prisma"
 import { enhance } from "@zenstackhq/runtime"
 import { auth } from "@/auth"
 import { userWithRolesInclude } from "@/lib/types/prisma"
@@ -20,12 +20,12 @@ import { questionClassificationService } from "@/lib/services/question-classific
 export async function createQuestion(formData: FormData) {
   try {
     const session = await auth()
-    
+
     // Must be authenticated to create a question
     if (!session?.user?.email) {
       throw new Error("You must be signed in to create a question")
     }
-    
+
     // Get user with roles for proper authorization
     const user = await prisma.user.findUnique({
       where: {
@@ -33,15 +33,15 @@ export async function createQuestion(formData: FormData) {
       },
       include: userWithRolesInclude
     })
-    
+
     if (!user) {
       throw new Error("User not found")
     }
-    
+
     // Create enhanced client with user context for this specific operation
     // This applies ZenStack's access policies for the current user
     const enhancedPrisma = enhance(prisma, { user })
-    
+
     const title = formData.get('title')?.toString() || ''
     const content = formData.get('content')?.toString() || ''
     const userSelectedType = formData.get('type')?.toString() as QuestionType
@@ -56,7 +56,7 @@ export async function createQuestion(formData: FormData) {
     const finalType = classification.confidence > 0.7 ? classification.type : userSelectedType
 
     const slug = slugify(title)
-    
+
     // Resolve tags: connect existing & create new to avoid update policy
     // Find tags that already exist
     const existingTags = await prisma.tag.findMany({
@@ -72,7 +72,7 @@ export async function createQuestion(formData: FormData) {
         `You do not have permission to create new tags: ${newTagNames.join(", ")}. Please use existing tags instead.`
       )
     }
-    
+
     // Use the enhanced client to create the question according to access policies
     const question = await enhancedPrisma.question.create({
       data: {
@@ -135,7 +135,7 @@ export async function createQuestion(formData: FormData) {
         };
       }
     }
-    
+
     // Send notification if this is a course question
     if (courseId) {
       try {
@@ -144,7 +144,7 @@ export async function createQuestion(formData: FormData) {
         console.error('Failed to send new course question notification:', error)
       }
     }
-    
+
     try {
       await addQuestionToSearchIndex({
         id: question.id,
@@ -157,16 +157,16 @@ export async function createQuestion(formData: FormData) {
     } catch (error) {
       console.error('Failed to add question to search index:', error)
     }
-    
+
     // Revalidate the questions page
     revalidatePath('/questions')
-    
+
     return { success: true, questionId: question.id, slug: question.slug }
   } catch (error) {
     console.error("Error creating question:", error)
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : "An unknown error occurred" 
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "An unknown error occurred"
     }
   }
 } 

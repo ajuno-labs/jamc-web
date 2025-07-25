@@ -4,7 +4,6 @@ import { createNotification, createNotifications } from "./notification-service"
 import { getEnhancedPrisma } from "@/lib/db/enhanced"
 import type { NotificationCreateRequest, NotificationMetadata } from "@/lib/types/notification"
 
-// Helper to get question details for notifications
 async function getQuestionForNotification(questionId: string) {
   const db = await getEnhancedPrisma()
   
@@ -31,7 +30,6 @@ async function getQuestionForNotification(questionId: string) {
   })
 }
 
-// Helper to get answer details for notifications
 async function getAnswerForNotification(answerId: string) {
   const db = await getEnhancedPrisma()
   
@@ -349,7 +347,6 @@ export async function notifyNewLesson(lessonId: string, courseId: string, actorI
   }
 }
 
-// 7. WELCOME notification for new users
 export async function notifyWelcome(userId: string) {
   try {
     const user = await getUserForNotification(userId)
@@ -371,6 +368,7 @@ export async function notifyWelcome(userId: string) {
 }
 
 // 8. REPUTATION MILESTONE notification
+// TOOD: Update reputation system later on, will soone be removed
 export async function notifyReputationMilestone(userId: string, newReputation: number, change: number) {
   try {
     // Define milestone thresholds
@@ -404,7 +402,6 @@ export async function notifyReputationMilestone(userId: string, newReputation: n
   }
 }
 
-// Helper function to notify question subscribers
 async function notifyQuestionSubscribers(
   questionId: string, 
   notificationType: 'FOLLOWED_QUESTION_ANSWER',

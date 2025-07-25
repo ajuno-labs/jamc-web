@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/navigation";
 import { getUserWithStats } from "@/lib/utils/user";
-import { prisma } from "@/lib/db/prisma";
+import { prisma } from "@/prisma";
 
 interface ProfilePageProps {
   params: Promise<{ id: string }>;
@@ -13,7 +13,6 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const { id: userId } = await params;
   const userWithStats = await getUserWithStats(userId);
 
-  // Get recent questions
   const recentQuestions = await prisma.question.findMany({
     where: { authorId: userId },
     select: {
@@ -32,7 +31,6 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     take: 5,
   });
 
-  // Get recent answers
   const recentAnswers = await prisma.answer.findMany({
     where: { authorId: userId },
     select: {
@@ -65,9 +63,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                   src={userWithStats.image || undefined}
                   alt={userWithStats.name || undefined}
                 />
-                <AvatarFallback className="text-2xl">
-                  {userWithStats.name?.[0]}
-                </AvatarFallback>
+                <AvatarFallback className="text-2xl">{userWithStats.name?.[0]}</AvatarFallback>
               </Avatar>
               <CardTitle className="text-2xl">{userWithStats.name}</CardTitle>
               <p className="text-muted-foreground">{userWithStats.email}</p>
@@ -75,34 +71,24 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4 text-center">
                 <div>
-                  <div className="text-2xl font-bold">
-                    {userWithStats.stats.reputation}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Reputation
-                  </div>
+                  <div className="text-2xl font-bold">{userWithStats.stats.reputation}</div>
+                  <div className="text-sm text-muted-foreground">Reputation</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold">
-                    {userWithStats.stats.questionCount}
-                  </div>
+                  <div className="text-2xl font-bold">{userWithStats.stats.questionCount}</div>
                   <div className="text-sm text-muted-foreground">Questions</div>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 text-center">
                 <div>
-                  <div className="text-2xl font-bold">
-                    {userWithStats.stats.answerCount}
-                  </div>
+                  <div className="text-2xl font-bold">{userWithStats.stats.answerCount}</div>
                   <div className="text-sm text-muted-foreground">Answers</div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold">
                     {new Date(userWithStats.createdAt).getFullYear()}
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    Member since
-                  </div>
+                  <div className="text-sm text-muted-foreground">Member since</div>
                 </div>
               </div>
 
@@ -134,23 +120,16 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
               {recentQuestions.length > 0 ? (
                 <div className="space-y-4">
                   {recentQuestions.map((question) => (
-                    <div
-                      key={question.id}
-                      className="border-b pb-4 last:border-b-0"
-                    >
+                    <div key={question.id} className="border-b pb-4 last:border-b-0">
                       <h4 className="font-medium hover:text-primary">
-                        <Link
-                          href={`/questions/${question.id}/${question.slug}`}
-                        >
+                        <Link href={`/questions/${question.id}/${question.slug}`}>
                           {question.title}
                         </Link>
                       </h4>
                       <div className="flex items-center space-x-4 text-sm text-muted-foreground mt-2">
                         <span>{question._count.answers} answers</span>
                         <span>{question._count.votes} votes</span>
-                        <span>
-                          {new Date(question.createdAt).toLocaleDateString()}
-                        </span>
+                        <span>{new Date(question.createdAt).toLocaleDateString()}</span>
                       </div>
                     </div>
                   ))}
@@ -170,16 +149,11 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
               {recentAnswers.length > 0 ? (
                 <div className="space-y-4">
                   {recentAnswers.map((answer) => (
-                    <div
-                      key={answer.id}
-                      className="border-b pb-4 last:border-b-0"
-                    >
+                    <div key={answer.id} className="border-b pb-4 last:border-b-0">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <h4 className="font-medium hover:text-primary">
-                            <Link
-                              href={`/questions/${answer.question.id}/${answer.question.slug}`}
-                            >
+                            <Link href={`/questions/${answer.question.id}/${answer.question.slug}`}>
                               {answer.question.title}
                             </Link>
                           </h4>
@@ -191,8 +165,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
                             <span className="text-sm text-muted-foreground">
                               {new Date(answer.createdAt).toLocaleDateString()}
                             </span>
-                            {(answer.isAcceptedByUser ||
-                              answer.isAcceptedByTeacher) && (
+                            {(answer.isAcceptedByUser || answer.isAcceptedByTeacher) && (
                               <Badge variant="default" className="text-xs">
                                 Accepted
                               </Badge>

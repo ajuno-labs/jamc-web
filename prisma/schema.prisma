@@ -97,12 +97,10 @@ model User {
   id                        String                     @id() @default(cuid())
   name                      String?
   email                     String                     @unique()
-  password                  String?
   emailVerified             DateTime?
   image                     String?
   accounts                  Account[]
   sessions                  Session[]
-  Authenticator             Authenticator[]
   createdAt                 DateTime                   @default(now())
   updatedAt                 DateTime                   @updatedAt()
   roles                     Role[]
@@ -171,20 +169,6 @@ model VerificationToken {
   expires    DateTime
 
   @@id([identifier, token])
-}
-
-model Authenticator {
-  credentialID         String  @unique()
-  userId               String
-  providerAccountId    String
-  credentialPublicKey  String
-  counter              Int
-  credentialDeviceType String
-  credentialBackedUp   Boolean
-  transports           String?
-  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@id([userId, credentialID])
 }
 
 model Question {

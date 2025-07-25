@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db/prisma";
+import { prisma } from "@/prisma";
 import { redirect } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 
@@ -14,5 +14,8 @@ export default async function QuestionRedirectPage({ params }: Props) {
   });
 
   if (!question) notFound();
-  return redirect(`/questions/${question.id}/${question.slug}`);
+  return redirect({
+    href: `/questions/${question.id}/${question.slug}`,
+    locale: "en",
+  });
 }

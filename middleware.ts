@@ -1,22 +1,12 @@
-import { auth } from "@/auth";
-import { NextResponse } from "next/server";
 import createMiddleware from "next-intl/middleware";
-import { routing } from "./i18n/routing";
-import { isPublicRoute } from "@/lib/config/routes";
+import { auth } from "@/auth";
+import { routing } from "@/i18n/routing";
 
 const intlMiddleware = createMiddleware(routing);
 
-export default auth(async (req) => {
-  const response = intlMiddleware(req);
-
-  if (!req.auth && !isPublicRoute(req.nextUrl.pathname)) {
-    const signinUrl = new URL("/signin", req.url);
-    signinUrl.searchParams.set("callbackUrl", req.nextUrl.pathname);
-    return NextResponse.redirect(signinUrl.toString());
-  }
-
-  return response;
-});
+export default auth((request) => {
+  return intlMiddleware(request);
+})
 
 export const config = {
   matcher: [

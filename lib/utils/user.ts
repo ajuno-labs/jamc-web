@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db/prisma"
+import { prisma } from "@/prisma"
 import { calculateUserReputation } from "@/lib/utils/reputation"
 import { notFound } from "next/navigation"
 
