@@ -5,23 +5,22 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { auth } from "@/auth";
 import { OnboardingRedirect } from "./_components/OnboardingRedirect";
 import { getCurrentUser } from "@/lib/auth/user";
-import { redirect } from "@/i18n/navigation";
+import { redirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
 import { userWithRolesInclude, hasCompletedOnboarding } from "@/lib/types/prisma";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
 
   const session = await auth();
+  if (!session) {
+    redirect('/api/auth/signin');
+  }
+
   const locale = await getLocale();
 
   const user = await getCurrentUser(userWithRolesInclude);
   if (!hasCompletedOnboarding(user)) {
-    redirect({
-      href: {
-        pathname: "/onboarding",
-      },
-      locale,
-    });
+    redirect(`/${locale}/onboarding`);
   }
 
   return (
