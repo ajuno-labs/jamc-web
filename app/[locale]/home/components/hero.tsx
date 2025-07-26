@@ -2,8 +2,7 @@
 
 import { Link } from "@/i18n/navigation"
 import { motion } from "framer-motion"
-import { ArrowRight, Sparkles } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Sparkles } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useTranslations } from 'next-intl'
 
@@ -32,19 +31,6 @@ export function Hero() {
             {t('subtitle')}
           </p>
           
-          <div className="flex flex-wrap gap-4 justify-center mb-16">
-            <Button size="lg" asChild>
-              <Link href="/signup">
-                {t('getStarted')}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="#features">
-                {t('learnMore')}
-              </Link>
-            </Button>
-          </div>
 
           {/* Navigation Cards for Authenticated Users */}
           <motion.div
