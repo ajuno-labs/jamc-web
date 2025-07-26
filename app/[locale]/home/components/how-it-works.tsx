@@ -1,8 +1,9 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Search, MessageCircle, Sparkles, ArrowRight } from "lucide-react"
+import { Search, MessageCircle, Sparkles } from "lucide-react"
 import { useTranslations } from 'next-intl'
+import { StepArrow } from './step-arrow'
 
 export function HowItWorks() {
   const t = useTranslations('LandingPage.howItWorks');
@@ -50,11 +51,7 @@ export function HowItWorks() {
                 <div className="bg-background rounded-full p-4 border shadow-sm">
                   {step.icon}
                 </div>
-                {i < 2 && (
-                  <div className="hidden md:block absolute top-1/2 left-full w-full h-0.5 bg-border">
-                    <ArrowRight className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  </div>
-                )}
+                {i < 2 && <StepArrow />}
               </div>
               <h3 className="text-xl font-bold mb-2">{step.title}</h3>
               <p className="text-muted-foreground">{step.description}</p>

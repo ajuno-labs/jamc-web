@@ -24,12 +24,6 @@ export function Header() {
           <span className="text-2xl font-bold">JAMC</span>
         </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex md:gap-6">
-          <a href="#features" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t('features')}</a>
-          <a href="#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{t('howItWorks')}</a>
-        </nav>
-
         <div className="hidden md:flex items-center gap-2">
           <LanguageSwitcher />
           {session ? (
