@@ -93,6 +93,21 @@ enum NotificationChannel {
   PUSH
 }
 
+enum AchievementType {
+  FIRST_QUESTION
+  FIRST_ANSWER
+  FIRST_UPVOTE
+  STREAK_7_DAYS
+  STREAK_30_DAYS
+  STREAK_100_DAYS
+  POINTS_100
+  POINTS_1000
+  POINTS_10000
+  HELPFUL_ANSWERER
+  ACTIVE_LEARNER
+  COMMUNITY_BUILDER
+}
+
 model User {
   id                        String                     @id() @default(cuid())
   name                      String?
@@ -120,6 +135,9 @@ model User {
   notificationPreferences   NotificationPreferences?
   notificationSubscriptions NotificationSubscription[]
   notificationAnalytics     NotificationAnalytics[]
+  contributions             UserContribution[]
+  streaks                   UserStreak[]
+  achievements              UserAchievement[]
 }
 
 model Role {
@@ -501,4 +519,52 @@ model NotificationAnalytics {
   @@index([notificationId])
   @@index([userId, eventType])
   @@index([timestamp])
+}
+
+model UserContribution {
+  id                 String   @id() @default(cuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date               DateTime @db.Date()
+  questionsAsked     Int      @default(0)
+  answersProvided    Int      @default(0)
+  questionsUpvoted   Int      @default(0)
+  questionsDownvoted Int      @default(0)
+  answersUpvoted     Int      @default(0)
+  answersDownvoted   Int      @default(0)
+  lessonsViewed      Int      @default(0)
+  commentsPosted     Int      @default(0)
+  totalPoints        Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt()
+
+  @@unique([userId, date])
+  @@index([userId, date])
+  @@index([date])
+}
+
+model UserStreak {
+  id                    String    @id() @default(cuid())
+  userId                String    @unique()
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentStreak         Int       @default(0)
+  longestStreak         Int       @default(0)
+  lastActiveDate        DateTime? @db.Date()
+  totalContributionDays Int       @default(0)
+  totalPoints           Int       @default(0)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt()
+}
+
+model UserAchievement {
+  id         String          @id() @default(cuid())
+  userId     String
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       AchievementType
+  unlockedAt DateTime        @default(now())
+  metadata   Json?           @default("{}")
+
+  @@unique([userId, type])
+  @@index([userId])
+  @@index([type])
 }

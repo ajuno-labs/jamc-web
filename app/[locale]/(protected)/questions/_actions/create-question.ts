@@ -12,6 +12,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
 import { Buffer } from "buffer"
 import { addQuestionToSearchIndex } from "../ask/_actions/ask-data"
 import { questionClassificationService } from "@/lib/services/question-classification-service"
+import { activityBus } from "@/lib/events"
 
 /**
  * Create a new question
@@ -134,6 +135,18 @@ export async function createQuestion(formData: FormData) {
           error: `Some attachments failed to upload: ${failedUploads.join(", ")}`
         };
       }
+    }
+
+    try {
+      activityBus.emit("activity", {
+        userId: user.id,
+        type: "ASK_QUESTION",
+        entityType: "Question",
+        entityId: question.id,
+        metadata: { courseId, lessonId },
+      });
+    } catch (error) {
+      console.error('Failed to emit question activity:', error)
     }
 
     // Send notification if this is a course question

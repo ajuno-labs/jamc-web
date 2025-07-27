@@ -5,6 +5,8 @@ import { prisma } from "@/prisma"
 import { revalidatePath } from "next/cache"
 import { calculateUserReputation, checkReputationMilestone } from "@/lib/utils/reputation"
 import { notifyNewAnswer, notifyVote, notifyComment } from "@/lib/services/notification-triggers"
+import { trackCommentContribution } from "@/lib/services/contribution-service"
+import { activityBus } from "@/lib/events"
 
 export async function getQuestionDetails(id: string) {
   const question = await prisma.question.findUnique({
@@ -139,6 +141,19 @@ export async function addAnswer(questionId: string, content: string) {
     },
   })
 
+  // Emit activity event for contribution tracking
+  try {
+    activityBus.emit("activity", {
+      userId: session.user.id,
+      type: "ANSWER_QUESTION",
+      entityType: "Answer",
+      entityId: answer.id,
+      metadata: { questionId },
+    });
+  } catch (error) {
+    console.error('Failed to emit answer activity:', error)
+  }
+
   // Send notification to question author
   try {
     await notifyNewAnswer(answer.id, session.user.id)
@@ -189,6 +204,20 @@ export async function voteQuestion(questionId: string, value: 1 | -1) {
         },
       })
 
+      // Emit activity event for contribution tracking
+      try {
+        const activityType = value === 1 ? "UPVOTE_QUESTION" : "DOWNVOTE_QUESTION";
+        activityBus.emit("activity", {
+          userId: session.user.id,
+          type: activityType,
+          entityType: "Question",
+          entityId: questionId,
+          metadata: { value },
+        });
+      } catch (error) {
+        console.error('Failed to emit vote activity:', error)
+      }
+
       // Send notification for vote change
       try {
         await notifyVote('question', questionId, value, session.user.id)
@@ -204,6 +233,20 @@ export async function voteQuestion(questionId: string, value: 1 | -1) {
         value,
       },
     })
+
+    // Emit activity event for contribution tracking
+    try {
+      const activityType = value === 1 ? "UPVOTE_QUESTION" : "DOWNVOTE_QUESTION";
+      activityBus.emit("activity", {
+        userId: session.user.id,
+        type: activityType,
+        entityType: "Question",
+        entityId: questionId,
+        metadata: { value },
+      });
+    } catch (error) {
+      console.error('Failed to emit vote activity:', error)
+    }
 
     // Send notification for new vote
     try {
@@ -307,6 +350,14 @@ export async function addComment(content: string, questionId?: string, answerId?
     }
   })
 
+  // Track comment contribution
+  try {
+    await trackCommentContribution(session.user.id)
+  } catch (error) {
+    console.error('Failed to track comment contribution:', error)
+    // Don't fail the comment creation if contribution tracking fails
+  }
+
   // Send notification to question/answer author
   try {
     await notifyComment(comment.id, session.user.id, questionId, answerId)
@@ -386,6 +437,20 @@ export async function voteAnswer(answerId: string, value: 1 | -1) {
         },
       })
 
+      // Emit activity event for contribution tracking
+      try {
+        const activityType = value === 1 ? "UPVOTE_ANSWER" : "DOWNVOTE_ANSWER";
+        activityBus.emit("activity", {
+          userId: session.user.id,
+          type: activityType,
+          entityType: "Answer",
+          entityId: answerId,
+          metadata: { value },
+        });
+      } catch (error) {
+        console.error('Failed to emit vote activity:', error)
+      }
+
       // Send notification for vote change
       try {
         await notifyVote('answer', answerId, value, session.user.id)
@@ -401,6 +466,20 @@ export async function voteAnswer(answerId: string, value: 1 | -1) {
         value,
       },
     })
+
+    // Emit activity event for contribution tracking
+    try {
+      const activityType = value === 1 ? "UPVOTE_ANSWER" : "DOWNVOTE_ANSWER";
+      activityBus.emit("activity", {
+        userId: session.user.id,
+        type: activityType,
+        entityType: "Answer",
+        entityId: answerId,
+        metadata: { value },
+      });
+    } catch (error) {
+      console.error('Failed to emit vote activity:', error)
+    }
 
     // Send notification for new vote
     try {

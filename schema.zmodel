@@ -49,6 +49,11 @@ model User {
   notificationPreferences   NotificationPreferences?
   notificationSubscriptions NotificationSubscription[]
   notificationAnalytics     NotificationAnalytics[]
+  
+  // Contribution tracking relations
+  contributions             UserContribution[]
+  streaks                   UserStreak[]
+  achievements              UserAchievement[]
 
   @@allow('create', true)
   @@allow('read', true)
@@ -686,4 +691,88 @@ model NotificationAnalytics {
   @@index([notificationId])
   @@index([userId, eventType])
   @@index([timestamp])
+}
+
+model UserContribution {
+  id                 String   @id @default(cuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date               DateTime @db.Date
+  
+  questionsAsked     Int      @default(0)
+  answersProvided    Int      @default(0)
+  questionsUpvoted   Int      @default(0)
+  questionsDownvoted Int      @default(0)
+  answersUpvoted     Int      @default(0)
+  answersDownvoted   Int      @default(0)
+  lessonsViewed      Int      @default(0)
+  commentsPosted     Int      @default(0)
+  
+  totalPoints        Int      @default(0)
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@unique([userId, date])
+  @@allow('create', auth() != null)
+  @@allow('read', true)
+  @@allow('update', auth() != null)
+  @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
+
+  @@index([userId, date])
+  @@index([date])
+}
+
+model UserStreak {
+  id                    String    @id @default(cuid())
+  userId                String    @unique
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  currentStreak         Int       @default(0)
+  longestStreak         Int       @default(0)
+  lastActiveDate        DateTime? @db.Date
+  
+  totalContributionDays Int       @default(0)
+  totalPoints           Int       @default(0)
+
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@allow('create', auth() != null)
+  @@allow('read', true)
+  @@allow('update', auth() != null)
+  @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
+}
+
+enum AchievementType {
+  FIRST_QUESTION
+  FIRST_ANSWER
+  FIRST_UPVOTE
+  STREAK_7_DAYS
+  STREAK_30_DAYS
+  STREAK_100_DAYS
+  POINTS_100
+  POINTS_1000
+  POINTS_10000
+  HELPFUL_ANSWERER
+  ACTIVE_LEARNER
+  COMMUNITY_BUILDER
+}
+
+model UserAchievement {
+  id         String          @id @default(cuid())
+  userId     String
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       AchievementType
+  unlockedAt DateTime        @default(now())
+  
+  metadata   Json?           @default("{}")
+
+  @@unique([userId, type])
+  @@allow('create', auth() != null)
+  @@allow('read', true)
+  @@allow('delete', auth() != null && auth().roles?[permissions?[name == DELETE]])
+
+  @@index([userId])
+  @@index([type])
 }
