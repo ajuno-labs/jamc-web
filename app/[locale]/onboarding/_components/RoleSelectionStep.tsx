@@ -10,13 +10,11 @@ import { useTranslations } from "next-intl";
 
 interface RoleSelectionStepProps {
   onRoleSelect: (role: Role) => void;
-  onSkip: () => void;
   isSkipping?: boolean;
 }
 
 export function RoleSelectionStep({
   onRoleSelect,
-  onSkip,
   isSkipping = false,
 }: RoleSelectionStepProps) {
   const [isLoading, setIsLoading] = useState<string | null>(null);
