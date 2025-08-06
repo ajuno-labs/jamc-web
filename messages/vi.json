@@ -235,7 +235,6 @@
       "passwordMaxLength": "Mật khẩu phải có ít hơn 32 ký tự"
     }
   },
-
   "DateFormats": {
     "default": "d MMM, yyyy 'lúc' HH:mm",
     "short": "d MMM, yyyy",
@@ -300,65 +299,65 @@
   },
   "Onboarding": {
     "welcome": {
-      "title": "Chào Mừng Đến Với JAMC!",
-      "greeting": "Xin chào {name}, chúng tôi rất vui khi có bạn tham gia",
-      "description1": "JAMC là nền tảng quản lý học tập toàn diện nơi giáo dục gặp gỡ đổi mới.",
-      "description2": "Dù bạn ở đây để giảng dạy hay học tập, chúng tôi sẽ giúp bạn bắt đầu với một thiết lập nhanh chóng.",
-      "getStarted": "Bắt Đầu",
-      "skipSetup": "Bỏ Qua Thiết Lập",
+      "title": "Chào mừng đến với JAMC!",
+      "greeting": "Xin chào {name}, rất vui vì bạn đã tham gia cùng chúng tôi",
+      "description1": "JAMC là nền tảng hỗ trợ hỏi đáp cho giáo viên và học sinh.",
+      "description2": "Dù bạn là giáo viên hay học sinh, chúng tôi sẽ giúp bạn bắt đầu thật nhanh chóng.",
+      "getStarted": "Bắt đầu ngay",
+      "skipSetup": "Bỏ qua bước thiết lập",
       "settingUp": "Đang thiết lập..."
     },
     "roleSelection": {
-      "title": "Chọn Vai Trò Của Bạn",
-      "description": "Bạn muốn sử dụng JAMC như thế nào? Bạn có thể thay đổi điều này sau.",
+      "title": "Chọn vai trò của bạn",
+      "description": "Bạn muốn sử dụng JAMC với vai trò nào? Bạn có thể thay đổi bất cứ lúc nào.",
       "student": {
-        "title": "Học Sinh",
-        "description": "Tham gia khóa học, tham gia hỏi đáp và theo dõi tiến độ học tập của bạn",
-        "button": "Tôi Là Học Sinh"
+        "title": "Học sinh",
+        "description": "Tham gia khóa học, đặt câu hỏi và theo dõi quá trình học tập của bạn",
+        "button": "Tôi là học sinh"
       },
       "teacher": {
-        "title": "Giáo Viên",
+        "title": "Giáo viên",
         "description": "Tạo khóa học, quản lý học sinh và tương tác với lớp học của bạn",
-        "button": "Tôi Là Giáo Viên"
+        "button": "Tôi là giáo viên"
       },
-      "decideLater": "Tôi sẽ quyết định sau",
+      "decideLater": "Quyết định sau",
       "settingUp": "Đang thiết lập..."
     },
     "teacherNextSteps": {
-      "title": "Chào Mừng, Nhà Giáo Dục! 🎓",
-      "description": "Bạn đã sẵn sàng với vai trò giáo viên. Có sẵn sàng bắt đầu chia sẻ kiến thức của mình không?",
+      "title": "Chào mừng thầy cô! 🎓",
+      "description": "Bạn đã sẵn sàng làm giáo viên rồi. Bắt đầu chia sẻ kiến thức thôi nào!",
       "createCourse": {
-        "title": "Tạo Khóa Học Đầu Tiên",
-        "description": "Bắt đầu xây dựng chương trình giảng dạy và mời học sinh tham gia lớp học của bạn",
-        "button": "Tạo Khóa Học"
+        "title": "Tạo khóa học đầu tiên",
+        "description": "Xây dựng chương trình giảng dạy và mời học sinh tham gia lớp học",
+        "button": "Tạo khóa học"
       },
       "explorePlatform": {
-        "title": "Khám Phá Nền Tảng",
-        "description": "Duyệt các khóa học hiện có và làm quen với nền tảng",
-        "button": "Duyệt Khóa Học"
+        "title": "Khám phá nền tảng",
+        "description": "Xem trước các khóa học hiện có và làm quen với JAMC",
+        "button": "Xem khóa học"
       },
-      "footer": "Bạn luôn có thể tạo khóa học sau từ bảng điều khiển",
-      "setupLater": "Tôi sẽ thiết lập điều này sau"
+      "footer": "Bạn có thể tạo khóa học bất cứ lúc nào từ bảng điều khiển",
+      "setupLater": "Để sau cũng được"
     },
     "studentNextSteps": {
-      "title": "Chào Mừng, Học Sinh! 📚",
-      "description": "Bạn đã sẵn sàng với vai trò học sinh. Có sẵn sàng bắt đầu học tập không?",
+      "title": "Chào mừng học sinh! 📚",
+      "description": "Bạn đã sẵn sàng để bắt đầu hành trình học tập chưa?",
       "joinCourse": {
-        "title": "Tham Gia Khóa Học",
-        "description": "Có mã khóa học từ giáo viên của bạn? Nhập vào bên dưới để tham gia lớp học",
-        "codeLabel": "Mã Khóa Học",
-        "codePlaceholder": "Nhập mã khóa học (ví dụ: ABC123)",
-        "button": "Tham Gia Khóa Học",
-        "joining": "Đang Tham Gia Khóa Học...",
-        "error": "Đã xảy ra lỗi khi tham gia khóa học"
+        "title": "Tham gia khóa học",
+        "description": "Bạn có mã khóa học từ giáo viên? Nhập vào ô bên dưới để tham gia lớp học",
+        "codeLabel": "Mã khóa học",
+        "codePlaceholder": "Nhập mã (ví dụ: ABC123)",
+        "button": "Tham gia ngay",
+        "joining": "Đang tham gia khóa học...",
+        "error": "Có lỗi xảy ra khi tham gia khóa học"
       },
       "exploreCourses": {
-        "title": "Khám Phá Các Khóa Học Có Sẵn",
-        "description": "Duyệt và khám phá các khóa học mà bạn quan tâm",
-        "button": "Duyệt Khóa Học"
+        "title": "Khám phá các khóa học",
+        "description": "Duyệt qua và tìm kiếm những khóa học thú vị và hấp dẫn",
+        "button": "Xem khóa học"
       },
-      "footer": "Bạn luôn có thể tham gia khóa học sau từ bảng điều khiển",
-      "setupLater": "Tôi sẽ thiết lập điều này sau"
+      "footer": "Bạn có thể tham gia khóa học bất kỳ lúc nào từ bảng điều khiển",
+      "setupLater": "Để sau cũng được"
     }
   }
 }
