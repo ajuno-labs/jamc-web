@@ -235,7 +235,6 @@
       "passwordMaxLength": "Mật khẩu phải có ít hơn 32 ký tự"
     }
   },
-
   "DateFormats": {
     "default": "d MMM, yyyy 'lúc' HH:mm",
     "short": "d MMM, yyyy",
@@ -296,6 +295,69 @@
       "title": "Hạn Chót Sắp Tới",
       "dueTomorrow": "Hạn chót ngày mai",
       "dueInDays": "Hạn chót trong {days} ngày"
+    }
+  },
+  "Onboarding": {
+    "welcome": {
+      "title": "Chào mừng đến với JAMC!",
+      "greeting": "Xin chào {name}, rất vui vì bạn đã tham gia cùng chúng tôi",
+      "description1": "JAMC là nền tảng hỗ trợ hỏi đáp cho giáo viên và học sinh.",
+      "description2": "Dù bạn là giáo viên hay học sinh, chúng tôi sẽ giúp bạn bắt đầu thật nhanh chóng.",
+      "getStarted": "Bắt đầu ngay",
+      "skipSetup": "Bỏ qua bước thiết lập",
+      "settingUp": "Đang thiết lập..."
+    },
+    "roleSelection": {
+      "title": "Chọn vai trò của bạn",
+      "description": "Bạn muốn sử dụng JAMC với vai trò nào? Bạn có thể thay đổi bất cứ lúc nào.",
+      "student": {
+        "title": "Học sinh",
+        "description": "Tham gia khóa học, đặt câu hỏi và theo dõi quá trình học tập của bạn",
+        "button": "Tôi là học sinh"
+      },
+      "teacher": {
+        "title": "Giáo viên",
+        "description": "Tạo khóa học, quản lý học sinh và tương tác với lớp học của bạn",
+        "button": "Tôi là giáo viên"
+      },
+      "decideLater": "Quyết định sau",
+      "settingUp": "Đang thiết lập..."
+    },
+    "teacherNextSteps": {
+      "title": "Chào mừng thầy cô! 🎓",
+      "description": "Bạn đã sẵn sàng làm giáo viên rồi. Bắt đầu chia sẻ kiến thức thôi nào!",
+      "createCourse": {
+        "title": "Tạo khóa học đầu tiên",
+        "description": "Xây dựng chương trình giảng dạy và mời học sinh tham gia lớp học",
+        "button": "Tạo khóa học"
+      },
+      "explorePlatform": {
+        "title": "Khám phá nền tảng",
+        "description": "Xem trước các khóa học hiện có và làm quen với JAMC",
+        "button": "Xem khóa học"
+      },
+      "footer": "Bạn có thể tạo khóa học bất cứ lúc nào từ bảng điều khiển",
+      "setupLater": "Để sau cũng được"
+    },
+    "studentNextSteps": {
+      "title": "Chào mừng học sinh! 📚",
+      "description": "Bạn đã sẵn sàng để bắt đầu hành trình học tập chưa?",
+      "joinCourse": {
+        "title": "Tham gia khóa học",
+        "description": "Bạn có mã khóa học từ giáo viên? Nhập vào ô bên dưới để tham gia lớp học",
+        "codeLabel": "Mã khóa học",
+        "codePlaceholder": "Nhập mã (ví dụ: ABC123)",
+        "button": "Tham gia ngay",
+        "joining": "Đang tham gia khóa học...",
+        "error": "Có lỗi xảy ra khi tham gia khóa học"
+      },
+      "exploreCourses": {
+        "title": "Khám phá các khóa học",
+        "description": "Duyệt qua và tìm kiếm những khóa học thú vị và hấp dẫn",
+        "button": "Xem khóa học"
+      },
+      "footer": "Bạn có thể tham gia khóa học bất kỳ lúc nào từ bảng điều khiển",
+      "setupLater": "Để sau cũng được"
     }
   }
 }

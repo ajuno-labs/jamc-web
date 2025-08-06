@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BookOpen, Plus, ArrowRight } from "lucide-react"
 import { type UserWithRoles } from "@/lib/types/prisma"
+import { useTranslations } from "next-intl"
 
 interface TeacherNextStepsProps {
   user: UserWithRoles
@@ -16,6 +17,7 @@ interface TeacherNextStepsProps {
 export function TeacherNextSteps({ onSkip }: TeacherNextStepsProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+  const t = useTranslations('Onboarding.teacherNextSteps')
 
   const handleCreateCourse = () => {
     setIsLoading(true)
@@ -30,9 +32,9 @@ export function TeacherNextSteps({ onSkip }: TeacherNextStepsProps) {
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold">Welcome, Educator! 🎓</CardTitle>
+        <CardTitle className="text-2xl font-bold">{t('title')}</CardTitle>
         <p className="text-muted-foreground">
-          You&apos;re all set up as a teacher. Ready to start sharing your knowledge?
+          {t('description')}
         </p>
       </CardHeader>
       
@@ -48,9 +50,9 @@ export function TeacherNextSteps({ onSkip }: TeacherNextStepsProps) {
                 </div>
               </div>
               <div className="space-y-2">
-                <h3 className="text-lg font-semibold">Create Your First Course</h3>
+                <h3 className="text-lg font-semibold">{t('createCourse.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Start building your curriculum and invite students to join your classroom
+                  {t('createCourse.description')}
                 </p>
               </div>
               <Button 
@@ -58,7 +60,7 @@ export function TeacherNextSteps({ onSkip }: TeacherNextStepsProps) {
                 disabled={isLoading}
                 className="w-full"
               >
-                Create Course
+                {t('createCourse.button')}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </CardContent>
@@ -71,9 +73,9 @@ export function TeacherNextSteps({ onSkip }: TeacherNextStepsProps) {
                 <BookOpen className="h-10 w-10 text-blue-500" />
               </div>
               <div className="space-y-2">
-                <h3 className="text-lg font-semibold">Explore the Platform</h3>
+                <h3 className="text-lg font-semibold">{t('explorePlatform.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Browse existing courses and get familiar with the platform
+                  {t('explorePlatform.description')}
                 </p>
               </div>
               <Button 
@@ -81,7 +83,7 @@ export function TeacherNextSteps({ onSkip }: TeacherNextStepsProps) {
                 onClick={handleBrowseCourses}
                 className="w-full"
               >
-                Browse Courses
+                {t('explorePlatform.button')}
               </Button>
             </CardContent>
           </Card>
@@ -89,10 +91,10 @@ export function TeacherNextSteps({ onSkip }: TeacherNextStepsProps) {
 
         <div className="text-center space-y-2">
           <p className="text-sm text-muted-foreground">
-            You can always create courses later from your dashboard
+            {t('footer')}
           </p>
           <Button variant="ghost" onClick={onSkip}>
-            I&apos;ll set this up later
+            {t('setupLater')}
           </Button>
         </div>
       </CardContent>

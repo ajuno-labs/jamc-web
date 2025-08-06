@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Users, ArrowRight, Search } from "lucide-react";
 import { type UserWithRoles } from "@/lib/types/prisma";
 import { joinCourseWithCode } from "../actions/onboarding-actions";
+import { useTranslations } from "next-intl";
 
 interface StudentNextStepsProps {
   user: UserWithRoles;
@@ -21,6 +22,7 @@ export function StudentNextSteps({ onSkip }: StudentNextStepsProps) {
   const [joinCode, setJoinCode] = useState("");
   const [isJoining, setIsJoining] = useState(false);
   const [joinError, setJoinError] = useState<string | null>(null);
+  const t = useTranslations('Onboarding.studentNextSteps');
 
   const handleJoinCourse = async () => {
     if (!joinCode.trim()) return;
@@ -39,7 +41,7 @@ export function StudentNextSteps({ onSkip }: StudentNextStepsProps) {
       }
     } catch (error) {
       console.error("Error joining course:", error);
-      setJoinError("An error occurred while joining the course");
+      setJoinError(t('joinCourse.error'));
     } finally {
       setIsJoining(false);
     }
@@ -52,9 +54,9 @@ export function StudentNextSteps({ onSkip }: StudentNextStepsProps) {
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold">Welcome, Student! 📚</CardTitle>
+        <CardTitle className="text-2xl font-bold">{t('title')}</CardTitle>
         <p className="text-muted-foreground">
-          You&apos;re all set up as a student. Ready to start learning?
+          {t('description')}
         </p>
       </CardHeader>
 
@@ -67,18 +69,18 @@ export function StudentNextSteps({ onSkip }: StudentNextStepsProps) {
                 <div className="flex justify-center">
                   <Users className="h-10 w-10 text-primary" />
                 </div>
-                <h3 className="text-lg font-semibold">Join a Course</h3>
+                <h3 className="text-lg font-semibold">{t('joinCourse.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Have a course code from your teacher? Enter it below to join the class
+                  {t('joinCourse.description')}
                 </p>
               </div>
 
               <div className="space-y-3">
                 <div className="space-y-2">
-                  <Label htmlFor="joinCode">Course Code</Label>
+                  <Label htmlFor="joinCode">{t('joinCourse.codeLabel')}</Label>
                   <Input
                     id="joinCode"
-                    placeholder="Enter course code (e.g., ABC123)"
+                    placeholder={t('joinCourse.codePlaceholder')}
                     value={joinCode}
                     onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                     disabled={isJoining}
@@ -94,10 +96,10 @@ export function StudentNextSteps({ onSkip }: StudentNextStepsProps) {
                   className="w-full"
                 >
                   {isJoining ? (
-                    "Joining Course..."
+                    t('joinCourse.joining')
                   ) : (
                     <>
-                      Join Course
+                      {t('joinCourse.button')}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </>
                   )}
@@ -113,13 +115,13 @@ export function StudentNextSteps({ onSkip }: StudentNextStepsProps) {
                 <Search className="h-10 w-10 text-blue-500" />
               </div>
               <div className="space-y-2">
-                <h3 className="text-lg font-semibold">Explore Available Courses</h3>
+                <h3 className="text-lg font-semibold">{t('exploreCourses.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Browse and discover courses that interest you
+                  {t('exploreCourses.description')}
                 </p>
               </div>
               <Button variant="outline" onClick={handleBrowseCourses} className="w-full">
-                Browse Courses
+                {t('exploreCourses.button')}
               </Button>
             </CardContent>
           </Card>
@@ -127,10 +129,10 @@ export function StudentNextSteps({ onSkip }: StudentNextStepsProps) {
 
         <div className="text-center space-y-2">
           <p className="text-sm text-muted-foreground">
-            You can always join courses later from your dashboard
+            {t('footer')}
           </p>
           <Button variant="ghost" onClick={onSkip}>
-            I&apos;ll set this up later
+            {t('setupLater')}
           </Button>
         </div>
       </CardContent>

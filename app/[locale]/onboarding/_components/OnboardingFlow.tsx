@@ -68,7 +68,6 @@ export function OnboardingFlow({ user }: OnboardingFlowProps) {
         {currentStep === "role-selection" && (
           <RoleSelectionStep
             onRoleSelect={handleRoleSelect}
-            onSkip={handleSkipOnboarding}
             isSkipping={isSkipping}
           />
         )}
