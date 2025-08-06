@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GraduationCap, BookOpen, ChevronRight } from "lucide-react";
 import { assignUserRole } from "../actions/onboarding-actions";
 import { Role } from "@/lib/types/roles";
+import { useTranslations } from "next-intl";
 
 interface RoleSelectionStepProps {
   onRoleSelect: (role: Role) => void;
@@ -19,6 +20,7 @@ export function RoleSelectionStep({
   isSkipping = false,
 }: RoleSelectionStepProps) {
   const [isLoading, setIsLoading] = useState<string | null>(null);
+  const t = useTranslations('Onboarding.roleSelection');
 
   const handleRoleSelect = async (role: Role) => {
     setIsLoading(role);
@@ -45,9 +47,9 @@ export function RoleSelectionStep({
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold">Choose Your Role</CardTitle>
+        <CardTitle className="text-2xl font-bold">{t('title')}</CardTitle>
         <p className="text-muted-foreground">
-          How would you like to use JAMC? You can always change this later.
+          {t('description')}
         </p>
       </CardHeader>
 
@@ -63,9 +65,9 @@ export function RoleSelectionStep({
                 <BookOpen className="h-12 w-12 text-blue-500" />
               </div>
               <div className="space-y-2">
-                <h3 className="text-lg font-semibold">Student</h3>
+                <h3 className="text-lg font-semibold">{t('student.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Join courses, participate in Q&A, and track your learning progress
+                  {t('student.description')}
                 </p>
               </div>
               <Button
@@ -78,10 +80,10 @@ export function RoleSelectionStep({
                 }}
               >
                 {isLoading === Role.STUDENT ? (
-                  "Setting up..."
+                  t('settingUp')
                 ) : (
                   <>
-                    I&apos;m a Student
+                    {t('student.button')}
                     <ChevronRight className="ml-2 h-4 w-4" />
                   </>
                 )}
@@ -99,9 +101,9 @@ export function RoleSelectionStep({
                 <GraduationCap className="h-12 w-12 text-green-500" />
               </div>
               <div className="space-y-2">
-                <h3 className="text-lg font-semibold">Teacher</h3>
+                <h3 className="text-lg font-semibold">{t('teacher.title')}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Create courses, manage students, and engage with your classroom
+                  {t('teacher.description')}
                 </p>
               </div>
               <Button
@@ -114,10 +116,10 @@ export function RoleSelectionStep({
                 }}
               >
                 {isLoading === Role.TEACHER ? (
-                  "Setting up..."
+                  t('settingUp')
                 ) : (
                   <>
-                    I&apos;m a Teacher
+                    {t('teacher.button')}
                     <ChevronRight className="ml-2 h-4 w-4" />
                   </>
                 )}
@@ -128,7 +130,7 @@ export function RoleSelectionStep({
 
         <div className="text-center pt-4">
           <Button variant="ghost" onClick={onSkip} disabled={isLoading !== null || isSkipping}>
-            {isSkipping ? "Setting up..." : "I'll decide later"}
+            {isSkipping ? t('settingUp') : t('decideLater')}
           </Button>
         </div>
       </CardContent>

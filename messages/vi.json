@@ -297,5 +297,68 @@
       "dueTomorrow": "Hạn chót ngày mai",
       "dueInDays": "Hạn chót trong {days} ngày"
     }
+  },
+  "Onboarding": {
+    "welcome": {
+      "title": "Chào Mừng Đến Với JAMC!",
+      "greeting": "Xin chào {name}, chúng tôi rất vui khi có bạn tham gia",
+      "description1": "JAMC là nền tảng quản lý học tập toàn diện nơi giáo dục gặp gỡ đổi mới.",
+      "description2": "Dù bạn ở đây để giảng dạy hay học tập, chúng tôi sẽ giúp bạn bắt đầu với một thiết lập nhanh chóng.",
+      "getStarted": "Bắt Đầu",
+      "skipSetup": "Bỏ Qua Thiết Lập",
+      "settingUp": "Đang thiết lập..."
+    },
+    "roleSelection": {
+      "title": "Chọn Vai Trò Của Bạn",
+      "description": "Bạn muốn sử dụng JAMC như thế nào? Bạn có thể thay đổi điều này sau.",
+      "student": {
+        "title": "Học Sinh",
+        "description": "Tham gia khóa học, tham gia hỏi đáp và theo dõi tiến độ học tập của bạn",
+        "button": "Tôi Là Học Sinh"
+      },
+      "teacher": {
+        "title": "Giáo Viên",
+        "description": "Tạo khóa học, quản lý học sinh và tương tác với lớp học của bạn",
+        "button": "Tôi Là Giáo Viên"
+      },
+      "decideLater": "Tôi sẽ quyết định sau",
+      "settingUp": "Đang thiết lập..."
+    },
+    "teacherNextSteps": {
+      "title": "Chào Mừng, Nhà Giáo Dục! 🎓",
+      "description": "Bạn đã sẵn sàng với vai trò giáo viên. Có sẵn sàng bắt đầu chia sẻ kiến thức của mình không?",
+      "createCourse": {
+        "title": "Tạo Khóa Học Đầu Tiên",
+        "description": "Bắt đầu xây dựng chương trình giảng dạy và mời học sinh tham gia lớp học của bạn",
+        "button": "Tạo Khóa Học"
+      },
+      "explorePlatform": {
+        "title": "Khám Phá Nền Tảng",
+        "description": "Duyệt các khóa học hiện có và làm quen với nền tảng",
+        "button": "Duyệt Khóa Học"
+      },
+      "footer": "Bạn luôn có thể tạo khóa học sau từ bảng điều khiển",
+      "setupLater": "Tôi sẽ thiết lập điều này sau"
+    },
+    "studentNextSteps": {
+      "title": "Chào Mừng, Học Sinh! 📚",
+      "description": "Bạn đã sẵn sàng với vai trò học sinh. Có sẵn sàng bắt đầu học tập không?",
+      "joinCourse": {
+        "title": "Tham Gia Khóa Học",
+        "description": "Có mã khóa học từ giáo viên của bạn? Nhập vào bên dưới để tham gia lớp học",
+        "codeLabel": "Mã Khóa Học",
+        "codePlaceholder": "Nhập mã khóa học (ví dụ: ABC123)",
+        "button": "Tham Gia Khóa Học",
+        "joining": "Đang Tham Gia Khóa Học...",
+        "error": "Đã xảy ra lỗi khi tham gia khóa học"
+      },
+      "exploreCourses": {
+        "title": "Khám Phá Các Khóa Học Có Sẵn",
+        "description": "Duyệt và khám phá các khóa học mà bạn quan tâm",
+        "button": "Duyệt Khóa Học"
+      },
+      "footer": "Bạn luôn có thể tham gia khóa học sau từ bảng điều khiển",
+      "setupLater": "Tôi sẽ thiết lập điều này sau"
+    }
   }
 }

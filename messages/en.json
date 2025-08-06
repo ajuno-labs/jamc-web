@@ -297,5 +297,68 @@
       "dueTomorrow": "Due tomorrow",
       "dueInDays": "Due in {days} days"
     }
+  },
+  "Onboarding": {
+    "welcome": {
+      "title": "Welcome to JAMC!",
+      "greeting": "Hello {name}, we're excited to have you on board",
+      "description1": "JAMC is your comprehensive learning management platform where education meets innovation.",
+      "description2": "Whether you're here to teach or learn, we'll help you get started with a quick setup.",
+      "getStarted": "Get Started",
+      "skipSetup": "Skip Setup",
+      "settingUp": "Setting up..."
+    },
+    "roleSelection": {
+      "title": "Choose Your Role",
+      "description": "How would you like to use JAMC? You can always change this later.",
+      "student": {
+        "title": "Student",
+        "description": "Join courses, participate in Q&A, and track your learning progress",
+        "button": "I'm a Student"
+      },
+      "teacher": {
+        "title": "Teacher",
+        "description": "Create courses, manage students, and engage with your classroom",
+        "button": "I'm a Teacher"
+      },
+      "decideLater": "I'll decide later",
+      "settingUp": "Setting up..."
+    },
+    "teacherNextSteps": {
+      "title": "Welcome, Educator! 🎓",
+      "description": "You're all set up as a teacher. Ready to start sharing your knowledge?",
+      "createCourse": {
+        "title": "Create Your First Course",
+        "description": "Start building your curriculum and invite students to join your classroom",
+        "button": "Create Course"
+      },
+      "explorePlatform": {
+        "title": "Explore the Platform",
+        "description": "Browse existing courses and get familiar with the platform",
+        "button": "Browse Courses"
+      },
+      "footer": "You can always create courses later from your dashboard",
+      "setupLater": "I'll set this up later"
+    },
+    "studentNextSteps": {
+      "title": "Welcome, Student! 📚",
+      "description": "You're all set up as a student. Ready to start learning?",
+      "joinCourse": {
+        "title": "Join a Course",
+        "description": "Have a course code from your teacher? Enter it below to join the class",
+        "codeLabel": "Course Code",
+        "codePlaceholder": "Enter course code (e.g., ABC123)",
+        "button": "Join Course",
+        "joining": "Joining Course...",
+        "error": "An error occurred while joining the course"
+      },
+      "exploreCourses": {
+        "title": "Explore Available Courses",
+        "description": "Browse and discover courses that interest you",
+        "button": "Browse Courses"
+      },
+      "footer": "You can always join courses later from your dashboard",
+      "setupLater": "I'll set this up later"
+    }
   }
 }

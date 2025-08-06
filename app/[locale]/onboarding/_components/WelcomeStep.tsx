@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { GraduationCap, Sparkles } from "lucide-react"
 import { type UserWithRoles } from "@/lib/types/prisma"
+import { useTranslations } from "next-intl"
 
 interface WelcomeStepProps {
   user: UserWithRoles
@@ -11,6 +12,8 @@ interface WelcomeStepProps {
 }
 
 export function WelcomeStep({ user, onNext, onSkip, isSkipping = false }: WelcomeStepProps) {
+  const t = useTranslations('Onboarding.welcome')
+
   return (
     <Card className="text-center">
       <CardHeader className="space-y-6">
@@ -22,10 +25,10 @@ export function WelcomeStep({ user, onNext, onSkip, isSkipping = false }: Welcom
         </div>
         <div className="space-y-2">
           <CardTitle className="text-3xl font-bold text-primary">
-            Welcome to JAMC!
+            {t('title')}
           </CardTitle>
           <p className="text-lg text-muted-foreground">
-            Hello {user.name || "there"}, we&apos;re excited to have you on board
+            {t('greeting', { name: user.name || 'there' })}
           </p>
         </div>
       </CardHeader>
@@ -33,19 +36,19 @@ export function WelcomeStep({ user, onNext, onSkip, isSkipping = false }: Welcom
       <CardContent className="space-y-6">
         <div className="space-y-4 text-muted-foreground">
           <p className="text-base">
-            JAMC is your comprehensive learning management platform where education meets innovation.
+            {t('description1')}
           </p>
           <p className="text-base">
-            Whether you&apos;re here to teach or learn, we&apos;ll help you get started with a quick setup.
+            {t('description2')}
           </p>
         </div>
         
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button onClick={onNext} size="lg" className="flex-1 sm:flex-none" disabled={isSkipping}>
-            Get Started
+            {t('getStarted')}
           </Button>
           <Button variant="outline" onClick={onSkip} size="lg" className="flex-1 sm:flex-none" disabled={isSkipping}>
-            {isSkipping ? "Setting up..." : "Skip Setup"}
+            {isSkipping ? t('settingUp') : t('skipSetup')}
           </Button>
         </div>
       </CardContent>
