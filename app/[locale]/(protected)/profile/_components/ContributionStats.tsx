@@ -11,8 +11,18 @@ interface ContributionStatsProps {
   userId?: string;
 }
 
+interface UserContributionStats {
+  totalPoints: number;
+  totalQuestions: number;
+  totalAnswers: number;
+  totalLessonsViewed: number;
+  currentStreak: number;
+  longestStreak: number;
+  totalContributionDays: number;
+}
+
 export function ContributionStats({ userId }: ContributionStatsProps) {
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<UserContributionStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
