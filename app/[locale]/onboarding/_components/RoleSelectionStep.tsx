@@ -127,12 +127,6 @@ export function RoleSelectionStep({
             </CardContent>
           </Card>
         </div>
-
-        <div className="text-center pt-4">
-          <Button variant="ghost" onClick={onSkip} disabled={isLoading !== null || isSkipping}>
-            {isSkipping ? t('settingUp') : t('decideLater')}
-          </Button>
-        </div>
       </CardContent>
     </Card>
   );
