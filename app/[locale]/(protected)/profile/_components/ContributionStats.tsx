@@ -31,7 +31,7 @@ export function ContributionStats({ userId }: ContributionStatsProps) {
       try {
         setLoading(true);
         const result = await getContributionStatsAction(userId);
-        if (result.success) {
+        if (result.success && result.data) {
           setStats(result.data);
         } else {
           setError(result.error || "Failed to load contribution stats");

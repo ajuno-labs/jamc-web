@@ -30,7 +30,7 @@ export default function RelatedQuestions({ questions }: RelatedQuestionsProps) {
         </Button>
       </div>
       <div className="space-y-3">
-        {questions.map((question) => (
+        {questions.map((question: LessonSummary["questions"][0]) => (
           <Card key={question.id} className="hover:bg-accent/50 transition-colors">
             <Link href={`/questions/${question.id}`} className="block">
               <CardHeader className="pb-2">
