@@ -5,6 +5,8 @@ import { AnswersSection } from "./_components/AnswersSection";
 import { BadgesSection } from "./_components/BadgesSection";
 import { SubscriptionsSection } from "./_components/SubscriptionsSection";
 import { NotificationsSection } from "./_components/NotificationsSection";
+import { ContributionHeatmap } from "./_components/ContributionHeatmap";
+import { ContributionStats } from "./_components/ContributionStats";
 import { getTranslations } from "next-intl/server";
 import { auth } from "@/auth";
 import { redirect } from "@/i18n/navigation";
@@ -41,12 +43,14 @@ export default async function ProfilePage() {
         {/* User Info Card */}
         <div className="lg:col-span-1 space-y-6">
           <UserInfoCard user={user} stats={stats} />
+          <ContributionStats userId={user.id} />
           <BadgesSection />
           <SubscriptionsSection />
         </div>
 
         {/* Activity Section */}
         <div className="lg:col-span-2 space-y-6">
+          <ContributionHeatmap userId={user.id} />
           <QuestionsSection questions={questions} totalQuestions={stats.totalQuestions} />
           <AnswersSection answers={answers} totalAnswers={stats.totalAnswers} />
           <NotificationsSection />
