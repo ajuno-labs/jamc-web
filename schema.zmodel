@@ -176,8 +176,7 @@ model Question {
   classificationConfidence Float?         @default(0.0)
   classificationReasoning  String[]       @default([])
   
-  // For formal questions
-  topic                    String?
+  // Attachments
   attachments              Attachment[]
   
   // Metadata

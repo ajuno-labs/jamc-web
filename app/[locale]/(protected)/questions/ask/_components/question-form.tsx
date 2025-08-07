@@ -38,7 +38,6 @@ const createQuestionSchema = (t: (key: string) => string) => z.object({
   visibility: z.nativeEnum(Visibility, {
     errorMap: () => ({ message: t('validation.visibilityRequired') }),
   }),
-  topic: z.string().optional(),
 });
 
 type QuestionFormValues = z.infer<ReturnType<typeof createQuestionSchema>>;
@@ -135,9 +134,6 @@ export function QuestionForm({
       formData.append('content', data.content || '');
       formData.append('type', data.type);
       formData.append('visibility', data.visibility);
-      if (data.type === QuestionType.STRUCTURED && data.topic) {
-        formData.append('topic', data.topic);
-      }
       selectedTags.forEach(t => formData.append('tags', t));
       if (localContext.courseId) formData.append('courseId', localContext.courseId);
       if (localContext.lessonId) formData.append('lessonId', localContext.lessonId);

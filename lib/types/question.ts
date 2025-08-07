@@ -19,7 +19,6 @@ export type QuestionFormData = {
   content: string
   type: QuestionType
   visibility: 'PUBLIC' | 'PRIVATE'
-  topic?: string
   context: QuestionContext
   tags: string[]
 }

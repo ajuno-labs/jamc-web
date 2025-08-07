@@ -47,7 +47,6 @@ export async function createQuestion(formData: FormData) {
     const content = formData.get('content')?.toString() || null
     const userSelectedType = formData.get('type')?.toString() as QuestionType
     const visibility = formData.get('visibility')?.toString() as Visibility
-    const topic = formData.get('topic')?.toString() || undefined
     const tags = formData.getAll('tags') as string[]
     const courseId = formData.get('courseId')?.toString() || undefined
     const lessonId = formData.get('lessonId')?.toString() || undefined
@@ -94,7 +93,6 @@ export async function createQuestion(formData: FormData) {
         content,
         type: finalType,
         visibility,
-        topic,
         slug,
         author: { connect: { id: user.id } },
         // Connect existing tags only

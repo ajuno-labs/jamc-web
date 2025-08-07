@@ -22,7 +22,6 @@ type QuestionFormValues = {
   content: string;
   type: QuestionType;
   visibility: Visibility;
-  topic?: string;
 };
 
 interface QuestionFormMainProps {
@@ -66,17 +65,12 @@ export function QuestionFormMain({
         )}
       </div>
 
-      {/* Topic and Attachments (Structured mode only) */}
       {selectedTypeValue === QuestionType.STRUCTURED && (
         <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="topic">{t('topic')}</Label>
-            <Input id="topic" {...register("topic")} disabled={isSubmitting} />
-          </div>
           <AttachmentUpload onFilesSelected={setAttachments} />
-          <AttachmentGallery 
-            files={attachments} 
-            onRemove={(f) => setAttachments(attachments.filter(a => a !== f))} 
+          <AttachmentGallery
+            files={attachments}
+            onRemove={(f) => setAttachments(attachments.filter(a => a !== f))}
           />
         </div>
       )}

@@ -17,7 +17,6 @@ type QuestionFormValues = {
   content: string;
   type: QuestionType;
   visibility: Visibility;
-  topic?: string;
 };
 
 interface QuestionTypeToggleProps {
