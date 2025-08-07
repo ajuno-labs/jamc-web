@@ -1,9 +1,11 @@
 import { prisma } from "./seed/utils";
 import { seedRolesAndPermissions } from "./seed/roles-permissions";
+import { seedTags } from "./seed/tags";
 
 async function main() {
   try {
     await seedRolesAndPermissions();
+    await seedTags();
     
     console.log("Database seeded successfully");
   } catch (error) {

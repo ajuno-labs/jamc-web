@@ -108,7 +108,7 @@ export function TagSelector({
             </div>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="p-0 w-full md:w-[250px]" align="start">
+        <PopoverContent className="p-0 w-full">
           <Command>
             <CommandInput placeholder={searchPlaceholder || t('searchTags')} />
             <CommandList>
