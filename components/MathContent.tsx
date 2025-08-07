@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { typeset } from '@/lib/initMathJax'
+import { cn } from '@/lib/utils'
 
 export interface MathContentProps {
   /** The full text content, including $...$ or $$...$$ LaTeX segments */
@@ -48,6 +49,7 @@ export function MathContent({ content, className = '' }: MathContentProps) {
               .replace(/&/g, '&amp;')
               .replace(/</g, '&lt;')
               .replace(/>/g, '&gt;')
+              .replace(/\n/g, '<br>')
           )
         }
         return typeset(seg.content, Boolean(seg.display)).then(rendered => {
@@ -65,7 +67,7 @@ export function MathContent({ content, className = '' }: MathContentProps) {
 
   return (
     <div
-      className={className}
+      className={cn("whitespace-pre-wrap break-words", className)}
       dangerouslySetInnerHTML={{ __html: html }}
     />
   )
