@@ -163,9 +163,12 @@
       "form": {
         "title": "Question Title",
         "titlePlaceholder": "e.g., How do I solve quadratic equations?",
+        "titleHelper": "State the question in one concise line",
+        "titlePreview": "Title Preview",
         "description": "Description",
         "descriptionPlaceholder": "Provide more details about your question...",
-        "preview": "Preview"
+        "preview": "Preview",
+        "addDetails": "Add details / examples"
       },
       "similarQuestions": {
         "title": "Similar Questions",

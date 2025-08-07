@@ -163,9 +163,12 @@
       "form": {
         "title": "Tiêu Đề",
         "titlePlaceholder": "Ví dụ: Làm thế nào để giải phương trình bậc hai?",
+        "titleHelper": "Nêu câu hỏi trong một dòng ngắn gọn",
+        "titlePreview": "Xem Trước Tiêu Đề",
         "description": "Mô Tả",
         "descriptionPlaceholder": "Cung cấp thêm chi tiết về câu hỏi của bạn...",
-        "preview": "Xem Trước"
+        "preview": "Xem Trước",
+        "addDetails": "Thêm chi tiết / ví dụ"
       },
       "similarQuestions": {
         "title": "Câu Hỏi Tương Tự",

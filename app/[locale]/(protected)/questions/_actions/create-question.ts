@@ -44,7 +44,7 @@ export async function createQuestion(formData: FormData) {
     const enhancedPrisma = enhance(prisma, { user })
 
     const title = formData.get('title')?.toString() || ''
-    const content = formData.get('content')?.toString() || ''
+    const content = formData.get('content')?.toString() || null
     const userSelectedType = formData.get('type')?.toString() as QuestionType
     const visibility = formData.get('visibility')?.toString() as Visibility
     const topic = formData.get('topic')?.toString() || undefined
@@ -54,7 +54,7 @@ export async function createQuestion(formData: FormData) {
     const attachments = formData.getAll('attachments') as File[]
     const isPseudonymous = formData.get('isPseudonymous')?.toString() === 'true'
 
-    const classification = await questionClassificationService.classifyQuestion(title, content)
+    const classification = await questionClassificationService.classifyQuestion(title, content || '')
     const finalType = classification.confidence > 0.7 ? classification.type : userSelectedType
 
     const slug = slugify(title)
@@ -177,7 +177,7 @@ export async function createQuestion(formData: FormData) {
         id: question.id,
         slug: question.slug,
         title: question.title,
-        content: question.content,
+        content: question.content || '',
         tags: existingTags.map(t => t.name),
         category: courseId ? 'course' : 'general'
       })

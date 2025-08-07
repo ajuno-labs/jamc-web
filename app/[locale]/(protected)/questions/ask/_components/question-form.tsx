@@ -28,7 +28,10 @@ const createQuestionSchema = (t: (key: string) => string) => z.object({
     .max(150, { message: t('validation.titleMax') }),
   content: z
     .string()
-    .min(20, { message: t('validation.contentMin') }),
+    .optional()
+    .refine((val) => !val || val.length >= 20, {
+      message: t('validation.contentMin'),
+    }),
   type: z.nativeEnum(QuestionType, {
     errorMap: () => ({ message: t('validation.typeRequired') }),
   }),
@@ -78,7 +81,7 @@ export function QuestionForm({
     resolver: zodResolver(questionSchema),
     defaultValues: {
       title: "",
-      content: "",
+      content: undefined,
       type: QuestionType.STRUCTURED,
       visibility: Visibility.PUBLIC,
     },
@@ -115,6 +118,7 @@ export function QuestionForm({
   };
 
   const contentValue = watch("content");
+  const titleValue = watch("title");
   const selectedTypeValue = watch("type");
 
   const onSubmit = async (data: QuestionFormValues) => {
@@ -128,7 +132,7 @@ export function QuestionForm({
     try {
       const formData = new FormData();
       formData.append('title', data.title);
-      formData.append('content', data.content);
+      formData.append('content', data.content || '');
       formData.append('type', data.type);
       formData.append('visibility', data.visibility);
       if (data.type === QuestionType.STRUCTURED && data.topic) {
@@ -175,9 +179,11 @@ export function QuestionForm({
             register={register}
             errors={errors}
             contentValue={contentValue}
+            titleValue={titleValue}
             isSubmitting={isSubmitting}
             showPreviewToggle={false}
             onTitleChange={handleTitleChange}
+            allowProgressiveDisclosure={true}
           />
 
           <QuestionFormMain

@@ -198,7 +198,7 @@ model PseudonymousName {
 model Question {
   id                       String            @id() @default(cuid())
   title                    String
-  content                  String
+  content                  String?
   type                     QuestionType
   visibility               Visibility        @default(PUBLIC)
   classificationConfidence Float?            @default(0.0)

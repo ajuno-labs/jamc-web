@@ -23,7 +23,7 @@ interface QuestionHeaderProps {
   question: {
     id: string
     title: string
-    content: string
+    content: string | null
     slug: string
     type: QuestionType
     author: {
@@ -115,7 +115,9 @@ export function QuestionHeader({ question, currentUserId }: QuestionHeaderProps)
         </div>
       </CardHeader>
       <CardContent>
-        <MathContent className="text-foreground mb-4" content={question.content} />
+        {question.content && (
+          <MathContent className="text-foreground mb-4" content={question.content} />
+        )}
         <AttachmentList attachments={question.attachments} />
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center space-x-2">

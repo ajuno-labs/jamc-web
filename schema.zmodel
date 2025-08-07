@@ -168,7 +168,7 @@ enum Status {
 model Question {
   id                       String         @id @default(cuid())
   title                    String         @length(min: 3, max: 300)
-  content                  String         @length(min: 10)
+  content                  String?        @length(min: 10)
   type                     QuestionType
   visibility               Visibility     @default(PUBLIC)
   
