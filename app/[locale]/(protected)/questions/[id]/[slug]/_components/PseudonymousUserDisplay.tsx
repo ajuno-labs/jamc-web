@@ -1,6 +1,9 @@
+"use client"
+
 import { Link } from "@/i18n/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { UserX } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 interface PseudonymousUserDisplayProps {
   user: {
@@ -23,6 +26,7 @@ export function PseudonymousUserDisplay({
   showReputation = true, 
   className = "" 
 }: PseudonymousUserDisplayProps) {
+  const t = useTranslations("PseudonymousUserDisplay")
   if (pseudonymousName) {
     return (
       <div className={`flex items-center space-x-2 ${className}`}>
@@ -36,7 +40,7 @@ export function PseudonymousUserDisplay({
             {pseudonymousName.name}
           </span>
           <span className="text-xs text-muted-foreground">
-            Anonymous Student
+            {t('anonymousStudent')}
           </span>
         </div>
       </div>
@@ -56,7 +60,7 @@ export function PseudonymousUserDisplay({
         <span className="font-semibold text-sm">{user.name}</span>
         {showReputation && user.reputation !== undefined && (
           <span className="text-xs text-muted-foreground">
-            {user.reputation} reputation
+            {t('reputation', { count: user.reputation })}
           </span>
         )}
       </div>

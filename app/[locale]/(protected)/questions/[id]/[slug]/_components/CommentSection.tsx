@@ -8,6 +8,7 @@ import { ThumbsUp } from "lucide-react"
 import { addComment, voteComment } from "../_actions/question-edit-actions"
 import { MathContent } from "@/components/MathContent"
 import { ClientDate } from "@/components/client-date"
+import { useTranslations } from "next-intl"
 
 interface Comment {
   id: string
@@ -35,6 +36,7 @@ interface CommentSectionProps {
 }
 
 export function CommentSection({ comments, questionId, answerId, currentUserId, className = "" }: CommentSectionProps) {
+  const t = useTranslations("CommentSection")
   const [isAddingComment, setIsAddingComment] = useState(false)
   const [newComment, setNewComment] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -117,7 +119,7 @@ export function CommentSection({ comments, questionId, answerId, currentUserId, 
             <Textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Add a comment..."
+              placeholder={t('placeholder')}
               className="min-h-[60px] text-sm"
             />
             <div className="flex gap-2">
@@ -127,7 +129,7 @@ export function CommentSection({ comments, questionId, answerId, currentUserId, 
                 size="sm"
                 className="text-xs"
               >
-                {isSubmitting ? "Adding..." : "Add Comment"}
+                {isSubmitting ? t('adding') : t('addComment')}
               </Button>
               <Button
                 variant="ghost"
@@ -138,7 +140,7 @@ export function CommentSection({ comments, questionId, answerId, currentUserId, 
                 size="sm"
                 className="text-xs"
               >
-                Cancel
+                {t('cancel')}
               </Button>
             </div>
           </div>
@@ -148,7 +150,7 @@ export function CommentSection({ comments, questionId, answerId, currentUserId, 
             className="text-xs text-muted-foreground hover:text-foreground transition-colors"
             disabled={!currentUserId}
           >
-            Add a comment
+            {t('addCommentLink')}
           </button>
         )}
       </div>

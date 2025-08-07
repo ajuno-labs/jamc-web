@@ -14,6 +14,7 @@ import { CommentSection } from "./CommentSection"
 import { useRouter } from "@/i18n/navigation"
 import { AttachmentList } from "./AttachmentList"
 import { ClientDate } from "@/components/client-date"
+import { useTranslations } from "next-intl"
 
 import { QuestionType } from "@prisma/client"
 import { getQuestionTypeBadge } from "@/lib/utils/question-type-badges"
@@ -63,6 +64,7 @@ interface QuestionHeaderProps {
 }
 
 export function QuestionHeader({ question, currentUserId }: QuestionHeaderProps) {
+  const t = useTranslations("QuestionHeader")
   const router = useRouter()
   const upvotes = question.votes.filter(v => v.value === 1).length
   const downvotes = question.votes.filter(v => v.value === -1).length
@@ -88,14 +90,14 @@ export function QuestionHeader({ question, currentUserId }: QuestionHeaderProps)
             {question.course && (
               <Link href={`/courses/${question.course.slug}`}>
                 <Badge variant="secondary" className="cursor-pointer">
-                  Course: {question.course.title}
+                  {t('course')}: {question.course.title}
                 </Badge>
               </Link>
             )}
             {question.lesson && question.course && (
               <Link href={`/courses/${question.course.slug}/lessons/${question.lesson.id}/${question.lesson.slug}`}>
                 <Badge variant="outline" className="cursor-pointer">
-                  Lesson: {question.lesson.title}
+                  {t('lesson')}: {question.lesson.title}
                 </Badge>
               </Link>
             )}
@@ -139,7 +141,7 @@ export function QuestionHeader({ question, currentUserId }: QuestionHeaderProps)
             )}
             <Button variant="ghost" size="sm">
               <Flag className="mr-1 h-4 w-4" />
-              <span>Flag</span>
+              <span>{t('flag')}</span>
             </Button>
           </div>
         </div>

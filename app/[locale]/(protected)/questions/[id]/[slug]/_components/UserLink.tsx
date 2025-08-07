@@ -1,5 +1,8 @@
+"use client"
+
 import { Link } from "@/i18n/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useTranslations } from "next-intl"
 
 interface UserLinkProps {
   user: {
@@ -13,6 +16,9 @@ interface UserLinkProps {
 }
 
 export function UserLink({ user, showReputation = true, className = "" }: UserLinkProps) {
+
+  const t = useTranslations("UserLink")
+
   return (
     <Link 
       href={`/profile/${user.id}`}
@@ -26,7 +32,7 @@ export function UserLink({ user, showReputation = true, className = "" }: UserLi
         <span className="font-semibold text-sm">{user.name}</span>
         {showReputation && user.reputation !== undefined && (
           <span className="text-xs text-muted-foreground">
-            {user.reputation} reputation
+            {t('reputation', { count: user.reputation })}
           </span>
         )}
       </div>

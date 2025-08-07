@@ -388,5 +388,75 @@
       "footer": "Bạn có thể tham gia khóa học bất kỳ lúc nào từ bảng điều khiển",
       "setupLater": "Để sau cũng được"
     }
+  },
+  "QuestionPage": {
+    "title": "Chi tiết câu hỏi"
+  },
+  "QuestionHeader": {
+    "course": "Khóa học",
+    "lesson": "Bài học",
+    "flag": "Báo cáo"
+  },
+  "AnswerList": {
+    "moderate": "Kiểm duyệt",
+    "mod": "KD"
+  },
+  "AnswerForm": {
+    "title": "Câu trả lời của bạn",
+    "placeholder": "Viết câu trả lời tại đây...",
+    "addAnswer": "Thêm câu trả lời",
+    "posting": "Đang đăng...",
+    "success": "Đã đăng câu trả lời thành công!",
+    "loginRequired": "Bạn phải đăng nhập để trả lời",
+    "validation": {
+      "minLength": "Câu trả lời phải có ít nhất 10 ký tự"
+    }
+  },
+  "RelatedQuestions": {
+    "title": "Câu hỏi liên quan",
+    "noQuestionsFound": "Không tìm thấy câu hỏi liên quan."
+  },
+  "CommentSection": {
+    "placeholder": "Thêm bình luận...",
+    "adding": "Đang thêm...",
+    "addComment": "Thêm bình luận",
+    "cancel": "Hủy",
+    "addCommentLink": "Thêm bình luận"
+  },
+  "EditableAnswer": {
+    "editAnswer": "Sửa câu trả lời",
+    "placeholder": "Viết câu trả lời của bạn...",
+    "saving": "Đang lưu...",
+    "save": "Lưu",
+    "cancel": "Hủy"
+  },
+  "AttachmentList": {
+    "title": "Tệp đính kèm",
+    "view": "Xem",
+    "download": "Tải xuống"
+  },
+  "PseudonymousUserDisplay": {
+    "anonymousStudent": "Học sinh ẩn danh",
+    "reputation": "{count} điểm uy tín"
+  },
+  "AcceptAnswerButtons": {
+    "userUnaccepted": "Đã hủy chấp nhận câu trả lời",
+    "userAccepted": "Đã chấp nhận câu trả lời!",
+    "updateFailed": "Không thể cập nhật câu trả lời",
+    "teacherUnaccepted": "Giáo viên đã hủy chấp nhận",
+    "teacherAccepted": "Giáo viên đã chấp nhận câu trả lời!",
+    "acceptedByAuthor": "Được tác giả chấp nhận",
+    "acceptedByTeacher": "Được giáo viên chấp nhận",
+    "unaccept": "Hủy chấp nhận",
+    "accept": "Chấp nhận",
+    "removeTeacherAcceptance": "Hủy chấp nhận của giáo viên",
+    "acceptAsTeacher": "Chấp nhận với tư cách giáo viên"
+  },
+  "PreviewToggle": {
+    "edit": "Sửa",
+    "preview": "Xem trước"
+  },
+  "UserLink": {
+    "reputation": "{count} điểm uy tín"
   }
 }

@@ -2,6 +2,7 @@ import { Lightbulb } from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import { RelatedQuestion } from "@/lib/types/question"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { getTranslations } from "next-intl/server"
 
 // Type for related questions, using a subset of the question properties
 // (now imported from our centralized type)
@@ -10,15 +11,16 @@ interface RelatedQuestionsProps {
   questions: RelatedQuestion[]
 }
 
-export function RelatedQuestions({ questions }: RelatedQuestionsProps) {
+export async function RelatedQuestions({ questions }: RelatedQuestionsProps) {
+  const t = await getTranslations("RelatedQuestions")
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Related Questions</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
       </CardHeader>
       <CardContent>
         {questions.length === 0 ? (
-          <p className="text-muted-foreground py-2">No related questions found.</p>
+          <p className="text-muted-foreground py-2">{t('noQuestionsFound')}</p>
         ) : (
           <div className="space-y-4">
             {questions.map((question) => (

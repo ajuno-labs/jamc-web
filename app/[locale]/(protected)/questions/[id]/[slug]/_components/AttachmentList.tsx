@@ -3,12 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, Download, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 export interface AttachmentListProps {
   attachments: { id: string; url: string; type: string }[];
 }
 
 export function AttachmentList({ attachments }: AttachmentListProps) {
+  const t = useTranslations("AttachmentList")
   if (attachments.length === 0) return null;
 
   const downloadFile = async (url: string, name?: string) => {
@@ -27,7 +29,7 @@ export function AttachmentList({ attachments }: AttachmentListProps) {
   return (
     <Card className="mb-4">
       <CardHeader>
-        <CardTitle>Attachments</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         {attachments.map((att) => {
@@ -56,7 +58,7 @@ export function AttachmentList({ attachments }: AttachmentListProps) {
                 <Button asChild size="icon" variant="outline">
                   <a href={att.url} target="_blank" rel="noopener noreferrer">
                     <Eye className="h-4 w-4" />
-                    <span className="sr-only">View</span>
+                    <span className="sr-only">{t('view')}</span>
                   </a>
                 </Button>
                 <Button
@@ -65,7 +67,7 @@ export function AttachmentList({ attachments }: AttachmentListProps) {
                   onClick={() => downloadFile(att.url, name || undefined)}
                 >
                   <Download className="h-4 w-4" />
-                  <span className="sr-only">Download</span>
+                  <span className="sr-only">{t('download')}</span>
                 </Button>
               </div>
             </div>
