@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { CheckCircle, GraduationCap, User } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
+import { useTranslations } from "next-intl"
 import {
   acceptAnswerByUser,
   unacceptAnswerByUser,
@@ -31,6 +32,7 @@ export function AcceptAnswerButtons({
   courseTeacherId,
   isLinkedToCourse,
 }: AcceptAnswerButtonsProps) {
+  const t = useTranslations("AcceptAnswerButtons")
   const [isLoading, setIsLoading] = useState(false)
 
   const isQuestionOwner = currentUserId === questionOwnerId
@@ -43,13 +45,13 @@ export function AcceptAnswerButtons({
     try {
       if (isAcceptedByUser) {
         await unacceptAnswerByUser(answerId)
-        toast.success("Answer unaccepted")
+        toast.success(t('userUnaccepted'))
       } else {
         await acceptAnswerByUser(answerId)
-        toast.success("Answer accepted!")
+        toast.success(t('userAccepted'))
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to update answer")
+      toast.error(error instanceof Error ? error.message : t('updateFailed'))
     } finally {
       setIsLoading(false)
     }
@@ -62,13 +64,13 @@ export function AcceptAnswerButtons({
     try {
       if (isAcceptedByTeacher) {
         await unacceptAnswerByTeacher(answerId)
-        toast.success("Teacher acceptance removed")
+        toast.success(t('teacherUnaccepted'))
       } else {
         await acceptAnswerByTeacher(answerId)
-        toast.success("Answer accepted by teacher!")
+        toast.success(t('teacherAccepted'))
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to update answer")
+      toast.error(error instanceof Error ? error.message : t('updateFailed'))
     } finally {
       setIsLoading(false)
     }
@@ -80,14 +82,14 @@ export function AcceptAnswerButtons({
       {isAcceptedByUser && (
         <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
           <CheckCircle className="w-3 h-3 mr-1" />
-          Accepted by Author
+          {t('acceptedByAuthor')}
         </Badge>
       )}
       
       {isAcceptedByTeacher && (
         <Badge variant="default" className="bg-blue-100 text-blue-800 border-blue-200">
           <GraduationCap className="w-3 h-3 mr-1" />
-          Accepted by Teacher
+          {t('acceptedByTeacher')}
         </Badge>
       )}
 
@@ -101,7 +103,7 @@ export function AcceptAnswerButtons({
           className={isAcceptedByUser ? "border-green-200 text-green-700" : ""}
         >
           <User className="w-4 h-4 mr-1" />
-          {isAcceptedByUser ? "Unaccept" : "Accept"}
+          {isAcceptedByUser ? t('unaccept') : t('accept')}
         </Button>
       )}
 
@@ -114,7 +116,7 @@ export function AcceptAnswerButtons({
           className={isAcceptedByTeacher ? "border-blue-200 text-blue-700" : ""}
         >
           <GraduationCap className="w-4 h-4 mr-1" />
-          {isAcceptedByTeacher ? "Remove Teacher Acceptance" : "Accept as Teacher"}
+          {isAcceptedByTeacher ? t('removeTeacherAcceptance') : t('acceptAsTeacher')}
         </Button>
       )}
     </div>

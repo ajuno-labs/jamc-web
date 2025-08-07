@@ -1,5 +1,4 @@
-import { auth } from "@/auth";
-import { prisma } from "@/prisma";
+import { getCurrentUser } from "@/lib/auth/user";
 import { userWithRolesInclude } from "@/lib/types/prisma";
 import { QuestionHeader } from "./_components/question-header";
 import { AnswerList } from "./_components/answer-list";
@@ -33,15 +32,7 @@ export default async function QuestionPage({ params }: QuestionPageProps) {
     getQuestionWithReputation(questionId),
     getAnswersWithReputation(questionId),
     getRelatedQuestions(questionId),
-    (async () => {
-      const session = await auth();
-      return await prisma.user.findUnique({
-        where: {
-          email: session!.user!.email!,
-        },
-        include: userWithRolesInclude,
-      });
-    })(),
+    getCurrentUser(userWithRolesInclude),
   ]);
 
   if (!question) {

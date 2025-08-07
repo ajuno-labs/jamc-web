@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Eye, EyeOff } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 interface PreviewToggleProps {
   isPreview: boolean
@@ -10,6 +11,7 @@ interface PreviewToggleProps {
 }
 
 export function PreviewToggle({ isPreview, onToggle, className = "" }: PreviewToggleProps) {
+  const t = useTranslations("PreviewToggle")
   return (
     <Button
       type="button"
@@ -21,12 +23,12 @@ export function PreviewToggle({ isPreview, onToggle, className = "" }: PreviewTo
       {isPreview ? (
         <>
           <EyeOff className="h-4 w-4 mr-2" />
-          Edit
+          {t('edit')}
         </>
       ) : (
         <>
           <Eye className="h-4 w-4 mr-2" />
-          Preview
+          {t('preview')}
         </>
       )}
     </Button>

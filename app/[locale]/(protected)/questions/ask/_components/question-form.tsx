@@ -19,6 +19,7 @@ import { QuestionFormSidebar } from "./QuestionFormSidebar";
 import { QuestionFormMain } from "./QuestionFormMain";
 import { QuestionFormFields } from "../../_components/QuestionFormFields";
 import { SubmitButton } from "@/components/ui/submit-button";
+import { PseudonymousToggle } from "./PseudonymousToggle";
 
 const createQuestionSchema = (t: (key: string) => string) => z.object({
   title: z
@@ -65,6 +66,7 @@ export function QuestionForm({
   const [similarQuestions, setSimilarQuestions] = useState<SimilarQuestionType[]>([]);
   const [isSimilarityLoading, setIsSimilarityLoading] = useState(false);
   const [similarityError, setSimilarityError] = useState<string | null>(null);
+  const [isPseudonymous, setIsPseudonymous] = useState(false);
 
   const {
     register,
@@ -136,6 +138,7 @@ export function QuestionForm({
       if (localContext.courseId) formData.append('courseId', localContext.courseId);
       if (localContext.lessonId) formData.append('lessonId', localContext.lessonId);
       attachments.forEach(file => formData.append('attachments', file));
+      formData.append('isPseudonymous', isPseudonymous.toString());
 
       const result = await createQuestion(formData);
 
@@ -157,6 +160,12 @@ export function QuestionForm({
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div className="md:col-span-2">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <PseudonymousToggle
+            isEnabled={isPseudonymous}
+            onToggle={setIsPseudonymous}
+            isSubmitting={isSubmitting}
+          />
+          
           <QuestionTypeToggle
             control={control}
             isSubmitting={isSubmitting}

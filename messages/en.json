@@ -180,6 +180,10 @@
         "checkSimilar": "Check for similar questions before posting",
         "tagAppropriately": "Tag your question appropriately"
       }
+    },
+    "PseudonymousToggle": {
+      "title": "Ask anonymously",
+      "description": "Your identity will be hidden and replaced with a pseudonymous name"
     }
   },
   "SearchPage": {
@@ -385,5 +389,75 @@
       "footer": "You can always join courses later from your dashboard",
       "setupLater": "I'll set this up later"
     }
+  },
+  "QuestionPage": {
+    "title": "Question Details"
+  },
+  "QuestionHeader": {
+    "course": "Course",
+    "lesson": "Lesson", 
+    "flag": "Flag"
+  },
+  "AnswerList": {
+    "moderate": "Moderate",
+    "mod": "Mod"
+  },
+  "AnswerForm": {
+    "title": "Your Answer",
+    "placeholder": "Write your answer here...",
+    "addAnswer": "Add Answer",
+    "posting": "Posting...",
+    "success": "Answer posted successfully!",
+    "loginRequired": "You must be logged in to answer",
+    "validation": {
+      "minLength": "Answer must be at least 10 characters long"
+    }
+  },
+  "RelatedQuestions": {
+    "title": "Related Questions",
+    "noQuestionsFound": "No related questions found."
+  },
+  "CommentSection": {
+    "placeholder": "Add a comment...",
+    "adding": "Adding...",
+    "addComment": "Add Comment",
+    "cancel": "Cancel",
+    "addCommentLink": "Add a comment"
+  },
+  "EditableAnswer": {
+    "editAnswer": "Edit Answer",
+    "placeholder": "Write your answer...",
+    "saving": "Saving...",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "AttachmentList": {
+    "title": "Attachments",
+    "view": "View",
+    "download": "Download"
+  },
+  "PseudonymousUserDisplay": {
+    "anonymousStudent": "Anonymous Student",
+    "reputation": "{count} reputation"
+  },
+  "AcceptAnswerButtons": {
+    "userUnaccepted": "Answer unaccepted",
+    "userAccepted": "Answer accepted!",
+    "updateFailed": "Failed to update answer",
+    "teacherUnaccepted": "Teacher acceptance removed",
+    "teacherAccepted": "Answer accepted by teacher!",
+    "acceptedByAuthor": "Accepted by Author",
+    "acceptedByTeacher": "Accepted by Teacher",
+    "unaccept": "Unaccept",
+    "accept": "Accept",
+    "removeTeacherAcceptance": "Remove Teacher Acceptance",
+    "acceptAsTeacher": "Accept as Teacher"
+  },
+  "PreviewToggle": {
+    "edit": "Edit",
+    "preview": "Preview"
+  },
+  "UserLink": {
+    "reputation": "{count} reputation"
   }
 }

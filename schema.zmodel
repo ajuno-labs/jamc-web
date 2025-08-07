@@ -138,6 +138,16 @@ model VerificationToken {
   @@id([identifier, token])
 }
 
+model PseudonymousName {
+  id        String @id @default(cuid())
+  name      String @unique
+  
+  questions Question[]
+  
+  @@allow('read', true)
+  @@allow('create', auth() != null)
+}
+
 enum QuestionType {
   OBJECTIVE
   STRUCTURED
@@ -177,6 +187,8 @@ model Question {
   // Relations
   authorId                 String
   author                   User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  pseudonymousNameId       String?
+  pseudonymousName         PseudonymousName? @relation(fields: [pseudonymousNameId], references: [id])
   answers                  Answer[]
   tags                     Tag[]
   votes                    QuestionVote[]

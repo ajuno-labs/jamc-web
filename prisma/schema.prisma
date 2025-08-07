@@ -189,31 +189,39 @@ model VerificationToken {
   @@id([identifier, token])
 }
 
+model PseudonymousName {
+  id        String     @id() @default(cuid())
+  name      String     @unique()
+  questions Question[]
+}
+
 model Question {
-  id                       String         @id() @default(cuid())
+  id                       String            @id() @default(cuid())
   title                    String
   content                  String
   type                     QuestionType
-  visibility               Visibility     @default(PUBLIC)
-  classificationConfidence Float?         @default(0.0)
-  classificationReasoning  String[]       @default([])
+  visibility               Visibility        @default(PUBLIC)
+  classificationConfidence Float?            @default(0.0)
+  classificationReasoning  String[]          @default([])
   topic                    String?
   attachments              Attachment[]
-  createdAt                DateTime       @default(now())
-  updatedAt                DateTime       @updatedAt()
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt()
   authorId                 String
-  author                   User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author                   User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  pseudonymousNameId       String?
+  pseudonymousName         PseudonymousName? @relation(fields: [pseudonymousNameId], references: [id])
   answers                  Answer[]
   tags                     Tag[]
   votes                    QuestionVote[]
   comments                 Comment[]
   courseId                 String?
-  course                   Course?        @relation(fields: [courseId], references: [id])
+  course                   Course?           @relation(fields: [courseId], references: [id])
   lessonId                 String?
-  lesson                   Lesson?        @relation(fields: [lessonId], references: [id])
-  viewCount                Int            @default(0)
-  slug                     String         @unique()
-  status                   Status         @default(OPEN)
+  lesson                   Lesson?           @relation(fields: [lessonId], references: [id])
+  viewCount                Int               @default(0)
+  slug                     String            @unique()
+  status                   Status            @default(OPEN)
 
   @@index([courseId])
   @@index([lessonId])

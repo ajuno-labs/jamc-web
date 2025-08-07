@@ -5,6 +5,7 @@ import { AlertTriangle } from "lucide-react"
 import { voteAnswer } from "../_actions/question-actions"
 import { VoteButtons } from "@/components/ui/vote-buttons"
 import { EditableAnswer } from "./EditableAnswer"
+import { useTranslations } from "next-intl"
 
 interface Answer {
   id: string
@@ -47,6 +48,7 @@ interface AnswerListProps {
 }
 
 export function AnswerList({ answers, currentUserId, isEducator = false }: AnswerListProps) {
+  const t = useTranslations("AnswerList")
   return (
     <div className="space-y-4 sm:space-y-6">
       {answers.map((answer) => {
@@ -81,8 +83,8 @@ export function AnswerList({ answers, currentUserId, isEducator = false }: Answe
               {isEducator && (
                 <Button variant="ghost" size="sm" className="text-yellow-600 w-fit">
                   <AlertTriangle className="mr-1 h-4 w-4" />
-                  <span className="hidden sm:inline">Moderate</span>
-                  <span className="sm:hidden">Mod</span>
+                  <span className="hidden sm:inline">{t('moderate')}</span>
+                  <span className="sm:hidden">{t('mod')}</span>
                 </Button>
               )}
             </div>

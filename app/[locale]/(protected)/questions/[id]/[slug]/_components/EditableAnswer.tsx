@@ -12,6 +12,7 @@ import { AcceptAnswerButtons } from "./AcceptAnswerButtons"
 import { updateAnswer } from "../_actions/question-edit-actions"
 import { MathContent } from "@/components/MathContent"
 import { ClientDate } from "@/components/client-date"
+import { useTranslations } from "next-intl"
 
 interface Answer {
   id: string
@@ -53,6 +54,7 @@ interface EditableAnswerProps {
 }
 
 export function EditableAnswer({ answer, currentUserId, className = "" }: EditableAnswerProps) {
+  const t = useTranslations("EditableAnswer")
   const [isEditing, setIsEditing] = useState(false)
   const [isPreview, setIsPreview] = useState(false)
   const [editContent, setEditContent] = useState(answer.content)
@@ -101,7 +103,7 @@ export function EditableAnswer({ answer, currentUserId, className = "" }: Editab
         {isEditing ? (
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <h4 className="font-medium">Edit Answer</h4>
+              <h4 className="font-medium">{t('editAnswer')}</h4>
               <PreviewToggle
                 isPreview={isPreview}
                 onToggle={() => setIsPreview(!isPreview)}
@@ -117,7 +119,7 @@ export function EditableAnswer({ answer, currentUserId, className = "" }: Editab
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
                 className="min-h-[200px]"
-                placeholder="Write your answer..."
+                placeholder={t('placeholder')}
               />
             )}
 
@@ -126,10 +128,10 @@ export function EditableAnswer({ answer, currentUserId, className = "" }: Editab
                 onClick={handleSave}
                 disabled={!editContent.trim() || isSubmitting}
               >
-                {isSubmitting ? "Saving..." : "Save"}
+                {isSubmitting ? t('saving') : t('save')}
               </Button>
               <Button variant="outline" onClick={handleCancel}>
-                Cancel
+                {t('cancel')}
               </Button>
             </div>
           </div>

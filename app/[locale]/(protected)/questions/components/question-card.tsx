@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation"
-import { MessageSquare, ThumbsUp, Tag } from "lucide-react"
+import { MessageSquare, ThumbsUp, Tag, UserX } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
@@ -17,6 +17,9 @@ interface QuestionCardProps {
     name: string | null
     image: string | null
   }
+  pseudonymousName?: {
+    name: string
+  } | null
   tags: Array<{ name: string }>
   answerCount: number
   voteCount: number
@@ -30,6 +33,7 @@ export function QuestionCard({
   content,
   type,
   author,
+  pseudonymousName,
   tags,
   answerCount,
   voteCount,
@@ -80,10 +84,18 @@ export function QuestionCard({
       <Separator className="my-4" />
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
         <Avatar className="h-6 w-6">
-          <AvatarImage src={author.image || undefined} />
-          <AvatarFallback>{author.name?.[0]}</AvatarFallback>
+          {pseudonymousName ? (
+            <AvatarFallback className="bg-muted">
+              <UserX className="h-3 w-3" />
+            </AvatarFallback>
+          ) : (
+            <>
+              <AvatarImage src={author.image || undefined} />
+              <AvatarFallback>{author.name?.[0]}</AvatarFallback>
+            </>
+          )}
         </Avatar>
-        <span>{author.name}</span>
+        <span>{pseudonymousName ? pseudonymousName.name : author.name}</span>
         <span>•</span>
         <ClientDate date={createdAt} variant="short" />
       </div>

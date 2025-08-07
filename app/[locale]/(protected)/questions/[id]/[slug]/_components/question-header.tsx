@@ -8,12 +8,13 @@ import { VoteButtons } from "@/components/ui/vote-buttons"
 import { MathContent } from '@/components/MathContent'
 import { Link } from "@/i18n/navigation"
 import { Badge } from "@/components/ui/badge"
-import { UserLink } from "./UserLink"
+import { PseudonymousUserDisplay } from "./PseudonymousUserDisplay"
 import { EditButton } from "./EditButton"
 import { CommentSection } from "./CommentSection"
 import { useRouter } from "@/i18n/navigation"
 import { AttachmentList } from "./AttachmentList"
 import { ClientDate } from "@/components/client-date"
+import { useTranslations } from "next-intl"
 
 import { QuestionType } from "@prisma/client"
 import { getQuestionTypeBadge } from "@/lib/utils/question-type-badges"
@@ -31,6 +32,10 @@ interface QuestionHeaderProps {
       image: string | null
       reputation?: number
     }
+    pseudonymousName?: {
+      id: string
+      name: string
+    } | null
     createdAt: Date
     votes: Array<{ value: number, userId?: string }>
     currentUserVote?: number | null
@@ -59,6 +64,7 @@ interface QuestionHeaderProps {
 }
 
 export function QuestionHeader({ question, currentUserId }: QuestionHeaderProps) {
+  const t = useTranslations("QuestionHeader")
   const router = useRouter()
   const upvotes = question.votes.filter(v => v.value === 1).length
   const downvotes = question.votes.filter(v => v.value === -1).length
@@ -84,14 +90,14 @@ export function QuestionHeader({ question, currentUserId }: QuestionHeaderProps)
             {question.course && (
               <Link href={`/courses/${question.course.slug}`}>
                 <Badge variant="secondary" className="cursor-pointer">
-                  Course: {question.course.title}
+                  {t('course')}: {question.course.title}
                 </Badge>
               </Link>
             )}
             {question.lesson && question.course && (
               <Link href={`/courses/${question.course.slug}/lessons/${question.lesson.id}/${question.lesson.slug}`}>
                 <Badge variant="outline" className="cursor-pointer">
-                  Lesson: {question.lesson.title}
+                  {t('lesson')}: {question.lesson.title}
                 </Badge>
               </Link>
             )}
@@ -113,7 +119,10 @@ export function QuestionHeader({ question, currentUserId }: QuestionHeaderProps)
         <AttachmentList attachments={question.attachments} />
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center space-x-2">
-            <UserLink user={question.author} />
+            <PseudonymousUserDisplay 
+              user={question.author} 
+              pseudonymousName={question.pseudonymousName}
+            />
             <span className="text-sm text-muted-foreground">
               <ClientDate date={question.createdAt} />
             </span>
@@ -132,7 +141,7 @@ export function QuestionHeader({ question, currentUserId }: QuestionHeaderProps)
             )}
             <Button variant="ghost" size="sm">
               <Flag className="mr-1 h-4 w-4" />
-              <span>Flag</span>
+              <span>{t('flag')}</span>
             </Button>
           </div>
         </div>
