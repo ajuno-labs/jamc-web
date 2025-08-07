@@ -5,7 +5,7 @@ export default function PostingGuideline() {
     const t = useTranslations('AskQuestionPage.QuestionForm.guidelines');
     
     return (
-    <Card className="mt-6">
+    <Card>
     <CardHeader>
       <CardTitle>{t('title')}</CardTitle>
     </CardHeader>
