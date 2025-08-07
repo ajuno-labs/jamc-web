@@ -71,12 +71,12 @@ export function QuestionHeader({ question, currentUserId }: QuestionHeaderProps)
   const typeBadge = getQuestionTypeBadge(question.type)
 
   return (
-    <Card className="mb-8">
+    <Card>
       <CardHeader>
-        <div className="flex flex-col space-y-2">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold">{question.title}</h1>
-            <Badge variant={typeBadge.variant} className="text-sm">
+        <div className="flex flex-col space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-bold break-words">{question.title}</h1>
+            <Badge variant={typeBadge.variant} className="text-sm w-fit">
               {typeBadge.icon} {typeBadge.label}
             </Badge>
           </div>
@@ -111,14 +111,14 @@ export function QuestionHeader({ question, currentUserId }: QuestionHeaderProps)
       <CardContent>
         <MathContent className="text-foreground mb-4" content={question.content} />
         <AttachmentList attachments={question.attachments} />
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center space-x-2">
             <UserLink user={question.author} />
             <span className="text-sm text-muted-foreground">
               <ClientDate date={question.createdAt} />
             </span>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <VoteButtons 
               itemId={question.id}
               upvotes={upvotes}
@@ -132,7 +132,7 @@ export function QuestionHeader({ question, currentUserId }: QuestionHeaderProps)
             )}
             <Button variant="ghost" size="sm">
               <Flag className="mr-1 h-4 w-4" />
-              Flag
+              <span>Flag</span>
             </Button>
           </div>
         </div>

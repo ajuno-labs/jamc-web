@@ -48,7 +48,7 @@ interface AnswerListProps {
 
 export function AnswerList({ answers, currentUserId, isEducator = false }: AnswerListProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {answers.map((answer) => {
         const upvotes = answer.votes.filter(v => v.value === 1).length
         const downvotes = answer.votes.filter(v => v.value === -1).length
@@ -63,13 +63,13 @@ export function AnswerList({ answers, currentUserId, isEducator = false }: Answe
         }
 
         return (
-          <div key={answer.id} className="space-y-4">
+          <div key={answer.id} className="space-y-3 sm:space-y-4">
             <EditableAnswer 
               answer={answer}
               currentUserId={currentUserId}
             />
             
-            <div className="flex items-center justify-between pl-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pl-3 sm:pl-6 gap-2 sm:gap-0">
               <VoteButtons 
                 itemId={answer.id}
                 upvotes={upvotes}
@@ -79,9 +79,10 @@ export function AnswerList({ answers, currentUserId, isEducator = false }: Answe
                 size="sm"
               />
               {isEducator && (
-                <Button variant="ghost" size="sm" className="text-yellow-600">
+                <Button variant="ghost" size="sm" className="text-yellow-600 w-fit">
                   <AlertTriangle className="mr-1 h-4 w-4" />
-                  Moderate
+                  <span className="hidden sm:inline">Moderate</span>
+                  <span className="sm:hidden">Mod</span>
                 </Button>
               )}
             </div>
@@ -90,4 +91,4 @@ export function AnswerList({ answers, currentUserId, isEducator = false }: Answe
       })}
     </div>
   )
-} 
+}
