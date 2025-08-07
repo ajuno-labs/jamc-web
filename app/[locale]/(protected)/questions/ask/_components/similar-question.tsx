@@ -2,14 +2,17 @@ import { AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { SimilarQuestion as SimilarQuestionType } from "../_actions/ask-data";
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 export default function SimilarQuestion({ similarQuestions }: { similarQuestions: SimilarQuestionType[] }) {
+    const t = useTranslations('AskQuestionPage.QuestionForm.similarQuestions');
+    
     return (
         <Card>
             <CardHeader>
-              <CardTitle>Similar Questions</CardTitle>
+              <CardTitle>{t('title')}</CardTitle>
               <CardDescription>
-                These questions might be related to yours. Check them out before posting!
+                {t('description')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -23,7 +26,7 @@ export default function SimilarQuestion({ similarQuestions }: { similarQuestions
                       </Link>
                     </div>
                     <span className="text-sm text-muted-foreground">
-                      {(question.similarity_score * 100).toFixed(0)}% match
+                      {(question.similarity_score * 100).toFixed(0)}% {t('match')}
                     </span>
                   </li>
                 ))}

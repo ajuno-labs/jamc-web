@@ -20,7 +20,7 @@ export function QuestionFormSidebar({
   const t = useTranslations('AskQuestionPage.QuestionForm');
 
   return (
-    <div className="space-y-6">
+    <div>
       {/* Similar Questions Section */}
       <div className="space-y-2">
         {isSimilarityLoading && (

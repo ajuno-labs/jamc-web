@@ -154,6 +154,26 @@
         "structuredDescription": "Giải thích và phân tích yêu cầu phản hồi chi tiết",
         "opinion": "Ý Kiến",
         "opinionDescription": "Câu hỏi phản ánh cá nhân và thảo luận"
+      },
+      "form": {
+        "title": "Tiêu Đề",
+        "titlePlaceholder": "Ví dụ: Làm thế nào để giải phương trình bậc hai?",
+        "description": "Mô Tả",
+        "descriptionPlaceholder": "Cung cấp thêm chi tiết về câu hỏi của bạn...",
+        "preview": "Xem Trước"
+      },
+      "similarQuestions": {
+        "title": "Câu Hỏi Tương Tự",
+        "description": "Những câu hỏi này có thể liên quan đến câu hỏi của bạn. Hãy xem trước khi đăng!",
+        "match": "khớp"
+      },
+      "guidelines": {
+        "title": "Hướng Dẫn Đăng Bài",
+        "beSpecific": "Hãy cụ thể và rõ ràng về câu hỏi của bạn",
+        "includeDetails": "Bao gồm tất cả chi tiết và ngữ cảnh liên quan",
+        "useFormatting": "Sử dụng định dạng phù hợp cho mã hoặc phương trình",
+        "checkSimilar": "Kiểm tra câu hỏi tương tự trước khi đăng",
+        "tagAppropriately": "Gắn thẻ phù hợp với câu hỏi"
       }
     }
   },
