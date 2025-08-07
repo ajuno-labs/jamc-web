@@ -135,6 +135,11 @@
       "unexpectedError": "An unexpected error occurred",
       "tags": "Tags",
       "tagsHint": "Select at least one tag to categorize your question",
+      "selectTags": "Select tags",
+      "tagsSelected": "{count} tags selected",
+      "searchTags": "Search tags...",
+      "noTagsFound": "No tags found.",
+      "clearAll": "Clear all",
       "topic": "Topic",
       "visibility": "Visibility",
       "selectVisibility": "Select visibility",
@@ -154,6 +159,26 @@
         "structuredDescription": "Explanations and analysis requiring detailed responses",
         "opinion": "Opinion",
         "opinionDescription": "Personal reflection and discussion questions"
+      },
+      "form": {
+        "title": "Question Title",
+        "titlePlaceholder": "e.g., How do I solve quadratic equations?",
+        "description": "Description",
+        "descriptionPlaceholder": "Provide more details about your question...",
+        "preview": "Preview"
+      },
+      "similarQuestions": {
+        "title": "Similar Questions",
+        "description": "These questions might be related to yours. Check them out before posting!",
+        "match": "match"
+      },
+      "guidelines": {
+        "title": "Posting Guidelines",
+        "beSpecific": "Be specific and clear about your question",
+        "includeDetails": "Include all relevant details and context",
+        "useFormatting": "Use proper formatting for code or equations",
+        "checkSimilar": "Check for similar questions before posting",
+        "tagAppropriately": "Tag your question appropriately"
       }
     }
   },

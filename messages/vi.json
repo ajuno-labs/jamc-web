@@ -98,8 +98,8 @@
       "placeholder": "Tìm kiếm câu hỏi...",
       "allTypes": "Tất Cả",
       "objective": "Khách Quan",
-      "structured": "Có Cấu Trúc",
-      "opinion": "Ý Kiến",
+      "structured": "Phân Tích",
+      "opinion": "Quan Điểm",
       "clearFilters": "Xóa Bộ Lọc",
       "selectTags": "Chọn thẻ",
       "tagsSelected": "{count} thẻ đã chọn",
@@ -135,6 +135,11 @@
       "unexpectedError": "Đã xảy ra lỗi không mong muốn",
       "tags": "Thẻ",
       "tagsHint": "Chọn ít nhất một thẻ để phân loại câu hỏi của bạn",
+      "selectTags": "Chọn thẻ",
+      "tagsSelected": "{count} thẻ đã chọn",
+      "searchTags": "Tìm kiếm thẻ...",
+      "noTagsFound": "Không tìm thấy thẻ nào.",
+      "clearAll": "Xóa tất cả",
       "topic": "Chủ đề",
       "visibility": "Hiển thị",
       "selectVisibility": "Chọn chế độ hiển thị",
@@ -150,10 +155,30 @@
         "label": "Loại Câu Hỏi",
         "objective": "Khách Quan",
         "objectiveDescription": "Câu hỏi dựa trên thực tế với câu trả lời cụ thể, chính xác",
-        "structured": "Có Cấu Trúc",
+        "structured": "Phân Tích",
         "structuredDescription": "Giải thích và phân tích yêu cầu phản hồi chi tiết",
-        "opinion": "Ý Kiến",
+        "opinion": "Quan Điểm",
         "opinionDescription": "Câu hỏi phản ánh cá nhân và thảo luận"
+      },
+      "form": {
+        "title": "Tiêu Đề",
+        "titlePlaceholder": "Ví dụ: Làm thế nào để giải phương trình bậc hai?",
+        "description": "Mô Tả",
+        "descriptionPlaceholder": "Cung cấp thêm chi tiết về câu hỏi của bạn...",
+        "preview": "Xem Trước"
+      },
+      "similarQuestions": {
+        "title": "Câu Hỏi Tương Tự",
+        "description": "Những câu hỏi này có thể liên quan đến câu hỏi của bạn. Hãy xem trước khi đăng!",
+        "match": "khớp"
+      },
+      "guidelines": {
+        "title": "Hướng Dẫn Đăng Bài",
+        "beSpecific": "Hãy cụ thể và rõ ràng về câu hỏi của bạn",
+        "includeDetails": "Bao gồm tất cả chi tiết và ngữ cảnh liên quan",
+        "useFormatting": "Sử dụng định dạng phù hợp cho mã hoặc phương trình",
+        "checkSimilar": "Kiểm tra câu hỏi tương tự trước khi đăng",
+        "tagAppropriately": "Gắn thẻ phù hợp với câu hỏi"
       }
     }
   },

@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card"
 import { MathContent } from "@/components/MathContent"
 import { PreviewToggle } from "../[id]/[slug]/_components/PreviewToggle"
 import { QuestionType, Visibility } from "@prisma/client"
+import { useTranslations } from "next-intl"
 
 interface FormData {
   title: string
@@ -36,21 +37,22 @@ export function QuestionFormFields({
   isSubmitting = false,
   showPreviewToggle = false,
   onTitleChange,
-  titlePlaceholder = "e.g., How do I solve quadratic equations?",
-  contentPlaceholder = "Provide more details about your question...",
+  titlePlaceholder,
+  contentPlaceholder,
   contentRows = 8,
 }: QuestionFormFieldsProps) {
+  const t = useTranslations('AskQuestionPage.QuestionForm.form');
   const [isPreview, setIsPreview] = useState(false)
 
   return (
     <>
       <div className="space-y-2">
-        <Label htmlFor="title">Question Title</Label>
+        <Label htmlFor="title">{t('title')}</Label>
         <Input
           id="title"
           {...register("title")}
           onChange={onTitleChange}
-          placeholder={titlePlaceholder}
+          placeholder={titlePlaceholder || t('titlePlaceholder')}
           disabled={isSubmitting}
         />
         {errors.title && (
@@ -60,7 +62,7 @@ export function QuestionFormFields({
 
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <Label htmlFor="content">Description</Label>
+          <Label htmlFor="content">{t('description')}</Label>
           {showPreviewToggle && (
             <PreviewToggle
               isPreview={isPreview}
@@ -77,7 +79,7 @@ export function QuestionFormFields({
           <Textarea
             id="content"
             {...register("content")}
-            placeholder={contentPlaceholder}
+            placeholder={contentPlaceholder || t('descriptionPlaceholder')}
             rows={contentRows}
             disabled={isSubmitting}
           />
@@ -91,7 +93,7 @@ export function QuestionFormFields({
 
       {!showPreviewToggle && (
         <div className="space-y-2">
-          <Label>Preview</Label>
+          <Label>{t('preview')}</Label>
           <Card className="p-4 bg-muted/50 min-h-[100px]">
             <MathContent content={contentValue || ""} />
           </Card>

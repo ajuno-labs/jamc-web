@@ -1,6 +1,6 @@
 import { Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { TagFilter } from "./tag-filter"
+import { TagSelector } from "@/components/tag-selector"
 import { useTranslations } from 'next-intl'
 import { QuestionType } from "@prisma/client"
 
@@ -67,7 +67,7 @@ export function QuestionSearch({
       </div>
       
       {/* Tag filter */}
-      <TagFilter 
+      <TagSelector 
         selectedTags={selectedTags} 
         onTagsChange={onTagsChange} 
       />

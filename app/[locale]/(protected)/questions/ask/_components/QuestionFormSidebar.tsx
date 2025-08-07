@@ -20,29 +20,29 @@ export function QuestionFormSidebar({
   const t = useTranslations('AskQuestionPage.QuestionForm');
 
   return (
-    <div className="space-y-6">
-      {/* Similar Questions Section */}
-      <div className="space-y-2">
-        {isSimilarityLoading && (
-          <div className="flex items-center gap-2">
-            <Loader2 className="animate-spin h-4 w-4" />
-            <span className="text-sm text-muted-foreground">
-              {t('similarity.loading')}
-            </span>
-          </div>
-        )}
-        
-        {similarityError && (
-          <p className="text-sm text-destructive">{similarityError}</p>
-        )}
-        
-        {similarQuestions.length > 0 && (
-          <SimilarQuestion similarQuestions={similarQuestions} />
-        )}
-      </div>
-
-      {/* Posting Guidelines */}
+    <div>
       <PostingGuideline />
+      
+      {(isSimilarityLoading || similarityError || similarQuestions.length > 0) && (
+        <div className="mt-6 space-y-2">
+          {isSimilarityLoading && (
+            <div className="flex items-center gap-2">
+              <Loader2 className="animate-spin h-4 w-4" />
+              <span className="text-sm text-muted-foreground">
+                {t('similarity.loading')}
+              </span>
+            </div>
+          )}
+
+          {similarityError && (
+            <p className="text-sm text-destructive">{similarityError}</p>
+          )}
+
+          {similarQuestions.length > 0 && (
+            <SimilarQuestion similarQuestions={similarQuestions} />
+          )}
+        </div>
+      )}
     </div>
-  );
+  )
 } 

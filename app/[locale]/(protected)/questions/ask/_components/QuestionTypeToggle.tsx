@@ -86,34 +86,38 @@ export function QuestionTypeToggle({
             value={field.value}
             onValueChange={field.onChange}
             disabled={isSubmitting}
-            className="grid grid-cols-1 md:grid-cols-3 gap-3"
+            className="grid grid-cols-3 gap-2 md:gap-3"
           >
             {Object.entries(createQuestionTypeConfig(t)).map(([type, config]) => {
               const Icon = config.icon;
               const isSelected = field.value === type;
               
               return (
-                <div key={type} className="relative">
-                  <RadioGroupItem
-                    value={type}
-                    id={type}
-                    className="sr-only"
-                  />
-                  <Label
-                    htmlFor={type}
-                    className={`flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                      isSelected
-                        ? `${config.bgColor} ${config.borderColor} ${config.color}`
-                        : 'bg-background border-border hover:bg-muted/50'
-                    }`}
-                  >
-                    <Icon className={`h-6 w-6 mb-2 ${isSelected ? config.color : 'text-muted-foreground'}`} />
-                    <span className="font-medium text-sm">{config.label}</span>
-                    <span className="text-xs text-muted-foreground text-center mt-1">
-                      {config.description}
-                    </span>
-                  </Label>
-                </div>
+                <Tooltip key={type}>
+                  <TooltipTrigger asChild>
+                    <div className="relative">
+                      <RadioGroupItem
+                        value={type}
+                        id={type}
+                        className="sr-only"
+                      />
+                      <Label
+                        htmlFor={type}
+                        className={`flex flex-col items-center justify-center h-16 md:h-20 p-2 md:p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                          isSelected
+                            ? `${config.bgColor} ${config.borderColor} ${config.color}`
+                            : 'bg-background border-border hover:bg-muted/50'
+                        }`}
+                      >
+                        <Icon className={`h-4 w-4 md:h-6 md:w-6 mb-1 ${isSelected ? config.color : 'text-muted-foreground'}`} />
+                        <span className="font-medium text-xs leading-tight text-center">{config.label}</span>
+                      </Label>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs">
+                    <p>{config.description}</p>
+                  </TooltipContent>
+                </Tooltip>
               );
             })}
           </RadioGroup>

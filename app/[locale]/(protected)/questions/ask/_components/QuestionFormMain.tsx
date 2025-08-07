@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { TagFilter } from "../../components/tag-filter";
+import { TagSelector } from "@/components/tag-selector";
 import { AttachmentUpload } from "./AttachmentUpload";
 import { AttachmentGallery } from "./AttachmentGallery";
 import { QuestionType, Visibility } from "@prisma/client";
@@ -54,10 +54,10 @@ export function QuestionFormMain({
     <div className="space-y-6">
       {/* Tags */}
       <div className="space-y-2">
-        <Label>{t('tags')}</Label>
-        <TagFilter
+        <TagSelector
           selectedTags={selectedTags}
           onTagsChange={setSelectedTags}
+          translationNamespace="AskQuestionPage.QuestionForm"
         />
         {selectedTags.length === 0 && (
           <p className="text-sm text-muted-foreground">
