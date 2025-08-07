@@ -168,7 +168,12 @@
         "description": "Description",
         "descriptionPlaceholder": "Provide more details about your question...",
         "preview": "Preview",
-        "addDetails": "Add details / examples"
+        "addDetails": "Add details / examples",
+        "formTab": "Form",
+        "previewTab": "Preview",
+        "contentPreview": "Content Preview",
+        "noTitleContent": "No title entered yet",
+        "noContentPreview": "No description added yet"
       },
       "similarQuestions": {
         "title": "Similar Questions",
