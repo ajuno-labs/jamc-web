@@ -19,13 +19,19 @@ export function Header({ user }: HeaderProps) {
 
   return (
     <header className="sticky top-0 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex justify-between h-14 items-center px-4">
-        <SidebarTrigger />
-        <SearchBar />
+      <div className="flex justify-between h-14 items-center px-2 sm:px-4">
         <div className="flex items-center gap-2">
+          <SidebarTrigger />
+        </div>
+        <div className="flex-1 max-w-md mx-2 sm:mx-4">
+          <SearchBar />
+        </div>
+        <div className="flex items-center gap-1 sm:gap-2">
           {user && <NotificationBell />}
           <ModeToggle />
-          <LanguageSwitcher />
+          <div className="hidden xs:block">
+            <LanguageSwitcher />
+          </div>
           <UserNav user={user} />
         </div>
       </div>
