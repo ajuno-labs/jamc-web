@@ -129,6 +129,12 @@ export async function getQuestionWithReputation(id: string) {
           image: true,
         },
       },
+      pseudonymousName: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
       votes: {
         select: {
           id: true,

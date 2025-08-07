@@ -180,6 +180,10 @@
         "checkSimilar": "Kiểm tra câu hỏi tương tự trước khi đăng",
         "tagAppropriately": "Gắn thẻ phù hợp với câu hỏi"
       }
+    },
+    "PseudonymousToggle": {
+      "title": "Đặt câu hỏi ẩn danh",
+      "description": "Tên của bạn sẽ được ẩn và thay thế bằng tên ẩn danh"
     }
   },
   "SearchPage": {

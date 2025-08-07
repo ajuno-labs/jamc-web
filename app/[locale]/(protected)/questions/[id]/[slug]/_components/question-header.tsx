@@ -8,7 +8,7 @@ import { VoteButtons } from "@/components/ui/vote-buttons"
 import { MathContent } from '@/components/MathContent'
 import { Link } from "@/i18n/navigation"
 import { Badge } from "@/components/ui/badge"
-import { UserLink } from "./UserLink"
+import { PseudonymousUserDisplay } from "./PseudonymousUserDisplay"
 import { EditButton } from "./EditButton"
 import { CommentSection } from "./CommentSection"
 import { useRouter } from "@/i18n/navigation"
@@ -31,6 +31,10 @@ interface QuestionHeaderProps {
       image: string | null
       reputation?: number
     }
+    pseudonymousName?: {
+      id: string
+      name: string
+    } | null
     createdAt: Date
     votes: Array<{ value: number, userId?: string }>
     currentUserVote?: number | null
@@ -113,7 +117,10 @@ export function QuestionHeader({ question, currentUserId }: QuestionHeaderProps)
         <AttachmentList attachments={question.attachments} />
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <UserLink user={question.author} />
+            <PseudonymousUserDisplay 
+              user={question.author} 
+              pseudonymousName={question.pseudonymousName}
+            />
             <span className="text-sm text-muted-foreground">
               <ClientDate date={question.createdAt} />
             </span>

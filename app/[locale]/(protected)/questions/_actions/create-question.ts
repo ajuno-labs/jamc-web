@@ -52,6 +52,7 @@ export async function createQuestion(formData: FormData) {
     const courseId = formData.get('courseId')?.toString() || undefined
     const lessonId = formData.get('lessonId')?.toString() || undefined
     const attachments = formData.getAll('attachments') as File[]
+    const isPseudonymous = formData.get('isPseudonymous')?.toString() === 'true'
 
     const classification = await questionClassificationService.classifyQuestion(title, content)
     const finalType = classification.confidence > 0.7 ? classification.type : userSelectedType
@@ -74,6 +75,18 @@ export async function createQuestion(formData: FormData) {
       )
     }
 
+    // Handle pseudonymous names
+    let pseudonymousNameId: string | undefined = undefined
+    if (isPseudonymous) {
+      // Get a random pseudonymous name
+      const randomName = await prisma.$queryRaw<{id: string}[]>`
+        SELECT id FROM "PseudonymousName" ORDER BY RANDOM() LIMIT 1
+      `
+      if (randomName.length > 0) {
+        pseudonymousNameId = randomName[0].id
+      }
+    }
+
     // Use the enhanced client to create the question according to access policies
     const question = await enhancedPrisma.question.create({
       data: {
@@ -93,6 +106,7 @@ export async function createQuestion(formData: FormData) {
         classificationReasoning: classification.reasoning,
         ...(courseId ? { course: { connect: { id: courseId } } } : {}),
         ...(lessonId ? { lesson: { connect: { id: lessonId } } } : {}),
+        ...(pseudonymousNameId ? { pseudonymousName: { connect: { id: pseudonymousNameId } } } : {}),
       }
     })
 

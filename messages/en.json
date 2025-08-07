@@ -180,6 +180,10 @@
         "checkSimilar": "Check for similar questions before posting",
         "tagAppropriately": "Tag your question appropriately"
       }
+    },
+    "PseudonymousToggle": {
+      "title": "Ask anonymously",
+      "description": "Your identity will be hidden and replaced with a pseudonymous name"
     }
   },
   "SearchPage": {
