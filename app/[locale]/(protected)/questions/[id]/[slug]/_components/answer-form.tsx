@@ -59,11 +59,11 @@ export function AnswerForm({ questionId }: AnswerFormProps) {
               {form.formState.errors.content.message}
             </p>
           )}
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" disabled={isPending} className="mt-4">
             {isPending ? "Posting..." : "Add Answer"}
           </Button>
         </form>
       </CardContent>
     </Card>
   )
-} 
+}

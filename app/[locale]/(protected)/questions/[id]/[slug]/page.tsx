@@ -67,10 +67,10 @@ export default async function QuestionPage({ params }: QuestionPageProps) {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="container mx-auto px-4 py-4 sm:py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
         {/* Main content area */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-8">
           <QuestionHeader question={enhancedQuestion} currentUserId={user?.id} />
           <AnswerList answers={answers} currentUserId={user?.id} isEducator={isEducator} />
           <AnswerForm questionId={questionId} />
