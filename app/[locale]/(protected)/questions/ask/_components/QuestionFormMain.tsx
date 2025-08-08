@@ -58,11 +58,9 @@ export function QuestionFormMain({
           onTagsChange={setSelectedTags}
           translationNamespace="AskQuestionPage.QuestionForm"
         />
-        {selectedTags.length === 0 && (
-          <p className="text-sm text-muted-foreground">
-            {t('tagsHint')}
-          </p>
-        )}
+        <p className="text-sm text-muted-foreground">
+          {t('tagsHint')}
+        </p>
       </div>
 
       {selectedTypeValue === QuestionType.STRUCTURED && (

@@ -121,11 +121,6 @@ export function QuestionForm({
   const selectedTypeValue = watch("type");
 
   const onSubmit = async (data: QuestionFormValues) => {
-    if (selectedTags.length === 0) {
-      toast.error(t('validation.tagsRequired'));
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {

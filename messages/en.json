@@ -134,7 +134,7 @@
       "postError": "Failed to post question",
       "unexpectedError": "An unexpected error occurred",
       "tags": "Tags",
-      "tagsHint": "Select at least one tag to categorize your question",
+      "tagsHint": "Select tags to categorize your question (optional)",
       "selectTags": "Select tags",
       "tagsSelected": "{count} tags selected",
       "searchTags": "Search tags...",
