@@ -51,6 +51,16 @@ export function QuestionFormMain({
 
   return (
     <div className="space-y-6">
+      {selectedTypeValue === QuestionType.STRUCTURED && (
+        <div className="space-y-4">
+          <AttachmentUpload onFilesSelected={setAttachments} />
+          <AttachmentGallery
+            files={attachments}
+            onRemove={(f) => setAttachments(attachments.filter(a => a !== f))}
+          />
+        </div>
+      )}
+
       {/* Tags */}
       <div className="space-y-2">
         <TagSelector
@@ -62,16 +72,6 @@ export function QuestionFormMain({
           {t('tagsHint')}
         </p>
       </div>
-
-      {selectedTypeValue === QuestionType.STRUCTURED && (
-        <div className="space-y-4">
-          <AttachmentUpload onFilesSelected={setAttachments} />
-          <AttachmentGallery
-            files={attachments}
-            onRemove={(f) => setAttachments(attachments.filter(a => a !== f))}
-          />
-        </div>
-      )}
 
       {/* Visibility */}
       <div className="space-y-2">
