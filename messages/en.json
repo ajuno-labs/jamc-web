@@ -140,6 +140,12 @@
       "searchTags": "Search tags...",
       "noTagsFound": "No tags found.",
       "clearAll": "Clear all",
+      "attachments": {
+        "dragAndDrop": "Drag and drop files here",
+        "supportedFormats": "Supports: PDF, JPG, PNG, GIF",
+        "browseFiles": "Browse files",
+        "fileTooLarge": "{fileName} is too large. Max size is {maxSize} MB."
+      },
       "visibility": "Visibility",
       "selectVisibility": "Select visibility",
       "public": "Public",

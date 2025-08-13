@@ -140,6 +140,12 @@
       "searchTags": "Tìm kiếm thẻ...",
       "noTagsFound": "Không tìm thấy thẻ nào.",
       "clearAll": "Xóa tất cả",
+      "attachments": {
+        "dragAndDrop": "Kéo và thả tệp vào đây",
+        "supportedFormats": "Hỗ trợ: PDF, JPG, PNG, GIF",
+        "browseFiles": "Duyệt tệp",
+        "fileTooLarge": "{fileName} quá lớn. Kích thước tối đa là {maxSize} MB."
+      },
       "visibility": "Hiển thị",
       "selectVisibility": "Chọn chế độ hiển thị",
       "public": "Công khai",
