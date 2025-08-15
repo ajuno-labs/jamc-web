@@ -134,13 +134,18 @@
       "postError": "Không thể đăng câu hỏi",
       "unexpectedError": "Đã xảy ra lỗi không mong muốn",
       "tags": "Thẻ",
-      "tagsHint": "Chọn ít nhất một thẻ để phân loại câu hỏi của bạn",
+      "tagsHint": "Chọn thẻ để phân loại câu hỏi của bạn (tùy chọn)",
       "selectTags": "Chọn thẻ",
       "tagsSelected": "{count} thẻ đã chọn",
       "searchTags": "Tìm kiếm thẻ...",
       "noTagsFound": "Không tìm thấy thẻ nào.",
       "clearAll": "Xóa tất cả",
-      "topic": "Chủ đề",
+      "attachments": {
+        "dragAndDrop": "Kéo và thả tệp vào đây",
+        "supportedFormats": "Hỗ trợ: PDF, JPG, PNG, GIF",
+        "browseFiles": "Duyệt tệp",
+        "fileTooLarge": "{fileName} quá lớn. Kích thước tối đa là {maxSize} MB."
+      },
       "visibility": "Hiển thị",
       "selectVisibility": "Chọn chế độ hiển thị",
       "public": "Công khai",
@@ -163,9 +168,17 @@
       "form": {
         "title": "Tiêu Đề",
         "titlePlaceholder": "Ví dụ: Làm thế nào để giải phương trình bậc hai?",
+        "titleHelper": "Nêu câu hỏi trong một dòng ngắn gọn",
+        "titlePreview": "Xem Trước Tiêu Đề",
         "description": "Mô Tả",
         "descriptionPlaceholder": "Cung cấp thêm chi tiết về câu hỏi của bạn...",
-        "preview": "Xem Trước"
+        "preview": "Xem Trước",
+        "addDetails": "Thêm mô tả",
+        "formTab": "Biểu Mẫu",
+        "previewTab": "Xem Trước",
+        "contentPreview": "Xem Trước Nội Dung",
+        "noTitleContent": "Chưa nhập tiêu đề",
+        "noContentPreview": "Chưa thêm mô tả"
       },
       "similarQuestions": {
         "title": "Câu Hỏi Tương Tự",

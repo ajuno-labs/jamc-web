@@ -3,25 +3,11 @@
 import { prisma } from "@/prisma";
 import { QuestionType, Prisma } from "@prisma/client";
 import { auth } from "@/auth";
-import { questionWithRelationsInclude } from "@/lib/types/prisma";
 import { getEnhancedPrisma } from "@/lib/db/enhanced";
+import { questionSearchIncludeArgs, QuestionSearch, QuestionSearchResult } from "@/lib/db/query-args";
 
 interface SearchQuestionsResult {
-  items: Array<{
-    id: string;
-    slug: string;
-    title: string;
-    content: string;
-    type: QuestionType;
-    author: {
-      name: string | null;
-      image: string | null;
-    };
-    tags: Array<{ name: string }>;
-    answerCount: number;
-    voteCount: number;
-    createdAt: string;
-  }>;
+  items: QuestionSearchResult[];
   total: number;
   hasMore: boolean;
 }
@@ -125,7 +111,7 @@ export async function searchQuestions(
     // Get paginated questions
     const questions = await db.question.findMany({
       where,
-      include: questionWithRelationsInclude,
+      include: questionSearchIncludeArgs,
       orderBy: {
         createdAt: "desc",
       },
@@ -141,18 +127,15 @@ export async function searchQuestions(
     }
 
     return {
-      items: questions.map((question) => ({
-        id: question.id,
-        slug: question.slug,
-        title: question.title,
-        content: question.content,
-        type: question.type,
-        author: question.author,
-        tags: question.tags,
-        answerCount: question._count.answers,
-        voteCount: question._count.votes,
-        createdAt: question.createdAt.toISOString(),
-      })),
+      items: questions.map((question: QuestionSearch): QuestionSearchResult => {
+        const { _count, createdAt, ...rest } = question;
+        return {
+          ...rest,
+          answerCount: _count.answers,
+          voteCount: _count.votes,
+          createdAt: createdAt.toISOString(),
+        };
+      }),
       total,
       hasMore: skip + questions.length < total,
     };

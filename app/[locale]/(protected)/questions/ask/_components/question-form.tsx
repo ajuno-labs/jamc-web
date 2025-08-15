@@ -28,14 +28,16 @@ const createQuestionSchema = (t: (key: string) => string) => z.object({
     .max(150, { message: t('validation.titleMax') }),
   content: z
     .string()
-    .min(20, { message: t('validation.contentMin') }),
+    .optional()
+    .refine((val) => !val || val.length >= 20, {
+      message: t('validation.contentMin'),
+    }),
   type: z.nativeEnum(QuestionType, {
     errorMap: () => ({ message: t('validation.typeRequired') }),
   }),
   visibility: z.nativeEnum(Visibility, {
     errorMap: () => ({ message: t('validation.visibilityRequired') }),
   }),
-  topic: z.string().optional(),
 });
 
 type QuestionFormValues = z.infer<ReturnType<typeof createQuestionSchema>>;
@@ -78,7 +80,7 @@ export function QuestionForm({
     resolver: zodResolver(questionSchema),
     defaultValues: {
       title: "",
-      content: "",
+      content: undefined,
       type: QuestionType.STRUCTURED,
       visibility: Visibility.PUBLIC,
     },
@@ -108,32 +110,25 @@ export function QuestionForm({
     500
   );
 
-  const handleTitleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTitleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const title = e.target.value;
     register("title").onChange(e);
     debouncedSimilarityCheck(title);
   };
 
   const contentValue = watch("content");
+  const titleValue = watch("title");
   const selectedTypeValue = watch("type");
 
   const onSubmit = async (data: QuestionFormValues) => {
-    if (selectedTags.length === 0) {
-      toast.error(t('validation.tagsRequired'));
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
       const formData = new FormData();
       formData.append('title', data.title);
-      formData.append('content', data.content);
+      formData.append('content', data.content || '');
       formData.append('type', data.type);
       formData.append('visibility', data.visibility);
-      if (data.type === QuestionType.STRUCTURED && data.topic) {
-        formData.append('topic', data.topic);
-      }
       selectedTags.forEach(t => formData.append('tags', t));
       if (localContext.courseId) formData.append('courseId', localContext.courseId);
       if (localContext.lessonId) formData.append('lessonId', localContext.lessonId);
@@ -175,13 +170,13 @@ export function QuestionForm({
             register={register}
             errors={errors}
             contentValue={contentValue}
+            titleValue={titleValue}
             isSubmitting={isSubmitting}
-            showPreviewToggle={false}
             onTitleChange={handleTitleChange}
+            allowProgressiveDisclosure={true}
           />
 
           <QuestionFormMain
-            register={register}
             control={control}
             errors={errors}
             selectedTags={selectedTags}

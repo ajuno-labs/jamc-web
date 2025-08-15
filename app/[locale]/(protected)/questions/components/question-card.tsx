@@ -11,7 +11,7 @@ interface QuestionCardProps {
   id: string
   slug: string
   title: string
-  content: string
+  content: string | null
   type: QuestionType
   author: {
     name: string | null
@@ -56,7 +56,9 @@ export function QuestionCard({
           {type}
         </Badge>
       </div>
-      <MathContent className="text-muted-foreground mb-4 line-clamp-2" content={content} />
+      {content && (
+        <MathContent className="text-muted-foreground mb-4 line-clamp-2" content={content} />
+      )}
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">

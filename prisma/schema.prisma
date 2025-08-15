@@ -198,12 +198,11 @@ model PseudonymousName {
 model Question {
   id                       String            @id() @default(cuid())
   title                    String
-  content                  String
+  content                  String?
   type                     QuestionType
   visibility               Visibility        @default(PUBLIC)
   classificationConfidence Float?            @default(0.0)
   classificationReasoning  String[]          @default([])
-  topic                    String?
   attachments              Attachment[]
   createdAt                DateTime          @default(now())
   updatedAt                DateTime          @updatedAt()

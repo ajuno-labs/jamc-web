@@ -134,13 +134,18 @@
       "postError": "Failed to post question",
       "unexpectedError": "An unexpected error occurred",
       "tags": "Tags",
-      "tagsHint": "Select at least one tag to categorize your question",
+      "tagsHint": "Select tags to categorize your question (optional)",
       "selectTags": "Select tags",
       "tagsSelected": "{count} tags selected",
       "searchTags": "Search tags...",
       "noTagsFound": "No tags found.",
       "clearAll": "Clear all",
-      "topic": "Topic",
+      "attachments": {
+        "dragAndDrop": "Drag and drop files here",
+        "supportedFormats": "Supports: PDF, JPG, PNG, GIF",
+        "browseFiles": "Browse files",
+        "fileTooLarge": "{fileName} is too large. Max size is {maxSize} MB."
+      },
       "visibility": "Visibility",
       "selectVisibility": "Select visibility",
       "public": "Public",
@@ -163,9 +168,17 @@
       "form": {
         "title": "Question Title",
         "titlePlaceholder": "e.g., How do I solve quadratic equations?",
+        "titleHelper": "State the question in one concise line",
+        "titlePreview": "Title Preview",
         "description": "Description",
         "descriptionPlaceholder": "Provide more details about your question...",
-        "preview": "Preview"
+        "preview": "Preview",
+        "addDetails": "Add details / examples",
+        "formTab": "Form",
+        "previewTab": "Preview",
+        "contentPreview": "Content Preview",
+        "noTitleContent": "No title entered yet",
+        "noContentPreview": "No description added yet"
       },
       "similarQuestions": {
         "title": "Similar Questions",

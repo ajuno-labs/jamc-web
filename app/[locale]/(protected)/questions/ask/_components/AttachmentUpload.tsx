@@ -7,6 +7,7 @@ import { Upload, File as FileIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { MAX_UPLOAD_SIZE_BYTES, MAX_UPLOAD_SIZE_MB } from "@/lib/config/upload"
+import { useTranslations } from "next-intl"
 
 type UploadingFile = {
   id: string
@@ -20,6 +21,7 @@ export interface AttachmentUploadProps {
 }
 
 export function AttachmentUpload({ onFilesSelected }: AttachmentUploadProps) {
+  const t = useTranslations('AskQuestionPage.QuestionForm.attachments')
   const [isDragging, setIsDragging] = useState(false)
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([])
   const [errorMessages, setErrorMessages] = useState<string[]>([])
@@ -54,7 +56,7 @@ export function AttachmentUpload({ onFilesSelected }: AttachmentUploadProps) {
     // Validate file sizes
     const oversize = files.filter(file => file.size > MAX_UPLOAD_SIZE_BYTES)
     if (oversize.length > 0) {
-      setErrorMessages(oversize.map(f => `${f.name} is too large. Max size is ${MAX_UPLOAD_SIZE_MB} MB.`))
+      setErrorMessages(oversize.map(f => t('fileTooLarge', { fileName: f.name, maxSize: MAX_UPLOAD_SIZE_MB })))
     } else {
       setErrorMessages([])
     }
@@ -128,8 +130,8 @@ export function AttachmentUpload({ onFilesSelected }: AttachmentUploadProps) {
       >
         <div className="flex flex-col items-center justify-center space-y-2">
           <Upload className="h-10 w-10 text-muted-foreground" />
-          <p className="text-sm font-medium">Drag and drop files here</p>
-          <p className="text-xs text-muted-foreground">Supports: PDF, JPG, PNG, GIF</p>
+          <p className="text-sm font-medium">{t('dragAndDrop')}</p>
+          <p className="text-xs text-muted-foreground">{t('supportedFormats')}</p>
           <div className="mt-2">
             <label htmlFor="file-upload">
               <Button type="button"
@@ -139,7 +141,7 @@ export function AttachmentUpload({ onFilesSelected }: AttachmentUploadProps) {
                 onClick={() => document.getElementById("file-upload")?.click()}
               >
                 <FileIcon className="h-4 w-4 mr-2" />
-                Browse files
+                {t('browseFiles')}
               </Button>
               <input
                 id="file-upload"

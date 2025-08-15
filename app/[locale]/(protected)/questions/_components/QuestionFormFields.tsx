@@ -2,18 +2,15 @@
 
 import { useState } from "react"
 import { UseFormRegister, FieldErrors } from "react-hook-form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Card } from "@/components/ui/card"
-import { MathContent } from "@/components/MathContent"
-import { PreviewToggle } from "../[id]/[slug]/_components/PreviewToggle"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { QuestionType, Visibility } from "@prisma/client"
 import { useTranslations } from "next-intl"
+import { QuestionFormTab } from "./QuestionFormTab"
+import { QuestionPreviewTab } from "./QuestionPreviewTab"
 
 interface FormData {
   title: string
-  content: string
+  content?: string
   type: QuestionType
   visibility: Visibility
 }
@@ -21,84 +18,73 @@ interface FormData {
 interface QuestionFormFieldsProps {
   register: UseFormRegister<FormData>
   errors: FieldErrors<FormData>
-  contentValue: string
+  contentValue: string | undefined
+  titleValue?: string
   isSubmitting?: boolean
-  showPreviewToggle?: boolean
-  onTitleChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onTitleChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
   titlePlaceholder?: string
   contentPlaceholder?: string
   contentRows?: number
+  allowProgressiveDisclosure?: boolean
 }
 
 export function QuestionFormFields({
   register,
   errors,
   contentValue,
+  titleValue = '',
   isSubmitting = false,
-  showPreviewToggle = false,
   onTitleChange,
   titlePlaceholder,
   contentPlaceholder,
   contentRows = 8,
+  allowProgressiveDisclosure = false,
 }: QuestionFormFieldsProps) {
   const t = useTranslations('AskQuestionPage.QuestionForm.form');
-  const [isPreview, setIsPreview] = useState(false)
+  const [showDescription, setShowDescription] = useState(!allowProgressiveDisclosure)
+  const [hasDescriptionContent, setHasDescriptionContent] = useState(false)
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const { onChange } = register("content")
+    onChange(e)
+    setHasDescriptionContent(e.target.value.trim().length > 0)
+
+    if (allowProgressiveDisclosure && e.target.value.trim().length === 0 && showDescription) {
+      setShowDescription(false)
+    }
+  }
 
   return (
-    <>
-      <div className="space-y-2">
-        <Label htmlFor="title">{t('title')}</Label>
-        <Input
-          id="title"
-          {...register("title")}
-          onChange={onTitleChange}
-          placeholder={titlePlaceholder || t('titlePlaceholder')}
-          disabled={isSubmitting}
+    <Tabs defaultValue="form" className="w-full">
+      <TabsList className="grid w-full grid-cols-2">
+        <TabsTrigger value="form">{t('formTab')}</TabsTrigger>
+        <TabsTrigger value="preview">{t('previewTab')}</TabsTrigger>
+      </TabsList>
+      
+      <TabsContent value="form" className="mt-4">
+        <QuestionFormTab
+          register={register}
+          errors={errors}
+          onTitleChange={onTitleChange}
+          titlePlaceholder={titlePlaceholder}
+          contentPlaceholder={contentPlaceholder}
+          contentRows={contentRows}
+          isSubmitting={isSubmitting}
+          allowProgressiveDisclosure={allowProgressiveDisclosure}
+          showDescription={showDescription}
+          setShowDescription={setShowDescription}
+          hasDescriptionContent={hasDescriptionContent}
+          handleDescriptionChange={handleDescriptionChange}
         />
-        {errors.title && (
-          <p className="text-sm text-destructive">{errors.title.message}</p>
-        )}
-      </div>
+      </TabsContent>
 
-      <div className="space-y-2">
-        <div className="flex justify-between items-center">
-          <Label htmlFor="content">{t('description')}</Label>
-          {showPreviewToggle && (
-            <PreviewToggle
-              isPreview={isPreview}
-              onToggle={() => setIsPreview(!isPreview)}
-            />
-          )}
-        </div>
-        
-        {showPreviewToggle && isPreview ? (
-          <Card className="p-4 bg-muted/50 min-h-[200px]">
-            <MathContent content={contentValue || ""} />
-          </Card>
-        ) : (
-          <Textarea
-            id="content"
-            {...register("content")}
-            placeholder={contentPlaceholder || t('descriptionPlaceholder')}
-            rows={contentRows}
-            disabled={isSubmitting}
-          />
-        )}
-        {errors.content && (
-          <p className="text-sm text-destructive">
-            {errors.content.message}
-          </p>
-        )}
-      </div>
-
-      {!showPreviewToggle && (
-        <div className="space-y-2">
-          <Label>{t('preview')}</Label>
-          <Card className="p-4 bg-muted/50 min-h-[100px]">
-            <MathContent content={contentValue || ""} />
-          </Card>
-        </div>
-      )}
-    </>
+      <TabsContent value="preview" className="mt-4">
+        <QuestionPreviewTab
+          titleValue={titleValue}
+          contentValue={contentValue || ""}
+          showDescription={showDescription}
+        />
+      </TabsContent>
+    </Tabs>
   )
 } 

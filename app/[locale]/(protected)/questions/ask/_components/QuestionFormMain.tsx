@@ -1,6 +1,6 @@
 "use client";
 
-import { Control, Controller, UseFormRegister, FieldErrors } from "react-hook-form";
+import { Control, Controller, FieldErrors } from "react-hook-form";
 import {
   Select,
   SelectContent,
@@ -9,7 +9,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { TagSelector } from "@/components/tag-selector";
 import { AttachmentUpload } from "./AttachmentUpload";
 import { AttachmentGallery } from "./AttachmentGallery";
@@ -19,14 +18,12 @@ import { useTranslations } from "next-intl";
 // Define the form values type
 type QuestionFormValues = {
   title: string;
-  content: string;
+  content?: string;
   type: QuestionType;
   visibility: Visibility;
-  topic?: string;
 };
 
 interface QuestionFormMainProps {
-  register: UseFormRegister<QuestionFormValues>;
   control: Control<QuestionFormValues>;
   errors: FieldErrors<QuestionFormValues>;
   selectedTags: string[];
@@ -38,7 +35,6 @@ interface QuestionFormMainProps {
 }
 
 export function QuestionFormMain({
-  register,
   control,
   errors,
   selectedTags,
@@ -52,6 +48,16 @@ export function QuestionFormMain({
 
   return (
     <div className="space-y-6">
+      {selectedTypeValue === QuestionType.STRUCTURED && (
+        <div className="space-y-4">
+          <AttachmentUpload onFilesSelected={setAttachments} />
+          <AttachmentGallery
+            files={attachments}
+            onRemove={(f) => setAttachments(attachments.filter(a => a !== f))}
+          />
+        </div>
+      )}
+
       {/* Tags */}
       <div className="space-y-2">
         <TagSelector
@@ -59,27 +65,10 @@ export function QuestionFormMain({
           onTagsChange={setSelectedTags}
           translationNamespace="AskQuestionPage.QuestionForm"
         />
-        {selectedTags.length === 0 && (
-          <p className="text-sm text-muted-foreground">
-            {t('tagsHint')}
-          </p>
-        )}
+        <p className="text-sm text-muted-foreground">
+          {t('tagsHint')}
+        </p>
       </div>
-
-      {/* Topic and Attachments (Structured mode only) */}
-      {selectedTypeValue === QuestionType.STRUCTURED && (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="topic">{t('topic')}</Label>
-            <Input id="topic" {...register("topic")} disabled={isSubmitting} />
-          </div>
-          <AttachmentUpload onFilesSelected={setAttachments} />
-          <AttachmentGallery 
-            files={attachments} 
-            onRemove={(f) => setAttachments(attachments.filter(a => a !== f))} 
-          />
-        </div>
-      )}
 
       {/* Visibility */}
       <div className="space-y-2">

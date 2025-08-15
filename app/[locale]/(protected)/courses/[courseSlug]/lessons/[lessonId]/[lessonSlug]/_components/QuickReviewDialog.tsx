@@ -7,13 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { BookOpen, ArrowLeft } from 'lucide-react';
 import { getReviewQuestions }  from '../_actions/review-actions'
 import { MathContent } from '@/components/MathContent';
-
-interface Question {
-  id: string;
-  title: string;
-  content: string;
-  slug: string;
-}
+import type { QuestionReview } from '@/lib/db/query-args';
 
 interface QuickReviewDialogProps {
   open: boolean;
@@ -28,7 +22,7 @@ export default function QuickReviewDialog({
   lessonId,
   lessonTitle,
 }: QuickReviewDialogProps) {
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<QuestionReview[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -85,7 +79,7 @@ export default function QuickReviewDialog({
                       <div className="flex-1 space-y-2">
                         <h4 className="font-medium">{question.title}</h4>
                         <div className="text-muted-foreground">
-                          <MathContent content={question.content} />
+                          <MathContent content={question.content || ""} />
                         </div>
                       </div>
                     </div>

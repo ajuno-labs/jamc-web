@@ -13,29 +13,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useDebounce } from "@/lib/hooks/use-debounce";
 import { searchQuestions } from "@/lib/actions/search-actions";
 import { QuestionType } from "@prisma/client";
-
-interface SearchResult {
-  id: string;
-  title: string;
-  content: string;
-  type: QuestionType;
-  author: {
-    name: string | null;
-    image: string | null;
-  };
-  tags: Array<{ name: string }>;
-  answerCount: number;
-  voteCount: number;
-  createdAt: string;
-  slug: string;
-}
+import type { QuestionSearchResult } from "@/lib/db/query-args";
 
 export function CommandMenu({ ...dialogProps }: DialogProps) {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
   const debouncedQuery = useDebounce(query, 300);
-  const [results, setResults] = React.useState<SearchResult[]>([]);
+  const [results, setResults] = React.useState<QuestionSearchResult[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
