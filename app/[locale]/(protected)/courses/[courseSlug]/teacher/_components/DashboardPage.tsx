@@ -16,17 +16,10 @@ import { StudentsSection } from "./StudentsSection"
 import { ActivityNotificationCard } from "./ActivityNotificationCard"
 import type { CourseActivitySummary } from "@/lib/types/student-activity"
 import type { WeeklyActivityData, ModuleProgressData, EnrollmentTrendData } from "@/lib/types/dashboard"
+import type { QuestionWithVotes } from "@/lib/db/query-args"
 
 export interface DashboardPageProps {
-  questions: {
-    id: string
-    content: string
-    slug: string
-    createdAt: string
-    author: { id: string; name: string }
-    _count: { answers: number }
-    votes?: { value: number }[]
-  }[]
+  questions: (Omit<QuestionWithVotes, 'createdAt'> & { createdAt: string })[]
   courses: { slug: string; title: string }[]
   currentCourseSlug: string
   joinCode: string | null

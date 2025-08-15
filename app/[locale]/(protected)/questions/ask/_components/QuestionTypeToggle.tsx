@@ -14,7 +14,7 @@ import { useTranslations } from "next-intl";
 
 type QuestionFormValues = {
   title: string;
-  content: string;
+  content?: string;
   type: QuestionType;
   visibility: Visibility;
 };

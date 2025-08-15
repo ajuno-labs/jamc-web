@@ -15,7 +15,6 @@ import { PreviewToggle } from "../../_components/PreviewToggle"
 import { updateQuestion } from "../../_actions/question-edit-actions"
 import { toast } from "sonner"
 
-// Define the form schema with zod
 const editQuestionSchema = z.object({
   title: z
     .string()
@@ -32,7 +31,7 @@ interface EditQuestionFormProps {
   question: {
     id: string
     title: string
-    content: string
+    content: string | null
     slug: string
   }
   questionId: string
@@ -53,7 +52,7 @@ export function EditQuestionForm({ question, questionId, questionSlug }: EditQue
     resolver: zodResolver(editQuestionSchema),
     defaultValues: {
       title: question.title,
-      content: question.content,
+      content: question.content || "",
     },
   })
 

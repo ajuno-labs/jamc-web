@@ -1,6 +1,7 @@
 "use server";
 
 import { getEnhancedPrisma } from "@/lib/db/enhanced";
+import { questionReviewSelectArgs } from "@/lib/db/query-args";
 
 export async function getReviewQuestions(lessonId: string) {
   if (!lessonId) {
@@ -12,12 +13,7 @@ export async function getReviewQuestions(lessonId: string) {
   // Get all questions for this lesson
   const questions = await prisma.question.findMany({
     where: { lessonId },
-    select: {
-      id: true,
-      title: true,
-      content: true,
-      slug: true,
-    },
+    select: questionReviewSelectArgs,
     orderBy: { createdAt: "desc" },
   });
 

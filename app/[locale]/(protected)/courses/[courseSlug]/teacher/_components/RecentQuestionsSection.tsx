@@ -6,31 +6,18 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { QuestionsList } from './QuestionsList'
+import type { QuestionWithVotes } from "@/lib/db/query-args"
 
 // Define proper types for tab values
 type QuestionTabType = 'all' | 'unanswered' | 'flagged'
 
-interface QuestionVote {
-  value: number // 1 for upvote, -1 for downvote
-}
-
-interface Question {
-  id: string
-  content: string
-  slug: string
-  createdAt: string
-  author: { id: string; name: string }
-  _count: { answers: number }
-  votes?: QuestionVote[] // Add votes to calculate flagged status
-}
-
 interface RecentQuestionsSectionProps {
-  questions: Question[]
+  questions: (Omit<QuestionWithVotes, 'createdAt'> & { createdAt: string })[]
   currentCourseSlug: string
 }
 
 // Helper function to calculate vote score and determine if question is flagged
-const calculateVoteScore = (votes: QuestionVote[] = []): number => {
+const calculateVoteScore = (votes: { value: number }[] = []): number => {
   return votes.reduce((total, vote) => total + vote.value, 0)
 }
 
@@ -43,7 +30,7 @@ const calculateVoteScore = (votes: QuestionVote[] = []): number => {
  * This helps teachers identify questions that may need attention due to
  * quality issues, inappropriate content, or other concerns raised by the community.
  */
-const isQuestionFlagged = (question: Question): boolean => {
+const isQuestionFlagged = (question: Omit<QuestionWithVotes, 'createdAt'> & { createdAt: string }): boolean => {
   const voteScore = calculateVoteScore(question.votes)
   // Consider a question flagged if it has a negative vote score (more downvotes than upvotes)
   // and has at least 2 votes to avoid flagging questions with just one downvote

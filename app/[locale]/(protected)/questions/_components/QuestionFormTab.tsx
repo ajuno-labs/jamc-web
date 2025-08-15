@@ -10,7 +10,7 @@ import { Plus, ChevronDown, ChevronUp } from "lucide-react"
 
 interface FormData {
   title: string
-  content: string
+  content?: string
   type: QuestionType
   visibility: Visibility
 }

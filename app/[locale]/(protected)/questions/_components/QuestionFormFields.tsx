@@ -10,7 +10,7 @@ import { QuestionPreviewTab } from "./QuestionPreviewTab"
 
 interface FormData {
   title: string
-  content: string
+  content?: string
   type: QuestionType
   visibility: Visibility
 }
@@ -18,10 +18,9 @@ interface FormData {
 interface QuestionFormFieldsProps {
   register: UseFormRegister<FormData>
   errors: FieldErrors<FormData>
-  contentValue: string
+  contentValue: string | undefined
   titleValue?: string
   isSubmitting?: boolean
-  showPreviewToggle?: boolean
   onTitleChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
   titlePlaceholder?: string
   contentPlaceholder?: string
@@ -35,7 +34,6 @@ export function QuestionFormFields({
   contentValue,
   titleValue = '',
   isSubmitting = false,
-  showPreviewToggle = false,
   onTitleChange,
   titlePlaceholder,
   contentPlaceholder,
@@ -43,7 +41,6 @@ export function QuestionFormFields({
   allowProgressiveDisclosure = false,
 }: QuestionFormFieldsProps) {
   const t = useTranslations('AskQuestionPage.QuestionForm.form');
-  const [isPreview, setIsPreview] = useState(false)
   const [showDescription, setShowDescription] = useState(!allowProgressiveDisclosure)
   const [hasDescriptionContent, setHasDescriptionContent] = useState(false)
 

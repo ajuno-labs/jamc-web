@@ -76,14 +76,9 @@ export default async function TeacherDashboardPage({ params }: TeacherDashboardP
     where: { courseId: course.id, answers: { none: {} } },
   });
 
-  const questions = rawQuestions.map((q: QuestionWithVotes) => ({
-    id: q.id,
-    content: q.content,
-    slug: q.slug,
+  const questions: (Omit<QuestionWithVotes, 'createdAt'> & { createdAt: string })[] = rawQuestions.map((q: QuestionWithVotes) => ({
+    ...q,
     createdAt: q.createdAt.toISOString(),
-    author: { id: q.author.id, name: q.author.name ?? "Unknown" },
-    _count: q._count,
-    votes: q.votes,
   }));
 
   const [weeklyActivityData, moduleCompletionData, enrollmentTrendData] = await Promise.all([

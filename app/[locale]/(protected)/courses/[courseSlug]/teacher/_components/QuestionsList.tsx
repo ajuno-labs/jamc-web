@@ -3,21 +3,14 @@ import React from "react";
 import { Clock, MessageSquare, AlertTriangle, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { MathContent } from "@/components/MathContent";
+import type { QuestionWithVotes } from "@/lib/db/query-args";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export interface QuestionsListProps {
-  questions: {
-    id: string;
-    content: string;
-    slug: string;
-    createdAt: string;
-    author: { id: string; name: string };
-    _count: { answers: number };
-    votes?: { value: number }[];
-  }[];
+  questions: (Omit<QuestionWithVotes, 'createdAt'> & { createdAt: string })[];
 }
 
 // Helper functions for vote calculations
@@ -48,11 +41,11 @@ export const QuestionsList: React.FC<QuestionsListProps> = ({ questions }) => {
           <div key={question.id} className={`rounded-lg border p-4 ${isFlagged ? 'border-destructive/50 bg-destructive/5' : ''}`}>
             <div className="flex items-start gap-4">
               <Avatar className="h-8 w-8">
-                <AvatarFallback>{question.author.name.charAt(0)}</AvatarFallback>
+                <AvatarFallback>{(question.author.name || "?").charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="flex-1 flex flex-col">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium">{question.author.name}</span>
+                  <span className="font-medium">{question.author.name || "Anonymous"}</span>
                   <span className="text-xs text-muted-foreground">
                     • {new Date(question.createdAt).toLocaleDateString()}
                   </span>
@@ -69,7 +62,7 @@ export const QuestionsList: React.FC<QuestionsListProps> = ({ questions }) => {
                   )}
                 </div>
                 <div className="mt-1 text-sm">
-                  <MathContent content={question.content} />
+                  <MathContent content={question.content || ""} />
                 </div>
                 <div className="mt-2 flex items-center gap-4 text-xs text-muted-foreground">
                   <Clock className="h-3 w-3" />

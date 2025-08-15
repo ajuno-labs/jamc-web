@@ -10,22 +10,7 @@ import { QuestionCard } from "./components/question-card";
 import { QuestionPagination } from "./components/question-pagination";
 import { useDebounce } from "@/lib/hooks/use-debounce";
 import { useTranslations } from "next-intl";
-
-interface SearchResult {
-  id: string;
-  slug: string;
-  title: string;
-  content: string;
-  type: QuestionType;
-  author: {
-    name: string | null;
-    image: string | null;
-  };
-  tags: Array<{ name: string }>;
-  answerCount: number;
-  voteCount: number;
-  createdAt: string;
-}
+import type { QuestionSearchResult } from "@/lib/db/query-args";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -33,7 +18,7 @@ export default function QuestionsPage() {
   const t = useTranslations("QuestionsPage");
   const [query, setQuery] = React.useState("");
   const debouncedQuery = useDebounce(query, 300);
-  const [results, setResults] = React.useState<SearchResult[]>([]);
+  const [results, setResults] = React.useState<QuestionSearchResult[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [selectedType, setSelectedType] = React.useState<"all" | QuestionType>("all");
   const [selectedTags, setSelectedTags] = React.useState<string[]>([]);

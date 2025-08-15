@@ -33,7 +33,8 @@ export const courseListSelectArgs = {
 
 export const questionAuthorSelectArgs = {
   id: true,
-  name: true
+  name: true,
+  image: true
 } as const satisfies Prisma.UserSelect
 
 export const questionBasicIncludeArgs = {
@@ -54,6 +55,28 @@ export const questionFullIncludeArgs = {
   tags: true,
   course: { select: courseBasicSelectArgs },
   lesson: { select: { id: true, title: true, slug: true } }
+} as const satisfies Prisma.QuestionInclude
+
+export const questionReviewSelectArgs = {
+  id: true,
+  title: true,
+  content: true,
+  slug: true
+} as const satisfies Prisma.QuestionSelect
+
+export const questionSearchSelectArgs = {
+  id: true,
+  title: true,
+  content: true,
+  slug: true,
+  type: true,
+  createdAt: true
+} as const satisfies Prisma.QuestionSelect
+
+export const questionSearchIncludeArgs = {
+  author: { select: questionAuthorSelectArgs },
+  tags: { select: { name: true } },
+  _count: { select: { answers: true, votes: true } }
 } as const satisfies Prisma.QuestionInclude
 
 // ============================================================================
@@ -94,6 +117,21 @@ export type QuestionWithVotes = Prisma.QuestionGetPayload<{
 export type QuestionFull = Prisma.QuestionGetPayload<{
   include: typeof questionFullIncludeArgs
 }>
+
+export type QuestionReview = Prisma.QuestionGetPayload<{
+  select: typeof questionReviewSelectArgs
+}>
+
+export type QuestionSearch = Prisma.QuestionGetPayload<{
+  include: typeof questionSearchIncludeArgs
+}>
+
+// Search result type for frontend consumption (with computed fields)
+export type QuestionSearchResult = Omit<QuestionSearch, 'createdAt' | '_count'> & {
+  createdAt: string
+  answerCount: number
+  voteCount: number
+}
 
 export type UserBasic = Prisma.UserGetPayload<{
   select: typeof userBasicSelectArgs

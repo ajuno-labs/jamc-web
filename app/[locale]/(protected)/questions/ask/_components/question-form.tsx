@@ -110,7 +110,7 @@ export function QuestionForm({
     500
   );
 
-  const handleTitleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTitleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const title = e.target.value;
     register("title").onChange(e);
     debouncedSimilarityCheck(title);
@@ -172,13 +172,11 @@ export function QuestionForm({
             contentValue={contentValue}
             titleValue={titleValue}
             isSubmitting={isSubmitting}
-            showPreviewToggle={false}
             onTitleChange={handleTitleChange}
             allowProgressiveDisclosure={true}
           />
 
           <QuestionFormMain
-            register={register}
             control={control}
             errors={errors}
             selectedTags={selectedTags}

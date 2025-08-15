@@ -1,6 +1,6 @@
 "use client";
 
-import { Control, Controller, UseFormRegister, FieldErrors } from "react-hook-form";
+import { Control, Controller, FieldErrors } from "react-hook-form";
 import {
   Select,
   SelectContent,
@@ -9,7 +9,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { TagSelector } from "@/components/tag-selector";
 import { AttachmentUpload } from "./AttachmentUpload";
 import { AttachmentGallery } from "./AttachmentGallery";
@@ -19,13 +18,12 @@ import { useTranslations } from "next-intl";
 // Define the form values type
 type QuestionFormValues = {
   title: string;
-  content: string;
+  content?: string;
   type: QuestionType;
   visibility: Visibility;
 };
 
 interface QuestionFormMainProps {
-  register: UseFormRegister<QuestionFormValues>;
   control: Control<QuestionFormValues>;
   errors: FieldErrors<QuestionFormValues>;
   selectedTags: string[];
@@ -37,7 +35,6 @@ interface QuestionFormMainProps {
 }
 
 export function QuestionFormMain({
-  register,
   control,
   errors,
   selectedTags,
